@@ -38,6 +38,18 @@ public class Hero {
     @Enumerated(EnumType.STRING)
     private Classes charClass;
 
+    @Column(length = 10000)
+    private String description;
+
+    @Column
+    private String imageUrl;
+
+    @Column(nullable = false)
+    private Alignment alignment;
+
+    @Column(nullable = false)
+    private Backgrounds background;
+
     @Column(nullable = false, name = "created_at")
     private LocalDateTime createdAt;
 
