@@ -43,6 +43,9 @@ public class User {
     @JoinColumn(name = "hero_id", referencedColumnName = "id")
     private Hero hero;
 
+    @Column
+    private String imageUrl;
+
     @Column(nullable = false, name = "created_at")
     private LocalDateTime createdAt;
 }
