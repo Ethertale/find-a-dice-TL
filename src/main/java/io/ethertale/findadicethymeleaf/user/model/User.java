@@ -30,6 +30,9 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
+    @Column(length = 300)
+    private String description;
+
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private UserRoles role;
@@ -47,17 +50,26 @@ public class User {
     public User() {
     }
 
-    public User(UUID id, String username, String password, String email, String firstName, String lastName, UserRoles role, Hero hero, String imageUrl, LocalDateTime createdAt) {
+    public User(UUID id, String username, String password, String email, String firstName, String lastName, String description, UserRoles role, Hero hero, String imageUrl, LocalDateTime createdAt) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.description = description;
         this.role = role;
         this.hero = hero;
         this.imageUrl = imageUrl;
         this.createdAt = createdAt;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public UUID getId() {
