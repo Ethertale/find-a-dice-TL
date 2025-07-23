@@ -50,6 +50,24 @@ public class Hero {
     @Column(nullable = false)
     private Backgrounds background;
 
+    @Column(nullable = false)
+    private int strength;
+
+    @Column(nullable = false)
+    private int dexterity;
+
+    @Column(nullable = false)
+    private int constitution;
+
+    @Column(nullable = false)
+    private int intelligence;
+
+    @Column(nullable = false)
+    private int wisdom;
+
+    @Column(nullable = false)
+    private int charisma;
+
     @Column(nullable = false, name = "created_at")
     private LocalDateTime createdAt;
 
