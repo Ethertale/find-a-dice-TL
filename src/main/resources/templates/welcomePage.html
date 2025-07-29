@@ -11,7 +11,15 @@
 </head>
 <body>
 
-<h1>MAIN PAGE BEFORE LOGIN</h1>
+<div style="min-height: 100vh" class="container d-flex flex-column justify-content-center align-items-center align-content-center h-100">
+    <img style="width: 15%; min-width: 130px" th:src="@{/imgs/Logo-Transparent.png}" alt="">
+    <h4>Find your next adventure partner!</h4>
+    <div class="container d-flex justify-content-center align-items-center align-content-center">
+        <a href="/login"><button class="btn btn-primary m-1">Login</button></a>
+        <a href="/register"><button class="btn btn-primary m-1">Register</button></a>
+    </div>
+</div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
