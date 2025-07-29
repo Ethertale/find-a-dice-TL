@@ -11,7 +11,7 @@
 </head>
 <body>
 
-<div class="container border">
+<div style="min-height: 100vh" class="container d-flex flex-column justify-content-center align-items-center align-content-center h-100">
     <form th:method="POST" th:action="@{/login}" th:object="${loginDTO}">
         <div class="form-group">
             <label for="username">Username</label>
@@ -19,10 +19,10 @@
         </div>
         <div class="form-group">
             <label for="password">Password</label>
-            <input th:field="*{password}" type="text" class="form-control" id="password" aria-describedby="usernameHelp" placeholder="Password">
+            <input th:field="*{password}" type="password" class="form-control" id="password" aria-describedby="usernameHelp" placeholder="Password">
         </div>
         <div class="container d-flex flex-column justify-content-center align-items-center">
-            <button type="submit" class="btn btn-primary" style="background-color: #231a1a; border-color: #826053; color: #d3a862">Login</button>
+            <button type="submit" class="btn btn-primary m-3" style="background-color: #231a1a; border-color: #826053; color: #d3a862">Login</button>
         </div>
     </form>
 </div>
