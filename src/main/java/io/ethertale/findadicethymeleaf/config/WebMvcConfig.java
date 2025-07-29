@@ -18,6 +18,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                        .requestMatchers("/favicon.ico", "/imgs/**", "/css/**", "/fonts/**", "/js/**").permitAll()
                         .requestMatchers("/login", "/register", "/").permitAll()
                         .requestMatchers("/home").authenticated()
                 )
