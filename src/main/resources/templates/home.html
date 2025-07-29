@@ -11,6 +11,13 @@
 </head>
 <body>
 
+<h1>Hello <span th:text="${loggedUser.firstName} + ' &quot' +${loggedUser.username} + '&quot ' + ${loggedUser.lastName}"></span></h1>
+
+<form action="/logout" method="post">
+    <!--        This returns CSRF token for the logout request since 6.x Spring Security requires it with a POST request instead of a GET request.-->
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    <button type="submit">Logout</button>
+</form>
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
