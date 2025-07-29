@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -22,11 +23,13 @@ public class FindADiceThymeleafApplication implements CommandLineRunner {
 
     private final HeroRepo heroRepo;
     private final UserRepo userRepo;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public FindADiceThymeleafApplication(HeroRepo heroRepo, UserRepo userRepo) {
+    public FindADiceThymeleafApplication(HeroRepo heroRepo, UserRepo userRepo, PasswordEncoder passwordEncoder) {
         this.heroRepo = heroRepo;
         this.userRepo = userRepo;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public static void main(String[] args) {
@@ -39,7 +42,7 @@ public class FindADiceThymeleafApplication implements CommandLineRunner {
         if (userRepo.count() == 0){
             Hero hero1 = new Hero();
 //            hero1.setId(UUID.randomUUID());
-            hero1.setName("hero");
+            hero1.setName("ADMIN");
             hero1.setAge(1);
             hero1.setGender(Genders.MALE);
             hero1.setCharClass(Classes.ARTIFICER);
@@ -56,11 +59,11 @@ public class FindADiceThymeleafApplication implements CommandLineRunner {
 
             User user1 = new User();
 //            user1.setId(UUID.randomUUID());
-            user1.setUsername("TestUser1");
-            user1.setPassword("TestPassword1");
+            user1.setUsername("admin");
+            user1.setPassword(passwordEncoder.encode("admin1"));
             user1.setEmail("email@mail.com");
-            user1.setFirstName("FirstName");
-            user1.setLastName("LastName");
+            user1.setFirstName("John");
+            user1.setLastName("Doe");
             user1.setDescription("Description");
             user1.setRole(UserRoles.USER);
             user1.setImageUrl("https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/avatars/77/777eb0797f3eb82da4255acb97932600ebbcb879_full.jpg");
