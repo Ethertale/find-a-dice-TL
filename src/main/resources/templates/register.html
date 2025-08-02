@@ -13,6 +13,9 @@
 
 <div style="min-height: 100vh" class="container d-flex flex-column justify-content-center align-items-center align-content-center h-100">
     <form th:method="POST" th:action="@{/register}" th:object="${registerDTO}">
+        <div class="container">
+            <a class="text-left" href="/"><img style="width: 20px" src="https://img.icons8.com/ios/50/left.png" alt="left"/></a>
+        </div>
         <div class="form-group">
             <label for="username">Username</label>
             <input th:field="*{username}" type="text" class="form-control" id="username" aria-describedby="usernameHelp" placeholder="Username">

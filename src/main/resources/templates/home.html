@@ -29,7 +29,12 @@
         <div class="col-12 col-md-2 border">
             <div class="container-fluid d-flex flex-column">
                 <div class="container-fluid border">
-                    <h3>Status Update</h3>
+                    <h3>Your Hero</h3>
+                    <div class="container border">
+                        <small><a style="text-decoration: none" href="#">Edit</a></small>
+                        <h5 th:text="${loggedUser.hero.name}"></h5>
+                        <img style="aspect-ratio: 1/1; width: 120px" th:src="${loggedUser.hero.imageUrl}" alt="">
+                    </div>
                 </div>
                 <div class="container-fluid border">
                     <h3>Invite your friends</h3>
