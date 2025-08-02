@@ -9,6 +9,11 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "user")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User {
 
     @Id
@@ -46,23 +51,6 @@ public class User {
 
     @Column(nullable = false, name = "created_at")
     private LocalDateTime createdAt;
-
-    public User() {
-    }
-
-    public User(UUID id, String username, String password, String email, String firstName, String lastName, String description, UserRoles role, Hero hero, String imageUrl, LocalDateTime createdAt) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.description = description;
-        this.role = role;
-        this.hero = hero;
-        this.imageUrl = imageUrl;
-        this.createdAt = createdAt;
-    }
 
     public String getDescription() {
         return description;
