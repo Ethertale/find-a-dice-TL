@@ -30,14 +30,15 @@ public class UserService implements UserDetailsService {
     }
 
     public void registerUser(RegisterDTO registerDTO) {
-        User user = new User();
-        user.setUsername(registerDTO.getUsername());
-        user.setPassword(passwordEncoder.encode(registerDTO.getPassword()));
-        user.setEmail(registerDTO.getEmail());
-        user.setFirstName(registerDTO.getFirstName());
-        user.setLastName(registerDTO.getLastName());
-        user.setRole(UserRoles.USER);
-        user.setCreatedAt(LocalDateTime.now());
+        User user = User.builder()
+                .username(registerDTO.getUsername())
+                .password(passwordEncoder.encode(registerDTO.getPassword()))
+                .email(registerDTO.getEmail())
+                .firstName(registerDTO.getFirstName())
+                .lastName(registerDTO.getLastName())
+                .role(UserRoles.USER)
+                .createdAt(LocalDateTime.now())
+                .build();
 
         userRepo.save(user);
     }
