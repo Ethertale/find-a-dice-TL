@@ -54,7 +54,7 @@ public class UserService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepo.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
 
-        log.info("At: {} User with ID: {} - and Username: {} logged in.", LocalDateTime.now(), user.getId(), username);
+        log.info("User {} logged in at {}:{} on {} {} {} - {}", username, LocalDateTime.now().getHour(), LocalDateTime.now().getMinute(), LocalDateTime.now().getDayOfMonth(), LocalDateTime.now().getMonth(), LocalDateTime.now().getYear(), user.getId());
 
         return new AuthenticationDetails(user.getId(), user.getUsername(), user.getPassword(), user.getEmail(), user.getFirstName(), user.getLastName(), user.getDescription(), user.getRole(), user.getHero(), user.getImageUrl(), user.getCreatedAt());
     }
