@@ -39,6 +39,7 @@ public class MainController {
 
         ModelAndView mav = new ModelAndView("home");
         mav.addObject("loggedUser", loggedUser);
+        mav.addObject("loggedUserHero", loggedUser.getHero());
 
         return mav;
     }
