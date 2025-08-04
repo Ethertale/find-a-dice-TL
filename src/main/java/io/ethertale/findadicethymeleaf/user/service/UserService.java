@@ -1,5 +1,6 @@
 package io.ethertale.findadicethymeleaf.user.service;
 
+import io.ethertale.findadicethymeleaf.hero.service.HeroService;
 import io.ethertale.findadicethymeleaf.security.AuthenticationDetails;
 import io.ethertale.findadicethymeleaf.user.model.User;
 import io.ethertale.findadicethymeleaf.user.model.UserRoles;
@@ -21,11 +22,13 @@ import java.util.UUID;
 public class UserService implements UserDetailsService {
 
     private final UserRepo userRepo;
+    private final HeroService heroService;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UserService(UserRepo userRepo, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepo userRepo, HeroService heroService, PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
+        this.heroService = heroService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -41,6 +44,12 @@ public class UserService implements UserDetailsService {
                 .build();
 
         userRepo.save(user);
+
+        User userByUsername = userRepo.getUserByUsername(user.getUsername());
+        userByUsername.setHero(heroService.createFirstHero(userByUsername));
+
+        userRepo.save(userByUsername);
+
     }
 
     public User getUserById(UUID id) {
