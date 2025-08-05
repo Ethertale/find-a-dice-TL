@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+    <title>Find A Dice - Edit Hero</title>
+</head>
+<body>
+
+<div style="min-height: 95vh" class="container d-flex flex-column justify-content-center align-items-center align-content-center h-95">
+    <div class="row">
+        <div class="col-12 mx-auto">
+            <div id="backgr" class="container d-flex flex-column justify-content-around align-items-center">
+                <form th:method="POST" th:action="@{'/profile/' + ${loggedUser.id} + '/edit-hero/success'}" th:object="${editHeroDTO}">
+                    <div class="container">
+                        <a class="text-left" href="/"><img style="width: 20px" src="https://img.icons8.com/ios/50/left.png" alt="left"/></a>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 mx-auto">
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input th:field="*{name}" type="text" class="form-control" id="name" aria-describedby="nameHelp" placeholder="Name">
+                            </div>
+                        </div>
+                        <div class="col-12 mx-auto">
+                            <div class="form-group">
+                                <label for="age">Age (18-∞)</label>
+                                <input th:field="*{age}" type="text" class="form-control" id="age" aria-describedby="usernameHelp" placeholder="Age (18-∞)">
+                            </div>
+                        </div>
+                        <div class="col-12 mx-auto">
+                            <div class="form-group">
+                                <label for="gender">Gender</label>
+                                <select class="form-control" th:field="*{gender}" name="gender" id="gender">
+                                    <option th:each="gender: ${genders}" th:value="${gender.name()}" th:text="${gender.name()}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 mx-auto">
+                            <div class="form-group">
+                                <label for="class">Class</label>
+                                <select class="form-control" th:field="*{charClass}" name="class" id="class">
+                                    <option th:each="class: ${charClasses}" th:value="${class.name()}" th:text="${class.name()}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 mx-auto">
+                            <div class="form-group">
+                                <label for="alignment">Alignment</label>
+                                <select class="form-control" th:field="*{alignment}" name="alignment" id="alignment">
+                                    <option th:each="alignment: ${alignments}" th:value="${alignment.name()}" th:text="${alignment.name()}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 mx-auto">
+                            <div class="form-group">
+                                <label for="background">Background</label>
+                                <select class="form-control" th:field="*{background}" name="background" id="background">
+                                    <option th:each="background: ${backgrounds}" th:value="${background.name()}" th:text="${background.name()}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 mx-auto">
+                            <div class="form-group">
+                                <label for="strength">Strength (1-20)</label>
+                                <input th:field="*{strength}" type="number" class="form-control" id="strength" aria-describedby="usernameHelp" placeholder="Strength (1-20)">                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 mx-auto">
+                            <div class="form-group">
+                                <label for="dexterity">Dexterity (1-20)</label>
+                                <input th:field="*{dexterity}" type="number" class="form-control" id="dexterity" aria-describedby="usernameHelp" placeholder="Dexterity (1-20)">                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 mx-auto">
+                            <div class="form-group">
+                                <label for="constitution">Constitution (1-20)</label>
+                                <input th:field="*{constitution}" type="number" class="form-control" id="constitution" aria-describedby="usernameHelp" placeholder="Constitution (1-20)">                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 mx-auto">
+                            <div class="form-group">
+                                <label for="intelligence">Intelligence (1-20)</label>
+                                <input th:field="*{intelligence}" type="number" class="form-control" id="intelligence" aria-describedby="usernameHelp" placeholder="Intelligence (1-20)">                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 mx-auto">
+                            <div class="form-group">
+                                <label for="wisdom">Wisdom (1-20)</label>
+                                <input th:field="*{wisdom}" type="number" class="form-control" id="wisdom" aria-describedby="usernameHelp" placeholder="Wisdom (1-20)">                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 mx-auto">
+                            <div class="form-group">
+                                <label for="charisma">Charisma (1-20)</label>
+                                <input th:field="*{charisma}" type="number" class="form-control" id="charisma" aria-describedby="usernameHelp" placeholder="Charisma (1-20)">                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 mx-auto">
+                            <div class="form-group">
+                                <label for="description">Description</label>
+                                <input th:field="*{description}" type="text" class="form-control" id="description" aria-describedby="usernameHelp" placeholder="Description">                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 mx-auto">
+                            <div class="form-group">
+                                <label for="imageUrl">Image Url</label>
+                                <input th:field="*{imageUrl}" type="text" class="form-control" id="imageUrl" aria-describedby="usernameHelp" placeholder="imageUrl">                                </select>
+                            </div>
+                        </div>
+                        <div class="container d-flex flex-column justify-content-center align-items-center">
+                            <button type="submit" class="btn m-3">Submit</button>
+                        </div>
+                    </div>
+
+
+                    <div class="container d-flex flex-column justify-content-center align-items-center">
+                        <button type="submit" class="btn m-3">Login</button>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.min.js"
+        integrity="sha384-RuyvpeZCxMJCqVUGFI0Do1mQrods/hhxYlcVfGPOfQtPJh0JCw12tUAZ/Mv10S7D"
+        crossorigin="anonymous"></script>
+</body>
+</html>
