@@ -20,7 +20,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers("/favicon.ico", "/imgs/**", "/css/**", "/fonts/**", "/js/**").permitAll()
                         .requestMatchers("/login", "/register", "/").permitAll()
-                        .requestMatchers("/home").authenticated()
+                        .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
