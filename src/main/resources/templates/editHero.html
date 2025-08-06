@@ -42,17 +42,31 @@
                         </div>
                         <div class="col-12 mx-auto">
                             <div class="form-group">
+                                <label for="race">Race</label>
+                                <select class="form-control" th:field="*{race}" name="race" id="race">
+                                    <option th:each="race: ${races}" th:value="${race.name()}" th:text="${race}"></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-12 mx-auto">
+                            <div class="form-group">
                                 <label for="class">Class</label>
                                 <select class="form-control" th:field="*{charClass}" name="class" id="class">
-                                    <option th:each="class: ${charClasses}" th:value="${class.name()}" th:text="${class.name()}"></option>
+                                    <option th:each="class: ${charClasses}" th:value="${class.name()}" th:text="${class}"></option>
                                 </select>
+                            </div>
+                        </div>
+                        <div class="col-12 mx-auto">
+                            <div class="form-group">
+                                <label for="level">Level</label>
+                                <input th:field="*{level}" type="number" class="form-control" id="level" aria-describedby="usernameHelp" placeholder="Level">
                             </div>
                         </div>
                         <div class="col-12 mx-auto">
                             <div class="form-group">
                                 <label for="alignment">Alignment</label>
                                 <select class="form-control" th:field="*{alignment}" name="alignment" id="alignment">
-                                    <option th:each="alignment: ${alignments}" th:value="${alignment.name()}" th:text="${alignment.name()}"></option>
+                                    <option th:each="alignment: ${alignments}" th:value="${alignment.name()}" th:text="${alignment}"></option>
                                 </select>
                             </div>
                         </div>
@@ -60,7 +74,7 @@
                             <div class="form-group">
                                 <label for="background">Background</label>
                                 <select class="form-control" th:field="*{background}" name="background" id="background">
-                                    <option th:each="background: ${backgrounds}" th:value="${background.name()}" th:text="${background.name()}"></option>
+                                    <option th:each="background: ${backgrounds}" th:value="${background.name()}" th:text="${background}"></option>
                                 </select>
                             </div>
                         </div>
