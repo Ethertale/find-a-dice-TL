@@ -58,5 +58,11 @@ public enum Races {
     VARIANT_HUMAN,
     VEDALKEN,
     WARFORGED,
-    WATER_GENASI,
+    WATER_GENASI;
+
+    @Override
+    public String toString() {
+        return name()
+                .replace("_", " ");
+    }
 }

@@ -9,5 +9,11 @@ public enum Alignment {
     CHAOTIC_NEUTRAL,
     LAWFUL_EVIL,
     NEUTRAL_EVIL,
-    CHAOTIC_EVIL
+    CHAOTIC_EVIL;
+
+    @Override
+    public String toString() {
+        return name()
+                .replace("_", " ");
+    }
 }

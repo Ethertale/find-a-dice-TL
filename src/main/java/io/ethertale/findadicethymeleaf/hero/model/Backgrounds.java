@@ -91,5 +91,11 @@ public enum Backgrounds {
     WATERDHAVIAN_NOBLE,
     WITCHLIGHT_HAND,
     WITHERBLOOM_STUDENT,
-    OTHER
+    OTHER;
+
+    @Override
+    public String toString() {
+        return name()
+                .replace("_", " ");
+    }
 }
