@@ -23,17 +23,20 @@
                     <a class="nav-link" th:href="@{'/profile/' + ${session.get('SPRING_SECURITY_CONTEXT').authentication.principal.id}}">Profile</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Link</a>
+                    <a class="nav-link" href="#">Friends</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Inbox</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        Dropdown
+                        Guides
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Action</a></li>
-                        <li><a class="dropdown-item" href="#">Another action</a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li><a class="dropdown-item" href="#">Something else here</a></li>
+                        <li><a class="dropdown-item" href="#">Races</a></li>
+                        <li><a class="dropdown-item" href="#">Classes</a></li>
+                        <li><a class="dropdown-item" href="#">Alignments</a></li>
+                        <li><a class="dropdown-item" href="#">Backgrounds</a></li>
                     </ul>
                 </li>
                 <li class="nav-item">
