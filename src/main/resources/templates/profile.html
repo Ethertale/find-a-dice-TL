@@ -49,9 +49,13 @@
                         <div class="profileStats rounded-0"><p class="m-2">0 Total Posts</p></div>
                         <div class="profileStats rounded-0 rounded-end"><p class="m-2">0 Events Visited</p></div>
                     </div>
+                    <div class="container">
+                        <a class="btn btn-secondary my-2" th:href="'/profile/' + ${loggedUser.getId()} + '/edit-hero'">Edit Hero</a>
+                    </div>
                 </div>
             </div>
         </div>
+        <hr>
         <div class="col-12 col-md-4 d-flex flex-column align-items-center justify-content-center border-end">
             <h2 class="text-center" th:text="${loggedUserHero.name}"></h2>
             <img class="img-fluid mb-2" style="max-width: 128px; min-width: 64px" th:src="${loggedUserHero.imageUrl}" alt="">
@@ -125,7 +129,6 @@
             </div>
         </div>
     </div>
-    <a class="btn btn-secondary" th:href="'/profile/' + ${loggedUser.getId()} + '/edit-hero'">Edit Hero</a>
 </div>
 
 <footer th:fragment="~{fragments::footer}"></footer>
