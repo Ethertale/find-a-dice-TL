@@ -51,8 +51,9 @@ public class ProfileController {
         User loggedUser = userService.getUserById(authenticationDetails.getId());
 
         ModelAndView mav = new ModelAndView("editHero");
-        mav.addObject("editHeroDTO", new HeroUpdateDTO());
         mav.addObject("loggedUser", loggedUser);
+        mav.addObject("loggedUserHero", loggedUser.getHero());
+        mav.addObject("editHeroDTO", HeroUpdateDTO.populateInfoHero(loggedUser.getHero()));
         mav.addObject("user", userService.getUserById(id));
         mav.addObject("genders", heroService.getAllGenders());
         mav.addObject("charClasses", heroService.getAllCharClasses());
