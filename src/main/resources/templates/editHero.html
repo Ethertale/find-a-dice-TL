@@ -22,19 +22,19 @@
                         <a class="text-left d-flex flex-row" th:href="'/profile/' + ${loggedUser.id}"><img style="width: 40px" src="https://img.icons8.com/ios/50/left.png" alt="left"/><p>Go Back</p></a>
                     </div>
                     <div class="row">
-                        <div class="col-12 mx-auto">
+                        <div class="col-12 col-md-4 mx-auto">
                             <div class="form-group">
                                 <label for="name">Name</label>
                                 <input th:field="*{name}" type="text" class="form-control" id="name" aria-describedby="nameHelp" placeholder="Name">
                             </div>
                         </div>
-                        <div class="col-12 mx-auto">
+                        <div class="col-12 col-md-4 mx-auto">
                             <div class="form-group">
                                 <label for="age">Age (18-∞)</label>
                                 <input th:field="*{age}" type="text" class="form-control" id="age" aria-describedby="usernameHelp" placeholder="Age (18-∞)">
                             </div>
                         </div>
-                        <div class="col-12 mx-auto">
+                        <div class="col-12 col-md-4 mx-auto">
                             <div class="form-group">
                                 <label for="gender">Gender</label>
                                 <select class="form-control" th:field="*{gender}" name="gender" id="gender">
@@ -42,7 +42,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-12 mx-auto">
+                        <div class="col-12 col-md-4 mx-auto">
                             <div class="form-group">
                                 <label for="race">Race</label>
                                 <select class="form-control" th:field="*{race}" name="race" id="race">
@@ -50,7 +50,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-12 mx-auto">
+                        <div class="col-12 col-md-4 mx-auto">
                             <div class="form-group">
                                 <label for="class">Class</label>
                                 <select class="form-control" th:field="*{charClass}" name="class" id="class">
@@ -58,13 +58,13 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-12 mx-auto">
+                        <div class="col-12 col-md-4 mx-auto">
                             <div class="form-group">
                                 <label for="level">Level</label>
                                 <input th:field="*{level}" type="number" class="form-control" id="level" aria-describedby="usernameHelp" placeholder="Level">
                             </div>
                         </div>
-                        <div class="col-12 mx-auto">
+                        <div class="col-12 col-md-5 mx-auto">
                             <div class="form-group">
                                 <label for="alignment">Alignment</label>
                                 <select class="form-control" th:field="*{alignment}" name="alignment" id="alignment">
@@ -72,7 +72,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-12 mx-auto">
+                        <div class="col-12 col-md-5 mx-auto">
                             <div class="form-group">
                                 <label for="background">Background</label>
                                 <select class="form-control" th:field="*{background}" name="background" id="background">
@@ -80,37 +80,37 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="col-12 mx-auto">
+                        <div class="col-12 col-md-4 mx-auto">
                             <div class="form-group">
                                 <label for="strength">Strength (1-20)</label>
                                 <input th:field="*{strength}" type="number" min="1" max="20" class="form-control" id="strength" aria-describedby="usernameHelp" placeholder="Strength (1-20)">                                </select>
                             </div>
                         </div>
-                        <div class="col-12 mx-auto">
+                        <div class="col-12 col-md-4 mx-auto">
                             <div class="form-group">
                                 <label for="dexterity">Dexterity (1-20)</label>
                                 <input th:field="*{dexterity}" type="number" min="1" max="20" class="form-control" id="dexterity" aria-describedby="usernameHelp" placeholder="Dexterity (1-20)">                                </select>
                             </div>
                         </div>
-                        <div class="col-12 mx-auto">
+                        <div class="col-12 col-md-4 mx-auto">
                             <div class="form-group">
                                 <label for="constitution">Constitution (1-20)</label>
                                 <input th:field="*{constitution}" type="number" min="1" max="20" class="form-control" id="constitution" aria-describedby="usernameHelp" placeholder="Constitution (1-20)">                                </select>
                             </div>
                         </div>
-                        <div class="col-12 mx-auto">
+                        <div class="col-12 col-md-4 mx-auto">
                             <div class="form-group">
                                 <label for="intelligence">Intelligence (1-20)</label>
                                 <input th:field="*{intelligence}" type="number" min="1" max="20" class="form-control" id="intelligence" aria-describedby="usernameHelp" placeholder="Intelligence (1-20)">                                </select>
                             </div>
                         </div>
-                        <div class="col-12 mx-auto">
+                        <div class="col-12 col-md-4 mx-auto">
                             <div class="form-group">
                                 <label for="wisdom">Wisdom (1-20)</label>
                                 <input th:field="*{wisdom}" type="number" min="1" max="20" class="form-control" id="wisdom" aria-describedby="usernameHelp" placeholder="Wisdom (1-20)">                                </select>
                             </div>
                         </div>
-                        <div class="col-12 mx-auto">
+                        <div class="col-12 col-md-4 mx-auto">
                             <div class="form-group">
                                 <label for="charisma">Charisma (1-20)</label>
                                 <input th:field="*{charisma}" type="number" min="1" max="20" class="form-control" id="charisma" aria-describedby="usernameHelp" placeholder="Charisma (1-20)">                                </select>
