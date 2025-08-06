@@ -35,11 +35,18 @@ public class Hero {
 
     @Column
     @Enumerated(EnumType.STRING)
+    private Races race;
+
+    @Column
+    @Enumerated(EnumType.STRING)
     private Genders gender;
 
     @Column(nullable = false, name = "char_class")
     @Enumerated(EnumType.STRING)
     private Classes charClass;
+
+    @Column
+    private int level;
 
     @Column(length = 10000)
     private String description;

@@ -58,6 +58,7 @@ public class ProfileController {
         mav.addObject("charClasses", heroService.getAllCharClasses());
         mav.addObject("alignments", heroService.getAllAlignments());
         mav.addObject("backgrounds", heroService.getAllBackgrounds());
+        mav.addObject("races", heroService.getAllRaces());
 
         return mav;
     }

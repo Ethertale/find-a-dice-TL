@@ -1,9 +1,6 @@
 package io.ethertale.findadicethymeleaf.hero.service;
 
-import io.ethertale.findadicethymeleaf.hero.model.Alignment;
-import io.ethertale.findadicethymeleaf.hero.model.Backgrounds;
-import io.ethertale.findadicethymeleaf.hero.model.Classes;
-import io.ethertale.findadicethymeleaf.hero.model.Hero;
+import io.ethertale.findadicethymeleaf.hero.model.*;
 import io.ethertale.findadicethymeleaf.hero.repo.HeroRepo;
 import io.ethertale.findadicethymeleaf.user.model.Genders;
 import io.ethertale.findadicethymeleaf.user.model.User;
@@ -33,7 +30,9 @@ public class HeroService {
                 .name("My Hero")
                 .age(18)
                 .gender(Genders.MALE)
+                .race(Races.AARAKOCRA)
                 .charClass(Classes.ARTIFICER)
+                .level(1)
                 .description("This is my description")
                 .imageUrl("https://i.ibb.co/WWDv4mYx/Logo-Transparent.png")
                 .alignment(Alignment.TRUE_NEUTRAL)
@@ -60,11 +59,17 @@ public class HeroService {
         if (heroUpdateDTO.getAge() >= 18) {
             updatedHero.setAge(heroUpdateDTO.getAge());
         }
+        if (heroUpdateDTO.getRace() != null) {
+            updatedHero.setRace(heroUpdateDTO.getRace());
+        }
         if (heroUpdateDTO.getGender() != null) {
             updatedHero.setGender(heroUpdateDTO.getGender());
         }
         if (heroUpdateDTO.getCharClass() != null) {
             updatedHero.setCharClass(heroUpdateDTO.getCharClass());
+        }
+        if (heroUpdateDTO.getLevel() >= 1 && heroUpdateDTO.getLevel() <= 99) {
+            updatedHero.setLevel(heroUpdateDTO.getLevel());
         }
         if (heroUpdateDTO.getDescription() != null || !heroUpdateDTO.getDescription().isBlank()) {
             updatedHero.setDescription(heroUpdateDTO.getDescription());
@@ -115,5 +120,8 @@ public class HeroService {
 
     public List<Genders> getAllGenders() {
         return List.of(Genders.values());
+    }
+    public List<Races> getAllRaces() {
+        return List.of(Races.values());
     }
 }
