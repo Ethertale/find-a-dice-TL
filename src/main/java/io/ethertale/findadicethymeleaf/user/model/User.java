@@ -52,4 +52,11 @@ public class User {
     @Column(nullable = false, name = "created_at")
     private LocalDateTime createdAt;
 
+
+    public String giveUserNames() {
+        String firstChar = firstName.substring(0, 1);
+        String lastChar = lastName.substring(0, 1);
+
+        return firstChar + ". " + lastChar + ".";
+    }
 }
