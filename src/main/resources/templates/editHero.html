@@ -11,13 +11,15 @@
 </head>
 <body>
 
+<nav th:replace="~{fragments::navbar}"></nav>
+
 <div style="min-height: 95vh" class="container d-flex flex-column justify-content-center align-items-center align-content-center h-95">
     <div class="row">
         <div class="col-12 mx-auto">
             <div id="backgr" class="container d-flex flex-column justify-content-around align-items-center">
                 <form th:method="POST" th:action="@{'/profile/' + ${loggedUser.id} + '/edit-hero/success'}" th:object="${editHeroDTO}">
                     <div class="container">
-                        <a class="text-left" href="/"><img style="width: 20px" src="https://img.icons8.com/ios/50/left.png" alt="left"/></a>
+                        <a class="text-left d-flex flex-row" th:href="'/profile/' + ${loggedUser.id}"><img style="width: 40px" src="https://img.icons8.com/ios/50/left.png" alt="left"/><p>Go Back</p></a>
                     </div>
                     <div class="row">
                         <div class="col-12 mx-auto">
@@ -81,37 +83,37 @@
                         <div class="col-12 mx-auto">
                             <div class="form-group">
                                 <label for="strength">Strength (1-20)</label>
-                                <input th:field="*{strength}" type="number" class="form-control" id="strength" aria-describedby="usernameHelp" placeholder="Strength (1-20)">                                </select>
+                                <input th:field="*{strength}" type="number" min="1" max="20" class="form-control" id="strength" aria-describedby="usernameHelp" placeholder="Strength (1-20)">                                </select>
                             </div>
                         </div>
                         <div class="col-12 mx-auto">
                             <div class="form-group">
                                 <label for="dexterity">Dexterity (1-20)</label>
-                                <input th:field="*{dexterity}" type="number" class="form-control" id="dexterity" aria-describedby="usernameHelp" placeholder="Dexterity (1-20)">                                </select>
+                                <input th:field="*{dexterity}" type="number" min="1" max="20" class="form-control" id="dexterity" aria-describedby="usernameHelp" placeholder="Dexterity (1-20)">                                </select>
                             </div>
                         </div>
                         <div class="col-12 mx-auto">
                             <div class="form-group">
                                 <label for="constitution">Constitution (1-20)</label>
-                                <input th:field="*{constitution}" type="number" class="form-control" id="constitution" aria-describedby="usernameHelp" placeholder="Constitution (1-20)">                                </select>
+                                <input th:field="*{constitution}" type="number" min="1" max="20" class="form-control" id="constitution" aria-describedby="usernameHelp" placeholder="Constitution (1-20)">                                </select>
                             </div>
                         </div>
                         <div class="col-12 mx-auto">
                             <div class="form-group">
                                 <label for="intelligence">Intelligence (1-20)</label>
-                                <input th:field="*{intelligence}" type="number" class="form-control" id="intelligence" aria-describedby="usernameHelp" placeholder="Intelligence (1-20)">                                </select>
+                                <input th:field="*{intelligence}" type="number" min="1" max="20" class="form-control" id="intelligence" aria-describedby="usernameHelp" placeholder="Intelligence (1-20)">                                </select>
                             </div>
                         </div>
                         <div class="col-12 mx-auto">
                             <div class="form-group">
                                 <label for="wisdom">Wisdom (1-20)</label>
-                                <input th:field="*{wisdom}" type="number" class="form-control" id="wisdom" aria-describedby="usernameHelp" placeholder="Wisdom (1-20)">                                </select>
+                                <input th:field="*{wisdom}" type="number" min="1" max="20" class="form-control" id="wisdom" aria-describedby="usernameHelp" placeholder="Wisdom (1-20)">                                </select>
                             </div>
                         </div>
                         <div class="col-12 mx-auto">
                             <div class="form-group">
                                 <label for="charisma">Charisma (1-20)</label>
-                                <input th:field="*{charisma}" type="number" class="form-control" id="charisma" aria-describedby="usernameHelp" placeholder="Charisma (1-20)">                                </select>
+                                <input th:field="*{charisma}" type="number" min="1" max="20" class="form-control" id="charisma" aria-describedby="usernameHelp" placeholder="Charisma (1-20)">                                </select>
                             </div>
                         </div>
                         <div class="col-12 mx-auto">
@@ -127,21 +129,16 @@
                             </div>
                         </div>
                         <div class="container d-flex flex-column justify-content-center align-items-center">
-                            <button type="submit" class="btn m-3">Submit</button>
+                            <button type="submit" class="btn btn-secondary m-3">Submit</button>
                         </div>
-                    </div>
-
-
-                    <div class="container d-flex flex-column justify-content-center align-items-center">
-                        <button type="submit" class="btn m-3">Login</button>
                     </div>
                 </form>
             </div>
-
         </div>
     </div>
 </div>
 
+<footer th:replace="~{fragments::footer}"></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
