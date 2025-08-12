@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -44,6 +45,10 @@ public class HeroService {
                 .wisdom(1)
                 .charisma(1)
                 .createdAt(LocalDateTime.now())
+                .groupPosts(new HashSet<>())
+                .comments(new HashSet<>())
+                .groups(new HashSet<>())
+                .createdGroups(new HashSet<>())
                 .build();
 
         heroRepo.save(hero);
