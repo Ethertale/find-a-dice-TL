@@ -107,7 +107,7 @@ public class Hero {
                 + createdAt.getYear()
                 + ", at "
                 + createdAt.getHour()
-                + " "
+                + ":"
                 + createdAt.getMinute();
     }
 

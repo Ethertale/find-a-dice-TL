@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "game_groups") // avoid reserved keywords
+@Table(name = "game_groups")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -23,10 +23,10 @@ public class Group {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false)
+    @Column(length = 40, nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    @Column(length = 1000, nullable = false)
     private String description;
 
     @Column(nullable = false)
@@ -53,7 +53,7 @@ public class Group {
                 + createdAt.getYear()
                 + ", at "
                 + createdAt.getHour()
-                + " "
+                + ":"
                 + createdAt.getMinute();
     }
 }

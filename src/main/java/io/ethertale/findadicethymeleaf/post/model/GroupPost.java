@@ -56,7 +56,7 @@ public class GroupPost {
                 + createdAt.getYear()
                 + ", at "
                 + createdAt.getHour()
-                + " "
+                + ":"
                 + createdAt.getMinute();
     }
 }
