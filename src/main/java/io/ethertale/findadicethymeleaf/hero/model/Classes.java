@@ -9,6 +9,63 @@ public enum Classes {
                 .replace("_", " ");
     }
 
+    public String classImage(){
+        return switch (this) {
+            case ARTIFICER -> "https://cdn.shopify.com/s/files/1/0736/8451/7137/files/5e-artificer_1000x.webp?v=1710686997";
+            case BARBARIAN -> "https://i0.wp.com/dungeonmister.com/wp-content/uploads/2024/09/gwosjwbaaaa12ar7948554346366278832-1100812978-e1730374056433.jpeg";
+            case BARD -> "https://forums.rpgmakerweb.com/data/attachments/198/198669-7284662f8bb5d6fc67223f79e215dc90.jpg";
+            case BLOOD_HUNTER -> "https://cdn.shopify.com/s/files/1/0736/8451/7137/files/5e-blood-hunter_1000x.webp?v=1710691788";
+            case CLERIC -> "https://assetsio.gnwcdn.com/dnd-cleric-images-7.jpg?width=1200&height=1200&fit=crop&quality=100&format=png&enable=upscale&auto=webp";
+            case DRUID -> "https://creator.nightcafe.studio/jobs/CzP2VRFJJ7aJ3HaTQRPq/CzP2VRFJJ7aJ3HaTQRPq--1--ba0g9.jpg";
+            case FIGHTER -> "https://imgcdn.stablediffusionweb.com/2024/11/1/8be63f20-02b8-49fb-a4af-9b95283ae674.jpg";
+            case GUNSLINGER -> "https://imgcdn.stablediffusionweb.com/2024/10/13/40ff0e21-7a53-4fc8-a425-52def893a8dd.jpg";
+            case MONK -> "https://assetsio.gnwcdn.com/dungeons-and-dragons-monk-playtest-art-by-TKTK.png?width=1200&height=1200&fit=crop&quality=100&format=png&enable=upscale&auto=webp";
+            case PALADIN -> "https://i.redd.it/bxeoql5zw3dd1.png";
+            case RANGER -> "https://arcaneeye.com/wp-content/uploads/2020/06/unnamed1.jpg";
+            case ROGUE -> "https://i0.wp.com/standsinthefire.com/wp-content/uploads/2015/06/rogue_by_sabin_boykinov-d486zda.jpg?fit=1400%2C1400&ssl=1";
+            case SORCERER -> "https://i.pinimg.com/736x/78/fb/21/78fb21b533d8cdb084887db4432b1678.jpg";
+            case WARLOCK -> "https://cdna.artstation.com/p/assets/covers/images/089/464/044/smaller_square/itssaintandreas-production-itssaintandreas-production-the-wild-curse-v10.jpg?1751023133";
+            case WIZARD -> "https://i.pinimg.com/736x/02/16/44/0216447aec0bb332e40cdc3e525ed3ab.jpg";
+            default -> "";
+        };
+    }
+
+    public String classShortDescription() {
+        return switch (this) {
+            case ARTIFICER ->
+                    "Masters of invention, artificers use ingenuity and magic to unlock extraordinary capabilities in objects. They see magic as a complex system waiting to be decoded and then harnessed in their spells and inventions.";
+            case BARBARIAN ->
+                    "Barbarians are mighty warriors who are powered by primal forces of the multiverse that manifest as a Rage. More than a mere emotion—and not limited to anger—this Rage is an incarnation of a predator’s ferocity, a storm’s fury, and a sea’s turmoil.";
+            case BARD ->
+                    "Invoking magic through music, dance, and verse, Bards are expert at inspiring others, soothing hurts, disheartening foes, and creating illusions. Bards believe the multiverse was spoken into existence and that remnants of its Words of Creation still resound and glimmer on every plane of existence.";
+            case BLOOD_HUNTER ->
+                    "Blood hunters are clever warriors driven by an unending determination to destroy evils old and new. Armed with rites of secretive blood magic and a willingness to sacrifice their own vitality and humanity for their cause, they protect the realms from the shadows.";
+            case CLERIC ->
+                    "Clerics draw power from the realms of the gods and harness it to work miracles. Blessed by a deity, a pantheon, or another immortal entity, a Cleric can reach out to the divine magic of the Outer Planes—where gods dwell—and channel it to bolster people and battle foes.";
+            case DRUID ->
+                    "Druids belong to ancient orders that call on the forces of nature. Harnessing the magic of animals, plants, and the four elements, Druids heal, transform into animals, and wield elemental destruction.";
+            case FIGHTER ->
+                    "Fighters rule many battlefields. Questing knights, royal champions, elite soldiers, and hardened mercenaries—as Fighters, they all share an unparalleled prowess with weapons and armor. And they are well acquainted with death, both meting it out and defying it.";
+            case GUNSLINGER ->
+                    "Most warriors and combat specialists spend their years perfecting the classic arts of swordplay, archery, or pole arm tactics. Whether duelist or infantry, martial weapons were seemingly perfected long ago, and the true challenge is to master them.";
+            case MONK ->
+                    "Monks use rigorous combat training and mental discipline to align themselves with the multiverse and focus their internal reservoirs of power. Different Monks conceptualize this power in various ways: as breath, energy, life force, essence, or self, for example.";
+            case PALADIN ->
+                    "Paladins are united by their oaths to stand against the forces of annihilation and corruption. Whether sworn before a god’s altar, in a sacred glade before nature spirits, or in a moment of desperation and grief with the dead as the only witnesses, a Paladin’s oath is a powerful bond.";
+            case RANGER ->
+                    "Far from bustling cities, amid the trees of trackless forests and across wide plains, Rangers keep their unending watch in the wilderness. Rangers learn to track their quarry as a predator does, moving stealthily through the wilds and hiding themselves in brush and rubble.";
+            case ROGUE ->
+                    "Rogues rely on cunning, stealth, and their foes’ vulnerabilities to get the upper hand in any situation. They have a knack for finding the solution to just about any problem. A few even learn magical tricks to supplement their other abilities.";
+            case SORCERER ->
+                    "Sorcerers wield innate magic that is stamped into their being. Some Sorcerers can’t name the origin of their power, while others trace it to strange events in their personal or family history. The blessing of a dragon or a dryad at a baby’s birth or the strike of lightning from a clear sky might spark a Sorcerer’s gift.";
+            case WARLOCK ->
+                    "Warlocks quest for knowledge that lies hidden in the fabric of the multiverse. They often begin their search for magical power by delving into tomes of forbidden lore, dabbling in invocations meant to attract the power of extraplanar beings, or seeking places of power where the influence of these beings can be felt.";
+            case WIZARD ->
+                    "Wizards are defined by their exhaustive study of magic’s inner workings. They cast spells of explosive fire, arcing lightning, subtle deception, and spectacular transformations. Their magic conjures monsters from other planes of existence, glimpses the future, or forms protective barriers.";
+            default -> "";
+        };
+    }
+
     public String classDescription() {
         return switch (this) {
             case ARTIFICER ->
