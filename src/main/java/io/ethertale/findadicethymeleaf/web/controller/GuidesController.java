@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
-@RequestMapping("/class-guides")
+@RequestMapping("/guides")
 public class GuidesController {
 
     private final HeroService heroService;
@@ -17,7 +17,7 @@ public class GuidesController {
         this.heroService = heroService;
     }
 
-    @GetMapping
+    @GetMapping("/classes")
     public ModelAndView classesPage() {
         ModelAndView modelAndView = new ModelAndView("classes");
         modelAndView.addObject("classes", Classes.values());
