@@ -13,6 +13,7 @@
             background-color: rgba(0, 0, 0, 1);
         }
         .card {
+            aspect-ratio: 5/3;
             overflow: hidden;
         }
         a p {
@@ -45,9 +46,9 @@
 
 <div class="container">
     <div class="row">
-        <div th:each="class: ${classes}" class="col-12 col-md-4 p-2">
+        <div th:each="class : ${classes}" class="col-12 col-md-4 p-2" th:if="${class.name() != 'OTHER'}">
             <a style="text-decoration: none" th:href="'/guides/classes/' + ${class.name().toLowerCase()}">
-                <div style="aspect-ratio: 4/1" class="card">
+                <div class="card">
                     <img style="position: absolute;" class="card-img-top img-fluid" th:src="${class.classImage()}" alt="">
                     <div style="z-index: 1; min-height: 144px" class="card-body">
                         <h5 class="card-title" th:text="${class}"></h5>
