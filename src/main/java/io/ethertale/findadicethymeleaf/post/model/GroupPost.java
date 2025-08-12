@@ -10,13 +10,13 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "post")
+@Table(name = "group_posts")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Post {
+public class GroupPost {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -32,11 +32,11 @@ public class Post {
     @JoinColumn(name = "hero_id", nullable = false)
     private Hero hero;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "groupPost", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments;
 
     @ManyToOne
-    @JoinColumn(name = "group_id")
+    @JoinColumn(name = "group_id", nullable = false) // renamed from groups_id
     private Group group;
 
     @Column(nullable = false)

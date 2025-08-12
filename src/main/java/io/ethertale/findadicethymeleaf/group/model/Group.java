@@ -1,6 +1,7 @@
 package io.ethertale.findadicethymeleaf.group.model;
 
-import io.ethertale.findadicethymeleaf.post.model.Post;
+import io.ethertale.findadicethymeleaf.hero.model.Hero;
+import io.ethertale.findadicethymeleaf.post.model.GroupPost;
 import io.ethertale.findadicethymeleaf.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,7 +11,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "group")
+@Table(name = "game_groups") // avoid reserved keywords
 @Getter
 @Setter
 @NoArgsConstructor
@@ -28,11 +29,18 @@ public class Group {
     @Column(nullable = false)
     private String description;
 
-    @OneToMany(mappedBy = "group")
-    private Set<User> users;
+    @Column(nullable = false)
+    private String imageUrl;
 
-    @OneToMany(mappedBy = "group")
-    private Set<Post> posts;
+    @ManyToMany(mappedBy = "groups")
+    private Set<Hero> heroes;
+
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<GroupPost> groupPosts;
+
+    @ManyToOne
+    @JoinColumn(name = "created_by_id", nullable = false)
+    private Hero createdBy;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;

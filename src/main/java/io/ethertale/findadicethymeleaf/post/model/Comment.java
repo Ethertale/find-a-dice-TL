@@ -28,8 +28,8 @@ public class Comment {
     private Hero hero;
 
     @ManyToOne
-    @JoinColumn(name = "post_id", nullable = false)
-    private Post post;
+    @JoinColumn(name = "group_post_id", nullable = false)
+    private GroupPost groupPost;
 
     @Column(nullable = false)
     private String content;

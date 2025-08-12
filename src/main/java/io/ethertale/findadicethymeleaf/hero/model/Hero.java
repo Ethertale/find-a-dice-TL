@@ -1,7 +1,8 @@
 package io.ethertale.findadicethymeleaf.hero.model;
 
+import io.ethertale.findadicethymeleaf.group.model.Group;
 import io.ethertale.findadicethymeleaf.post.model.Comment;
-import io.ethertale.findadicethymeleaf.post.model.Post;
+import io.ethertale.findadicethymeleaf.post.model.GroupPost;
 import io.ethertale.findadicethymeleaf.user.model.Genders;
 import io.ethertale.findadicethymeleaf.user.model.User;
 import jakarta.persistence.*;
@@ -12,7 +13,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "hero")
+@Table(name = "heroes")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -81,11 +82,22 @@ public class Hero {
     @Column(nullable = false, name = "created_at")
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "hero")
-    private Set<Post> posts;
+    @OneToMany(mappedBy = "hero", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<GroupPost> groupPosts;
 
-    @OneToMany(mappedBy = "hero")
+    @OneToMany(mappedBy = "hero", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Comment> comments;
+
+    @ManyToMany
+    @JoinTable(
+            name = "hero_group_link", // join table
+            joinColumns = @JoinColumn(name = "hero_id"),
+            inverseJoinColumns = @JoinColumn(name = "group_id")
+    )
+    private Set<Group> groups;
+
+    @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Group> createdGroups;
 
     public String getTimestamp() {
         return createdAt.getDayOfMonth()
