@@ -59,4 +59,16 @@ public class User {
 
         return firstChar + ". " + lastChar + ".";
     }
+
+    public String getTimestamp() {
+        return createdAt.getDayOfMonth()
+                + " "
+                + createdAt.getMonth().toString()
+                + " "
+                + createdAt.getYear()
+                + ", at "
+                + createdAt.getHour()
+                + " "
+                + createdAt.getMinute();
+    }
 }

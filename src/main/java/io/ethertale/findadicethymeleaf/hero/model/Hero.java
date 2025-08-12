@@ -87,4 +87,16 @@ public class Hero {
     @OneToMany(mappedBy = "hero")
     private Set<Comment> comments;
 
+    public String getTimestamp() {
+        return createdAt.getDayOfMonth()
+                + " "
+                + createdAt.getMonth().toString()
+                + " "
+                + createdAt.getYear()
+                + ", at "
+                + createdAt.getHour()
+                + " "
+                + createdAt.getMinute();
+    }
+
 }

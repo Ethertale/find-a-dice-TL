@@ -1,5 +1,6 @@
 package io.ethertale.findadicethymeleaf.post.model;
 
+import io.ethertale.findadicethymeleaf.group.model.Group;
 import io.ethertale.findadicethymeleaf.hero.model.Hero;
 import jakarta.persistence.*;
 import lombok.*;
@@ -33,6 +34,10 @@ public class Post {
 
     @OneToMany(mappedBy = "post")
     private Set<Comment> comments;
+
+    @ManyToOne
+    @JoinColumn(name = "group_id")
+    private Group group;
 
     @Column(nullable = false)
     private String description;
