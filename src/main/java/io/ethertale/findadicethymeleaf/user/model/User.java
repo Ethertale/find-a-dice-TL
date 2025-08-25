@@ -71,4 +71,12 @@ public class User {
                 + " "
                 + createdAt.getMinute();
     }
+
+    public String getYearAndMonthAndDayOfCreation(){
+        return createdAt.getDayOfMonth()
+                + "/"
+                + createdAt.getMonthValue()
+                + "/"
+                + createdAt.getYear();
+    }
 }
