@@ -56,4 +56,12 @@ public class Group {
                 + ":"
                 + createdAt.getMinute();
     }
+
+    public String slug(){
+        return name.toLowerCase().replaceAll(" ", "-").replaceAll("[`~!@#$%^&*()_+\\\\;',./{}|:\"<>?]", "");
+    }
+
+    public String shortId(){
+        return id.toString().substring(0, 8);
+    }
 }
