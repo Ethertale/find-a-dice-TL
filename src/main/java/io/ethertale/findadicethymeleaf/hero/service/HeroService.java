@@ -129,4 +129,8 @@ public class HeroService {
     public List<Races> getAllRaces() {
         return List.of(Races.values());
     }
+
+    public List<Hero> getAllCharacters() {
+        return heroRepo.findAll().stream().toList();
+    }
 }

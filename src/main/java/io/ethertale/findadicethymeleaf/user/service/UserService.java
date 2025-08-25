@@ -15,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -39,6 +40,7 @@ public class UserService implements UserDetailsService {
                 .email(registerDTO.getEmail())
                 .firstName(registerDTO.getFirstName())
                 .lastName(registerDTO.getLastName())
+                .imageUrl("https://i.ibb.co/WWDv4mYx/Logo-Transparent.png")
                 .role(UserRoles.USER)
                 .createdAt(LocalDateTime.now())
                 .build();
@@ -66,5 +68,9 @@ public class UserService implements UserDetailsService {
         log.info("User {} logged in at {}:{} on {} {} {} - {}", username, LocalDateTime.now().getHour(), LocalDateTime.now().getMinute(), LocalDateTime.now().getDayOfMonth(), LocalDateTime.now().getMonth(), LocalDateTime.now().getYear(), user.getId());
 
         return new AuthenticationDetails(user.getId(), user.getUsername(), user.getPassword(), user.getEmail(), user.getFirstName(), user.getLastName(), user.getDescription(), user.getRole(), user.getHero(), user.getImageUrl(), user.getCreatedAt());
+    }
+
+    public List<User> getAllUsers() {
+        return userRepo.findAll().stream().toList();
     }
 }
