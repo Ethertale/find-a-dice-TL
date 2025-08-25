@@ -1,5 +1,6 @@
 package io.ethertale.findadicethymeleaf.web.controller;
 
+import io.ethertale.findadicethymeleaf.hero.service.HeroService;
 import io.ethertale.findadicethymeleaf.security.AuthenticationDetails;
 import io.ethertale.findadicethymeleaf.user.model.User;
 import io.ethertale.findadicethymeleaf.user.service.UserService;
@@ -21,10 +22,12 @@ import java.time.LocalDateTime;
 public class MainController {
 
     private final UserService userService;
+    private final HeroService heroService;
 
     @Autowired
-    public MainController(UserService userService) {
+    public MainController(UserService userService, HeroService heroService) {
         this.userService = userService;
+        this.heroService = heroService;
     }
 
     @GetMapping("/")
@@ -61,6 +64,20 @@ public class MainController {
     public ModelAndView login(){
         ModelAndView mav = new ModelAndView("login");
         mav.addObject("loginDTO", new LoginDTO());
+        return mav;
+    }
+
+    @GetMapping("/users")
+    public ModelAndView usersListPage(){
+        ModelAndView mav = new ModelAndView("usersList");
+        mav.addObject("users", userService.getAllUsers());
+        return mav;
+    }
+
+    @GetMapping("/characters")
+    public ModelAndView charsListPage(){
+        ModelAndView mav = new ModelAndView("charsList");
+        mav.addObject("characters", heroService.getAllCharacters());
         return mav;
     }
 }
