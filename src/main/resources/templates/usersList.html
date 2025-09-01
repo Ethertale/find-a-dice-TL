@@ -12,6 +12,7 @@
         .card {
             aspect-ratio: 3/5;
             overflow: hidden;
+            box-shadow: 0px 2px 2px 2px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
@@ -22,7 +23,7 @@
     <div class="row mt-3">
         <div th:each="user: ${users}" class="col-6 col-md-4 col-lg-2">
             <a style="text-decoration: none" th:href="@{'/profile/' + ${user.id}}">
-                <div class="card">
+                <div class="card my-2">
                     <img th:src="${user.imageUrl}" alt="" class="card-img-top">
                     <div class="card-body">
                         <h5 class="text-center" th:text="${user.username}"></h5>
