@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class GroupService {
@@ -20,5 +21,9 @@ public class GroupService {
 
     public List<Group> getAllGroupsSortedByCreationDesc() {
         return groupRepo.findAll().stream().sorted(Comparator.comparing(Group::getCreatedAt).reversed()).toList();
+    }
+
+    public Group getSpecificGroup(UUID id){
+        return groupRepo.findById(id).orElse(null);
     }
 }
