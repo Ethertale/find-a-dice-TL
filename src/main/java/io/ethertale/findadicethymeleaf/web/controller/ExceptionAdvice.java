@@ -1,9 +1,6 @@
 package io.ethertale.findadicethymeleaf.web.controller;
 
-import io.ethertale.findadicethymeleaf.exceptions.LoginProfileWrongCredentials;
-import io.ethertale.findadicethymeleaf.exceptions.RegisterEmailNotValid;
-import io.ethertale.findadicethymeleaf.exceptions.RegisterPasswordNotInCharRange;
-import io.ethertale.findadicethymeleaf.exceptions.RegisterUsernameNotInCharRange;
+import io.ethertale.findadicethymeleaf.exceptions.*;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -30,6 +27,16 @@ public class ExceptionAdvice {
     public String handleRegisterUsernameNotInCharRange(RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute("registerUsernameNotInCharRange", "Username must be between 5 and 16 characters!");
         return "redirect:/register";
+    }
+    @ExceptionHandler(GroupDoesNotExistException.class)
+    public String handleGroupDoesNotExist(RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("groupDoesNotExist", "Group does not exist!");
+        return "redirect:/groups";
+    }
+    @ExceptionHandler(GroupHeroAlreadyInGroupException.class)
+    public String handleGroupHeroAlreadyInGroup(RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("groupHeroAlreadyInGroup", "Hero already in group!");
+        return "redirect:/groups";
     }
 
 }
