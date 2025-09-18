@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -43,5 +44,21 @@ public class GroupsController {
         modelAndView.addObject("group", groupService.getSpecificGroup(groupId));
         modelAndView.addObject("loggedUser", loggedUser);
         return modelAndView;
+    }
+
+    @PostMapping("/{id}/join-group-{heroId}")
+    public String joinGroup(@PathVariable("id") UUID groupId, @PathVariable("heroId") UUID loggedUserHeroId, @AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
+        User loggedUser = userService.getUserById(authenticationDetails.getId());
+
+        groupService.addHeroToGroup(loggedUserHeroId, groupId);
+        return "redirect:/groups/" + groupId;
+    }
+
+    @PostMapping("/{id}/leave-group-{heroId}")
+    public String leaveGroup(@PathVariable("id") UUID groupId, @PathVariable("heroId") UUID loggedUserHeroId, @AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
+        User loggedUser = userService.getUserById(authenticationDetails.getId());
+
+        groupService.removeHeroFromGroup(loggedUserHeroId, groupId);
+        return "redirect:/groups/" + groupId;
     }
 }
