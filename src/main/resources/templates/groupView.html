@@ -29,7 +29,7 @@
             <form th:unless="${loggedUser.hero.groups.contains(group)}" th:method="POST" th:action="@{'/groups/' + ${group.id} + '/join-group-' + ${loggedUser.hero.id}}">
                 <button class="btn btn-primary" type="submit">+ Join Group</button>
             </form>
-            <form th:unless="${!loggedUser.hero.groups.contains(group) and loggedUser.hero != group.createdBy}" th:method="POST" th:action="@{'/groups/' + ${group.id} + '/leave-group-' + ${loggedUser.hero.id}}">
+            <form th:unless="${!loggedUser.hero.groups.contains(group) or loggedUser.hero != group.createdBy}" th:method="POST" th:action="@{'/groups/' + ${group.id} + '/leave-group-' + ${loggedUser.hero.id}}">
                 <button class="btn btn-primary" type="submit">Leave Group</button>
             </form>
             <p class="m-0 p-2 pe-3" th:text="'Members: ' + ${group.heroes.size()}"></p>
