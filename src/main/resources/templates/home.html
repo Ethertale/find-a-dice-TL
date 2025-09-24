@@ -26,40 +26,36 @@
 <div class="container">
     <div class="row">
         <div class="col-12 col-md-2 border">
-            <ul style="list-style: none;">
-                <li><a style="text-decoration: none; color: black" href="#"><img style="width: 20px;" src="https://img.icons8.com/material-sharp/50/today.png" alt="today"/> Events</a></li>
-                <li><a style="text-decoration: none; color: black" href="/groups"><img style="width: 20px;" src="https://img.icons8.com/ios/50/conference-call--v1.png" alt="conference-call--v1"/> Groups</a></li>
-                <li><a style="text-decoration: none; color: black" href="/users"><img style="width: 20px;" src="https://img.icons8.com/ios/50/conference-call--v1.png" alt="conference-call--v1"/> Users</a></li>
-                <li><a style="text-decoration: none; color: black" href="/characters"><img style="width: 20px;" src="https://img.icons8.com/ios/50/conference-call--v1.png" alt="conference-call--v1"/> Characters</a></li>
-            </ul>
+            YOUR PROFILE PLACEHOLDER
+            <img width="40" th:src="${loggedUser.imageUrl}" alt="">
         </div>
-        <div class="col-12 col-md-8 border d-flex justify-content-around align-items-center">
+        <div class="col-12 col-md-8 border d-flex justify-content-center align-items-center">
             <div class="row">
                 <div class="col-6 col-lg-3 main-buttons">
 <!--                    <a style="text-decoration: none; color: black" href="#"><img style="width: 20px;" src="https://img.icons8.com/material-sharp/50/today.png" alt="today"/> Events</a>-->
                     <a class="d-flex flex-column align-items-center" style="text-decoration: none; color: black" href="/events">
-                        <img style="width: 50px;" src="https://img.icons8.com/material-sharp/50/today.png" alt="today"/>
+                        <img style="width: 50px;" src="https://img.icons8.com/ios/100/red-carpet.png" alt="red-carpet"/>
                         <p>Events</p>
                     </a>
                 </div>
                 <div class="col-6 col-lg-3 main-buttons">
 <!--                    <a style="text-decoration: none; color: black" href="/groups"><img style="width: 20px;" src="https://img.icons8.com/ios/50/conference-call&#45;&#45;v1.png" alt="conference-call&#45;&#45;v1"/> Groups</a>-->
                     <a class="d-flex flex-column align-items-center" style="text-decoration: none; color: black" href="/groups">
-                        <img style="width: 50px;" src="https://img.icons8.com/ios/50/conference-call&#45;&#45;v1.png" alt="conference-call&#45;&#45;v1"/>
+                        <img style="width: 50px;" src="https://img.icons8.com/wired/128/crowd.png" alt="crowd"/>
                         <p>Groups</p>
                     </a>
                 </div>
                 <div class="col-6 col-lg-3 main-buttons">
 <!--                    <a style="text-decoration: none; color: black" href="/users"><img style="width: 20px;" src="https://img.icons8.com/ios/50/conference-call&#45;&#45;v1.png" alt="conference-call&#45;&#45;v1"/> Users</a>-->
                     <a class="d-flex flex-column align-items-center" style="text-decoration: none; color: black" href="/users">
-                        <img style="width: 50px;" src="https://img.icons8.com/ios/50/conference-call&#45;&#45;v1.png" alt="conference-call&#45;&#45;v1"/>
+                        <img style="width: 50px;" src="https://img.icons8.com/ios/100/crown.png" alt="crown"/>
                         <p>Users</p>
                     </a>
                 </div>
                 <div class="col-6 col-lg-3 main-buttons">
 <!--                    <a style="text-decoration: none; color: black" href="/characters"><img style="width: 20px;" src="https://img.icons8.com/ios/50/conference-call&#45;&#45;v1.png" alt="conference-call&#45;&#45;v1"/> Characters</a>-->
                     <a class="d-flex flex-column align-items-center" style="text-decoration: none; color: black" href="/characters">
-                        <img style="width: 50px;" src="https://img.icons8.com/ios/50/conference-call&#45;&#45;v1.png" alt="conference-call&#45;&#45;v1"/>
+                        <img style="width: 50px;" src="https://img.icons8.com/ios/100/sword.png" alt="sword"/>
                         <p>Characters</p>
                     </a>
                 </div>
@@ -69,7 +65,7 @@
             <div class="container-fluid d-flex flex-column">
                 <div class="container-fluid border">
                     <h3>Your Hero</h3>
-                    <small><a style="text-decoration: none" th:href="'/profile/' + ${loggedUser.getId()} + '/edit'">Edit</a></small>
+                    <small><a style="text-decoration: none" th:href="'/profile/' + ${loggedUser.getId()} + '/edit-hero'">Edit</a></small>
                     <h5 th:text="${loggedUserHero.name}"></h5>
                     <div class="container border">
                         <img class="img-fluid" style="aspect-ratio: 1/1; min-width: 64px" th:src="${loggedUser.hero.imageUrl}" alt="">
