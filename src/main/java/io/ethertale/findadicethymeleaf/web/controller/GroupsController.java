@@ -4,14 +4,13 @@ import io.ethertale.findadicethymeleaf.group.service.GroupService;
 import io.ethertale.findadicethymeleaf.security.AuthenticationDetails;
 import io.ethertale.findadicethymeleaf.user.model.User;
 import io.ethertale.findadicethymeleaf.user.service.UserService;
+import io.ethertale.findadicethymeleaf.web.dto.GroupCreateDTO;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.UUID;
@@ -34,6 +33,22 @@ public class GroupsController {
         ModelAndView modelAndView = new ModelAndView("groups");
         modelAndView.addObject("groups", groupService.getAllGroupsSortedByCreationDesc());
         return modelAndView;
+    }
+
+    @GetMapping("/create-group")
+    public ModelAndView createGroup() {
+        ModelAndView modelAndView = new ModelAndView("groupCreate");
+
+        modelAndView.addObject("groupDTO", new GroupCreateDTO());
+        return modelAndView;
+    }
+
+    @PostMapping("/create-group/create")
+    public String createGroup(@ModelAttribute("groupDTO") GroupCreateDTO groupDTO, @AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
+        User loggedUser = userService.getUserById(authenticationDetails.getId());
+
+        groupService.createGroup(groupDTO, loggedUser.getHero());
+        return "redirect:/groups";
     }
 
     @GetMapping("/{id}")

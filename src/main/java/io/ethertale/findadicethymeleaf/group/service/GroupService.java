@@ -6,13 +6,16 @@ import io.ethertale.findadicethymeleaf.group.model.Group;
 import io.ethertale.findadicethymeleaf.group.repo.GroupRepo;
 import io.ethertale.findadicethymeleaf.hero.model.Hero;
 import io.ethertale.findadicethymeleaf.hero.repo.HeroRepo;
+import io.ethertale.findadicethymeleaf.web.dto.GroupCreateDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -71,5 +74,19 @@ public class GroupService {
                 throw new GroupDoesNotExistException();
             }
         }
+    }
+
+    public void createGroup(GroupCreateDTO groupDTO, Hero hero) {
+        Group group = Group.builder()
+                .name(groupDTO.getName())
+                .description(groupDTO.getDescription())
+                .imageUrl(groupDTO.getImageUrl())
+                .heroes(new HashSet<>())
+                .groupPosts(new HashSet<>())
+                .createdBy(hero)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        groupRepo.save(group);
     }
 }
