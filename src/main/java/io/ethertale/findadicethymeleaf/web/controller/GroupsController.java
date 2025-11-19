@@ -1,10 +1,12 @@
 package io.ethertale.findadicethymeleaf.web.controller;
 
 import io.ethertale.findadicethymeleaf.group.service.GroupService;
+import io.ethertale.findadicethymeleaf.post.model.GroupPost;
 import io.ethertale.findadicethymeleaf.security.AuthenticationDetails;
 import io.ethertale.findadicethymeleaf.user.model.User;
 import io.ethertale.findadicethymeleaf.user.service.UserService;
 import io.ethertale.findadicethymeleaf.web.dto.GroupCreateDTO;
+import io.ethertale.findadicethymeleaf.web.dto.GroupPostDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -58,7 +60,17 @@ public class GroupsController {
         ModelAndView modelAndView = new ModelAndView("groupView");
         modelAndView.addObject("group", groupService.getSpecificGroup(groupId));
         modelAndView.addObject("loggedUser", loggedUser);
+        modelAndView.addObject("postDTO", new GroupPostDTO());
+
         return modelAndView;
+    }
+
+    @PostMapping("{id}/create-post")
+    public String createPost(@PathVariable("id") UUID groupId, @ModelAttribute("postDTO")GroupPostDTO postDTO, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
+        User loggedUser = userService.getUserById(authenticationDetails.getId());
+
+        groupService.createPost(postDTO, loggedUser.getHero(), groupId);
+        return "redirect:/groups";
     }
 
     @PostMapping("/{id}/join-group-{heroId}")

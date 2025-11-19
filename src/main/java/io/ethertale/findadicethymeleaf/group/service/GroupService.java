@@ -7,6 +7,7 @@ import io.ethertale.findadicethymeleaf.group.repo.GroupRepo;
 import io.ethertale.findadicethymeleaf.hero.model.Hero;
 import io.ethertale.findadicethymeleaf.hero.repo.HeroRepo;
 import io.ethertale.findadicethymeleaf.web.dto.GroupCreateDTO;
+import io.ethertale.findadicethymeleaf.web.dto.GroupPostDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,5 +89,9 @@ public class GroupService {
                 .build();
 
         groupRepo.save(group);
+    }
+
+    public void createPost(GroupPostDTO postDTO, Hero hero, UUID groupId) {
+
     }
 }
