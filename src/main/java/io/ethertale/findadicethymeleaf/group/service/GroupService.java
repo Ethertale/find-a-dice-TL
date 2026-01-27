@@ -6,6 +6,8 @@ import io.ethertale.findadicethymeleaf.group.model.Group;
 import io.ethertale.findadicethymeleaf.group.repo.GroupRepo;
 import io.ethertale.findadicethymeleaf.hero.model.Hero;
 import io.ethertale.findadicethymeleaf.hero.repo.HeroRepo;
+import io.ethertale.findadicethymeleaf.post.model.GroupPost;
+import io.ethertale.findadicethymeleaf.post.repo.GroupPostRepo;
 import io.ethertale.findadicethymeleaf.web.dto.GroupCreateDTO;
 import io.ethertale.findadicethymeleaf.web.dto.GroupPostDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -27,11 +29,13 @@ public class GroupService {
     private static final Logger logger = LoggerFactory.getLogger(GroupService.class);
     private final GroupRepo groupRepo;
     private final HeroRepo heroRepo;
+    private final GroupPostRepo groupPostRepo;
 
     @Autowired
-    public GroupService(GroupRepo groupRepo, HeroRepo heroRepo) {
+    public GroupService(GroupRepo groupRepo, HeroRepo heroRepo, GroupPostRepo groupPostRepo) {
         this.groupRepo = groupRepo;
         this.heroRepo = heroRepo;
+        this.groupPostRepo = groupPostRepo;
     }
 
     public List<Group> getAllGroupsSortedByCreationDesc() {
@@ -91,7 +95,18 @@ public class GroupService {
         groupRepo.save(group);
     }
 
-    public void createPost(GroupPostDTO postDTO, Hero hero, UUID groupId) {
+    public void createPost(GroupPostDTO postDTO, UUID groupId, Hero hero) {
+        GroupPost newPost = GroupPost.builder()
+                .group(groupRepo.findById(groupId).orElse(null))
+                .title(postDTO.getTitle())
+                .createdAt(LocalDateTime.now())
+                .hero(hero)
+                .comments(new HashSet<>())
+                .description(postDTO.getDescription())
+                .image(hero.getImageUrl())
+                .likes(0)
+                .build();
 
+        groupPostRepo.save(newPost);
     }
 }

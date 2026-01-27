@@ -39,20 +39,37 @@
     <div th:unless="${!loggedUser.hero.groups.contains(group)}" style="box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.5)" class="container mt-3 rounded">
         <div class="container d-flex flex-row justify-content-center">
             <img style="aspect-ratio: 1/1; width: 64px; height: 64px" class="rounded m-1" th:src="${loggedUser.hero.imageUrl}" alt="">
-<!--            <form class="m-1" style="width: 80%">-->
-<!--                <div>-->
-<!--                    <label for="postInput" class="form-label"></label>-->
-<!--                    <input type="text" class="form-control" id="postInput" placeholder="Write something here...">-->
-<!--                    <input type="file" accept="image/jpeg, image/jpg, image/png" class="form-control" placeholder="Upload image...">-->
-<!--                    <button type="submit" class="btn btn-primary">Post</button>-->
-<!--                </div>-->
-<!--            </form>-->
-            <form th:method="POST" th:action="@{{id}/groups/create-post(id=${group.id})}" th:object="${postDTO}"></form>
+            <form th:method="POST" th:action="@{{id}/create-post(id=${group.id})}" th:object="${postDTO}" class="m-1" style="width: 80%">
+                    <div>
+                        <label for="postTitle" class="form-label"></label>
+                        <input type="text" th:field="*{title}" class="form-control" id="postTitle" placeholder="Post Title"></input>
+                    </div>
+                    <div>
+                        <label for="postInput" class="form-label"></label>
+                        <input type="text" th:field="*{description}" class="form-control" id="postInput" placeholder="Write something here...">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Post</button>
+            </form>
+<!--            <form th:method="POST" th:action="@{{id}/groups/create-post(id=${group.id})}" th:object="${postDTO}"></form>-->
         </div>
     </div>
 
     <div class="container mt-3 rounded">
         <h1>Group Feed goes here</h1>
+        <div th:each="post : ${group.getGroupPosts()}">
+            <div class="container">
+                <div class="row">
+                    <div class="col-2">
+                        <img width="64px" th:src="${post.hero.imageUrl}" alt="">
+                    </div>
+                    <div class="col-10">
+                        <div th:text="${post.title}"></div>
+                        <div th:text="${post.description}"></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
 

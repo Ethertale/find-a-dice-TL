@@ -16,5 +16,4 @@ public class GroupPostDTO {
     private Hero hero;
     private Group group;
     private String description;
-    private String image;
 }

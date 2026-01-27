@@ -69,7 +69,7 @@ public class GroupsController {
     public String createPost(@PathVariable("id") UUID groupId, @ModelAttribute("postDTO")GroupPostDTO postDTO, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
         User loggedUser = userService.getUserById(authenticationDetails.getId());
 
-        groupService.createPost(postDTO, loggedUser.getHero(), groupId);
+        groupService.createPost(postDTO, groupId, loggedUser.getHero());
         return "redirect:/groups";
     }
 
