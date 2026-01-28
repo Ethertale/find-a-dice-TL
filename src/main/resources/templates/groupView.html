@@ -47,8 +47,9 @@
                     <div>
                         <label for="postInput" class="form-label"></label>
                         <input type="text" th:field="*{description}" class="form-control" id="postInput" placeholder="Write something here...">
+                        <small id="charCounter">0/1000</small>
                     </div>
-                    <button type="submit" class="btn btn-primary">Post</button>
+                    <button id="submitPostButton" type="submit" class="btn btn-primary">Post</button>
             </form>
         </div>
     </div>
@@ -112,6 +113,24 @@
             el.style.color = COLORS[cls] || COLORS.OTHER;
         });
     });
+</script>
+<script>
+    let inputArea = document.getElementById('postInput');
+    let charCounter = document.getElementById('charCounter');
+    let submitPostButton = document.getElementById('submitPostButton')
+
+    inputArea.addEventListener('keydown' && 'keyup', () => {
+        if (inputArea.value.length >= 1000) {
+            charCounter.style.color = 'red';
+            submitPostButton.disabled = true;
+        } else {
+            charCounter.style.color = 'black';
+            submitPostButton.disabled = false;
+        }
+        charCounter.textContent = inputArea.value.length + '/1000';
+        console.log(inputArea.value.length);
+        console.log(charCounter);
+    })
 </script>
 </body>
 </html>
