@@ -96,6 +96,7 @@ public class GroupService {
     }
 
     public void createPost(GroupPostDTO postDTO, UUID groupId, Hero hero) {
+        //TODO Add validation
         GroupPost newPost = GroupPost.builder()
                 .group(groupRepo.findById(groupId).orElse(null))
                 .title(postDTO.getTitle())
