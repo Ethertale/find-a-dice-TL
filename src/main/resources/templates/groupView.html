@@ -34,18 +34,25 @@
             height: 100%;
             margin: 0;
             padding: 0;
-            /* Layer order: gradient overlay on top, image underneath */
-            background:
-                    /*linear-gradient(rgba(6,10,8,0.55), rgba(3,6,5,0.65)),   !* subtle dark overlay for contrast *!*/
-                    url('https://i.imgur.com/gx0aFns.png') center center / cover no-repeat fixed;
-            /* shorthand above sets:
-               - overlay gradient (tint for readability)
-               - image positioned center/center, sized cover, no-repeat, and fixed (does not move on scroll)
-            */
+            position: relative;
             font-family: "Georgia", "Palatino Linotype", serif;
             color: var(--muted-text);
-            -webkit-font-smoothing:antialiased;
-            -moz-osx-font-smoothing:grayscale;
+            overflow-x: hidden;
+        }
+
+        /* Blurred background layer */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+
+            background:
+                    linear-gradient(rgba(6,10,8,0.55), rgba(3,6,5,0.65)),
+                    url("https://w0.peakpx.com/wallpaper/1014/828/HD-wallpaper-fantasy-of-after-world-war-4-fantasy-vintage-art-retro.jpg") center center / cover no-repeat;
+
+            filter: blur(10px);
+            transform: scale(1.05); /* prevents edge clipping after blur */
         }
 
         /* Keep nav untouched: we intentionally avoid rules targeting <nav> */
