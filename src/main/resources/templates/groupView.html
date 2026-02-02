@@ -313,6 +313,9 @@
             </form>
             <p class="m-0 p-2 pe-3" th:text="'Members: ' + ${group.heroes.size()}"></p>
         </div>
+        <div class="container">
+            <p th:text="${group.description}"></p>
+        </div>
     </div>
 
     <div th:unless="${!loggedUser.hero.groups.contains(group)}" style="box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.5)" class="container mt-3 rounded">
@@ -334,9 +337,9 @@
     </div>
 
     <div class="container mt-3 rounded">
-        <h1>Group Feed goes here</h1>
+<!--        <h1>Group Feed goes here</h1>-->
         <div th:unless="${!loggedUser.hero.groups.contains(group)}" th:each="post : ${group.getGroupPosts()}">
-            <div style="background-color: rgba(0,0,0,0.3); border-radius: 10px; border: 2px ridge red" class="container m-2">
+            <div style="background-color: rgba(0,0,0,0.3);" class="container m-2">
                 <div class="row">
                     <div class="col-2 d-flex flex-row">
                         <img class="m-1" style="aspect-ratio: 1/1; height: 100px; width: 100px" th:src="${post.hero.imageUrl}" alt="">
