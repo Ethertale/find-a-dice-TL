@@ -291,11 +291,12 @@
             html, body {
                 /* switch to scrolling background for mobile to avoid jitter/performance issues */
                 background: linear-gradient(rgba(6,10,8,0.55), rgba(3,6,5,0.65)),
-                url('https://i.imgur.com/gx0aFns.png') center center / cover no-repeat;
+                url('https://w0.peakpx.com/wallpaper/1014/828/HD-wallpaper-fantasy-of-after-world-war-4-fantasy-vintage-art-retro.jpg') center center / cover no-repeat;
                 background-attachment: scroll;
             }
         }
     </style>
+
 </head>
 <body>
 <nav th:replace="~{fragments::navbar}"></nav>
@@ -347,7 +348,8 @@
                     </div>
                     <div class="col-12 col-lg-10">
                         <div class="container d-flex flex-column">
-                            <h6 class="m-0 fw-bold" th:text="${post.hero.name}"></h6>
+                                <h6 th:if="${post.hero.id == group.createdBy.id}" class="m-0 fw-bold"><img width="24" height="24" src="https://img.icons8.com/emoji/48/crown-emoji.png" alt="crown-emoji"/><span th:text="${post.hero.name}"></span></h6>
+                                <h6 th:unless="${post.hero.id == group.createdBy.id}" class="m-0 fw-bold" th:text="${post.hero.name}"></h6>
                             <small class="classLevelText" th:text="${post.hero.level} + ' ' + ${post.hero.race} + ' ' + ${post.hero.charClass}" th:attr="data-char-class=${post.hero.charClass}"></small>
                             <small class="pb-2" style="font-size: 0.6rem" th:text="${post.getTimestamp()}"></small>
                         </div>
