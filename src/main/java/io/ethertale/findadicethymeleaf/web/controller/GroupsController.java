@@ -70,7 +70,7 @@ public class GroupsController {
         User loggedUser = userService.getUserById(authenticationDetails.getId());
 
         groupService.createPost(postDTO, groupId, loggedUser.getHero());
-        return "redirect:/groups";
+        return "redirect:/groups/" + groupId;
     }
 
     @PostMapping("/{id}/join-group-{heroId}")

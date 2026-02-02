@@ -2,6 +2,7 @@ package io.ethertale.findadicethymeleaf.group.service;
 
 import io.ethertale.findadicethymeleaf.exceptions.GroupDoesNotExistException;
 import io.ethertale.findadicethymeleaf.exceptions.GroupHeroAlreadyInGroupException;
+import io.ethertale.findadicethymeleaf.exceptions.GroupPostTooLongOrTooShort;
 import io.ethertale.findadicethymeleaf.group.model.Group;
 import io.ethertale.findadicethymeleaf.group.repo.GroupRepo;
 import io.ethertale.findadicethymeleaf.hero.model.Hero;
@@ -96,7 +97,10 @@ public class GroupService {
     }
 
     public void createPost(GroupPostDTO postDTO, UUID groupId, Hero hero) {
-        //TODO Add validation
+        if  (postDTO.getDescription().isBlank() || postDTO.getDescription().length() > 1000 || postDTO.getTitle().isBlank() || postDTO.getTitle().length() > 100 || postDTO.getTitle().length() <= 2) {
+            throw new GroupPostTooLongOrTooShort();
+        }
+
         GroupPost newPost = GroupPost.builder()
                 .group(groupRepo.findById(groupId).orElse(null))
                 .title(postDTO.getTitle())
@@ -109,5 +113,6 @@ public class GroupService {
                 .build();
 
         groupPostRepo.save(newPost);
+        log.info("User {} created post {} in group {}", hero.getUser().getId(), newPost.getId(), groupId);
     }
 }

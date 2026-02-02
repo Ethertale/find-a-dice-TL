@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.UUID;
+
 @ControllerAdvice
 public class ExceptionAdvice {
 
@@ -36,6 +38,11 @@ public class ExceptionAdvice {
     @ExceptionHandler(GroupHeroAlreadyInGroupException.class)
     public String handleGroupHeroAlreadyInGroup(RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute("groupHeroAlreadyInGroup", "Hero already in group!");
+        return "redirect:/groups";
+    }
+    @ExceptionHandler(GroupPostTooLongOrTooShort.class)
+    public String handleGroupPostTooLongOrTooShort(RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("groupPostTooLongOrTooShort", "Post input is outside the allowed range!");
         return "redirect:/groups";
     }
 

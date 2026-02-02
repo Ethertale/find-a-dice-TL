@@ -314,6 +314,7 @@
             <p class="m-0 p-2 pe-3" th:text="'Members: ' + ${group.heroes.size()}"></p>
         </div>
         <div class="container">
+            <h3 style="color: var(--gold); text-shadow: 0px 2px 5px rgba(0, 0, 0, 1)" class="text-center mt-1" th:text="${group.name}"></h3>
             <p th:text="${group.description}"></p>
         </div>
     </div>
@@ -331,7 +332,7 @@
                         <input type="text" th:field="*{description}" class="form-control" id="postInput" placeholder="Write something here...">
                         <small id="charCounter">0/1000</small>
                     </div>
-                    <button id="submitPostButton" type="submit" class="btn btn-primary">Post</button>
+                    <button id="submitPostButton" disabled type="submit" class="btn btn-primary">Post</button>
             </form>
         </div>
     </div>
@@ -401,11 +402,11 @@
     let submitPostButton = document.getElementById('submitPostButton')
 
     inputArea.addEventListener('keydown' && 'keyup', () => {
-        if (inputArea.value.length >= 1000) {
+        if (inputArea.value.length >= 1000 && inputArea.value.length <= 0) {
             charCounter.style.color = 'red';
             submitPostButton.disabled = true;
         } else {
-            charCounter.style.color = 'black';
+            charCounter.style.color = '#cfc8b8';
             submitPostButton.disabled = false;
         }
         charCounter.textContent = inputArea.value.length + '/1000';
