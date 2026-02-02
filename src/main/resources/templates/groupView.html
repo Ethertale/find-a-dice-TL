@@ -335,7 +335,7 @@
 
     <div class="container mt-3 rounded">
         <h1>Group Feed goes here</h1>
-        <div th:each="post : ${group.getGroupPosts()}">
+        <div th:unless="${!loggedUser.hero.groups.contains(group)}" th:each="post : ${group.getGroupPosts()}">
             <div style="background-color: rgba(0,0,0,0.3); border-radius: 10px; border: 2px ridge red" class="container m-2">
                 <div class="row">
                     <div class="col-2 d-flex flex-row">
