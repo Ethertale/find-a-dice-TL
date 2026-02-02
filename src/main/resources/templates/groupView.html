@@ -9,12 +9,291 @@
           integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
     <title th:text="'Find A Dice - Group \'' + ${group.name} + '\''"></title>
     <style>
-        a {
-            text-decoration: none;
-            color: black;
+        /*a {*/
+        /*    text-decoration: none;*/
+        /*    color: black;*/
+        /*}*/
+        /*a:hover {*/
+        /*    text-decoration: underline;*/
+        /*}*/
+        :root{
+            --page-bg-1: #061012;      /* deep midnight */
+            --page-bg-2: #0f1f14;      /* forest dark */
+            --panel-dark: #0c0f11;     /* post panel base */
+            --panel-accent: #3c2b19;   /* frame wood / metal */
+            --gold: #d9b261;
+            --gold-dark: #8f6a36;
+            --muted-text: #cfc8b8;
+            --light-text: #f7f3e7;
+            --accent-glow: rgba(200,150,60,0.12);
+            --card-radius: 10px;
         }
-        a:hover {
-            text-decoration: underline;
+
+        /* ---------- Page background ---------- */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            font-family: "Georgia", "Palatino Linotype", serif;
+            color: var(--muted-text);
+            overflow-x: hidden;
+        }
+
+        /* Blurred background layer */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+
+            background:
+                    linear-gradient(rgba(6,10,8,0.55), rgba(3,6,5,0.65)),
+                    url("https://w0.peakpx.com/wallpaper/1014/828/HD-wallpaper-fantasy-of-after-world-war-4-fantasy-vintage-art-retro.jpg") center center / cover no-repeat;
+
+            filter: blur(10px);
+            transform: scale(1.05); /* prevents edge clipping after blur */
+        }
+
+        /* Keep nav untouched: we intentionally avoid rules targeting <nav> */
+
+        /* ---------- Layout containers ---------- */
+        .container {
+            max-width: 1150px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        /* Header block: banner + golden ribbon */
+        .container.header {
+            margin-top: 1.25rem;
+            border-radius: var(--card-radius);
+            overflow: hidden;
+            box-shadow:
+                    0 6px 18px rgba(0,0,0,0.7),
+                    inset 0 -4px 20px rgba(0,0,0,0.5);
+            border: 3px solid rgba(0,0,0,0.6);
+            position: relative;
+        }
+
+        /* Banner image overlay treatment */
+        .container.header img {
+            display:block;
+            width:100%;
+            height: auto;
+            object-fit: cover;
+            filter: contrast(.9) brightness(.75) saturate(.85);
+            background: linear-gradient(90deg, rgba(0,0,0,0.25), rgba(0,0,0,0.45));
+        }
+
+        /* Golden ribbon bar (the action bar under the banner) */
+        .container.header > .d-flex {
+            background: linear-gradient(180deg, rgba(37,22,7,0.94), rgba(54,34,14,1));
+            border-top: 2px solid rgba(255,220,130,0.06);
+            border-bottom: 4px solid rgba(0,0,0,0.6);
+            box-shadow: 0 3px 0 rgba(0,0,0,0.6);
+            color: var(--light-text);
+            align-items: center;
+        }
+
+        /* Link on the ribbon */
+        .container.header a {
+            color: var(--gold);
+            font-weight: 600;
+            text-decoration: none;
+            text-shadow: 0 1px 0 rgba(0,0,0,0.6);
+        }
+
+        /* ---------- Make the "create post" area feel like a carved desk ---------- */
+        .container.mt-3.rounded {
+            background:
+                    linear-gradient(180deg, rgba(10,12,10,0.3), rgba(0,0,0,0.6));
+            border-radius: calc(var(--card-radius) + 2px);
+            padding: 0.6rem;
+            margin-top: 1rem;
+            border: 1px solid rgba(255,255,255,0.02);
+            backdrop-filter: blur(.6px);
+        }
+
+        /* small avatar frames for create-post */
+        .container.mt-3.rounded img.rounded {
+            border-radius: 12px;
+            border: 3px solid transparent;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+            background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(0,0,0,0.35));
+        }
+
+        /* ---------- Post panel - the important part ---------- */
+        /* target the post panels inside the group feed container specifically */
+        .container.mt-3.rounded > div.container.m-2,
+        .container.mt-3.rounded > div.container.m-1{
+            /* enforce a consistent fantasy panel regardless of inline style */
+            background:
+                    linear-gradient(180deg, rgba(8,10,12,0.85), rgba(6,7,9,0.95));
+            border-radius: 10px;
+            padding: 0.6rem;
+            margin: 0.75rem 0;
+            border: 3px solid var(--panel-accent);
+            box-shadow:
+                    0 6px 16px rgba(0,0,0,0.7),
+                    inset 0 1px 0 rgba(255,255,255,0.02),
+                    inset 0 -12px 45px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: visible;
+        }
+
+        /* pseudo-frame with gold filigree look */
+        .container.mt-3.rounded > div.container.m-2::before{
+            content: "";
+            position: absolute;
+            left: -6px;
+            right: -6px;
+            top: -6px;
+            bottom: -6px;
+            border-radius: 12px;
+            pointer-events: none;
+            background: linear-gradient(90deg, rgba(0,0,0,0.0), rgba(0,0,0,0.0));
+            box-shadow:
+                    0 0 0 2px rgba(0,0,0,0.45),
+                    0 0 18px rgba(0,0,0,0.6);
+            mix-blend-mode: multiply;
+        }
+
+        /* Title + content contrast: always light on dark background */
+        .container.mt-3.rounded > div.container.m-2 h4,
+        .container.mt-3.rounded > div.container.m-2 p,
+        .container.mt-3.rounded > div.container.m-2 h6,
+        .container.mt-3.rounded > div.container.m-2 small {
+            color: var(--light-text);
+            text-shadow: 0 1px 0 rgba(0,0,0,0.7);
+        }
+
+        /* Post title styling */
+        .container.mt-3.rounded > div.container.m-2 h4{
+            font-family: "Palatino Linotype", "Book Antiqua", serif;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            margin-top: 0.25rem;
+            margin-bottom: 0.4rem;
+            font-size: 1.2rem;
+            color: #f3ead6;
+            text-shadow:
+                    0 1px 0 rgba(0,0,0,0.8),
+                    0 2px 8px rgba(60,40,12,0.12);
+        }
+
+        /* Body paragraph: readable but fantasy-ish */
+        .container.mt-3.rounded > div.container.m-2 p {
+            line-height: 1.45;
+            margin-bottom: 0.6rem;
+            color: #e9e1d6;
+            opacity: 0.95;
+        }
+
+        /* Small timestamp and meta */
+        .container.mt-3.rounded > div.container.m-2 small.pb-2 {
+            font-size: 0.66rem;
+            color: #bfb6a6;
+        }
+
+        /* Avatar within post: carved frame */
+        .container.mt-3.rounded > div.container.m-2 .col-2 img {
+            width: 100px; height: 100px; object-fit: cover;
+            border-radius: 6px;
+            border: 3px solid rgba(0,0,0,0.6);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.6), inset 0 2px 0 rgba(255,255,255,0.02);
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.2));
+        }
+
+        /* Character name and level */
+        .container.mt-3.rounded > div.container.m-2 h6.fw-bold {
+            color: var(--gold);
+            font-weight: 700;
+            text-transform: none;
+            letter-spacing: 0.8px;
+            margin-bottom: 0.08rem;
+            text-shadow: 0 1px 0 rgba(0,0,0,0.8);
+        }
+
+        /* classLevelText colors are set by your script; make sure they stand out */
+        .classLevelText {
+            display: inline-block;
+            font-weight: 600;
+            padding: 3px 6px;
+            border-radius: 6px;
+            background: rgba(255,255,255,0.02);
+            box-shadow: inset 0 -2px 6px rgba(0,0,0,0.45);
+        }
+
+        /* preserve the script colors but ensure contrast by adding a light outline */
+        .classLevelText[style] {
+            text-shadow: 0 1px 0 rgba(0,0,0,0.8);
+        }
+
+        /* ---------- Buttons and inputs ---------- */
+        .btn.btn-primary {
+            background: linear-gradient(180deg, #5a4316, var(--gold));
+            color: #111;
+            border: 1px solid var(--gold-dark);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.06);
+            border-radius: 8px;
+            font-weight: 700;
+        }
+
+        .btn.btn-primary:hover, .btn.btn-primary:focus {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.7);
+        }
+
+        /* Inputs: carved leather look */
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid rgba(0,0,0,0.6);
+            background: linear-gradient(180deg, rgba(14,12,10,0.5), rgba(0,0,0,0.6));
+            color: var(--light-text);
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.6);
+        }
+
+        /* Placeholder color */
+        .form-control::placeholder { color: rgba(255,255,255,0.55); }
+
+        /* small char counter */
+        #charCounter {
+            display: inline-block;
+            margin-top: 0.25rem;
+            font-size: 0.75rem;
+            color: #cfc6b4;
+        }
+
+        /* ---------- Footer spacing ---------- */
+        footer {
+            margin-top: 2.5rem;
+            color: #9f967f;
+        }
+
+        /* ---------- Responsive tweaks ---------- */
+        @media (max-width: 768px) {
+            .container.mt-3.rounded > div.container.m-2 .col-2 { display:none; }
+            .container.mt-3.rounded > div.container.m-2 h4 { font-size: 1rem; }
+        }
+
+        /* ---------- Optional subtle scrollbars (modern browsers) ---------- */
+        ::-webkit-scrollbar { height:10px; width:10px; }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #4a381f, #2b210c);
+            border-radius: 10px;
+            border: 2px solid rgba(0,0,0,0.45);
+        }
+        ::-webkit-scrollbar-track { background: linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.25)); }
+        @media (max-width: 768px) {
+            html, body {
+                /* switch to scrolling background for mobile to avoid jitter/performance issues */
+                background: linear-gradient(rgba(6,10,8,0.55), rgba(3,6,5,0.65)),
+                url('https://i.imgur.com/gx0aFns.png') center center / cover no-repeat;
+                background-attachment: scroll;
+            }
         }
     </style>
 </head>
@@ -36,22 +315,45 @@
         </div>
     </div>
 
-    <div style="box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.5)" class="container mt-3 rounded">
+    <div th:unless="${!loggedUser.hero.groups.contains(group)}" style="box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, 0.5)" class="container mt-3 rounded">
         <div class="container d-flex flex-row justify-content-center">
             <img style="aspect-ratio: 1/1; width: 64px; height: 64px" class="rounded m-1" th:src="${loggedUser.hero.imageUrl}" alt="">
-            <form class="m-1" style="width: 80%">
-                <div>
-                    <label for="postInput" class="form-label"></label>
-                    <input type="text" class="form-control" id="postInput" placeholder="Write something here...">
-                    <input type="file" accept="image/jpeg, image/jpg, image/png" class="form-control" placeholder="Upload image...">
-                    <button type="submit" class="btn btn-primary">Post</button>
-                </div>
+            <form th:method="POST" th:action="@{{id}/create-post(id=${group.id})}" th:object="${postDTO}" class="m-1" style="width: 80%">
+                    <div>
+                        <label for="postTitle" class="form-label"></label>
+                        <input type="text" th:field="*{title}" class="form-control" id="postTitle" placeholder="Post Title"></input>
+                    </div>
+                    <div>
+                        <label for="postInput" class="form-label"></label>
+                        <input type="text" th:field="*{description}" class="form-control" id="postInput" placeholder="Write something here...">
+                        <small id="charCounter">0/1000</small>
+                    </div>
+                    <button id="submitPostButton" type="submit" class="btn btn-primary">Post</button>
             </form>
         </div>
     </div>
 
     <div class="container mt-3 rounded">
         <h1>Group Feed goes here</h1>
+        <div th:each="post : ${group.getGroupPosts()}">
+            <div style="background-color: rgba(0,0,0,0.3); border-radius: 10px; border: 2px ridge red" class="container m-2">
+                <div class="row">
+                    <div class="col-2 d-flex flex-row">
+                        <img class="m-1" style="aspect-ratio: 1/1; height: 100px; width: 100px" th:src="${post.hero.imageUrl}" alt="">
+                    </div>
+                    <div class="col-12 col-lg-10">
+                        <div class="container d-flex flex-column">
+                            <h6 class="m-0 fw-bold" th:text="${post.hero.name}"></h6>
+                            <small class="classLevelText" th:text="${post.hero.level} + ' ' + ${post.hero.race} + ' ' + ${post.hero.charClass}" th:attr="data-char-class=${post.hero.charClass}"></small>
+                            <small class="pb-2" style="font-size: 0.6rem" th:text="${post.getTimestamp()}"></small>
+                        </div>
+                        <h4 th:text="${post.title}"></h4>
+                        <p th:text="${post.description}"></p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
     </div>
 </div>
 
@@ -62,5 +364,51 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.min.js"
         integrity="sha384-RuyvpeZCxMJCqVUGFI0Do1mQrods/hhxYlcVfGPOfQtPJh0JCw12tUAZ/Mv10S7D"
         crossorigin="anonymous"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const COLORS = {
+            ARTIFICER: '#2F8F8B',
+            BARBARIAN:  '#dc0101',
+            BARD:       '#C43B9B',
+            'BLOOD HUNTER':'#671313',
+            CLERIC:     '#FFD966',
+            DRUID:      '#2E8B57',
+            FIGHTER:    '#6B7280',
+            GUNSLINGER: '#1F3A5F',
+            MONK:       '#F4A261',
+            PALADIN:    '#F58AB6',
+            RANGER:     '#556B2F',
+            ROGUE:      '#0B0B0B',
+            SORCERER:   '#7B4CC2',
+            WARLOCK:    '#3AFF00',
+            WIZARD:     '#3B5BDB',
+            OTHER:      '#9CA3AF'
+        };
+
+        document.querySelectorAll('.classLevelText').forEach(el => {
+            const raw = (el.dataset.charClass || '').toString().trim().toUpperCase();
+            const cls = raw || 'OTHER';
+            el.style.color = COLORS[cls] || COLORS.OTHER;
+        });
+    });
+</script>
+<script>
+    let inputArea = document.getElementById('postInput');
+    let charCounter = document.getElementById('charCounter');
+    let submitPostButton = document.getElementById('submitPostButton')
+
+    inputArea.addEventListener('keydown' && 'keyup', () => {
+        if (inputArea.value.length >= 1000) {
+            charCounter.style.color = 'red';
+            submitPostButton.disabled = true;
+        } else {
+            charCounter.style.color = 'black';
+            submitPostButton.disabled = false;
+        }
+        charCounter.textContent = inputArea.value.length + '/1000';
+        console.log(inputArea.value.length);
+        console.log(charCounter);
+    })
+</script>
 </body>
 </html>

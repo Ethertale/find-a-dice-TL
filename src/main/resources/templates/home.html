@@ -30,7 +30,7 @@
             <div class="container-fluid d-flex flex-column">
                 <div class="container-fluid border">
                     <h3>Your Hero</h3>
-                    <small><a style="text-decoration: none" th:href="'/profile/' + ${loggedUser.getId()} + '/edit'">Edit</a></small>
+                    <small><a style="text-decoration: none" th:href="'/profile/' + ${loggedUser.getId()} + '/edit-hero'">Edit</a></small>
                     <h5 th:text="${loggedUserHero.name}"></h5>
                     <div class="container border">
                         <img class="img-fluid" style="aspect-ratio: 1/1; min-width: 64px" th:src="${loggedUser.hero.imageUrl}" alt="">
