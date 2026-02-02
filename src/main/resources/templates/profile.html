@@ -191,6 +191,13 @@
 
         /* keep footer spacing consistent */
         footer { margin-top: 2.5rem; color: #9f967f; }
+
+        @media (max-width: 768px) {
+            #stats {
+                display: flex;
+                flex-direction: column;
+            }
+        }
     </style>
 </head>
 <body>
@@ -206,9 +213,9 @@
                 <div class="container d-flex flex-column justify-content-start">
                     <h5 th:text="'Initials: ' + ${user.giveUserNames()}"></h5>
                     <h5 th:text="'Member since: ' + ${user.getCreatedAt().dayOfMonth} + ' ' + ${user.getCreatedAt().month} + ' ' + ${user.getCreatedAt().year}"></h5>
-                    <div class="container d-flex flex-row">
+                    <div id="stats" class="container">
                         <div class="profileStats rounded-0 rounded-start align-items-center"><p class="m-2">0 Friends</p></div>
-                        <div class="profileStats rounded-0"><p class="m-2">0 Total Posts</p></div>
+                        <div class="profileStats rounded-0"><p class="m-2"><span th:text="${user.hero.groupPosts.size()}">0</span> Total Posts</p></div>
                         <div class="profileStats rounded-0 rounded-end"><p class="m-2">0 Events Visited</p></div>
                     </div>
                     <div th:if="${user.id == loggedUser.id} OR ${loggedUser.role.name()} == 'ADMIN'" class="container" >
