@@ -9,53 +9,403 @@
           integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
     <title>Find A Dice</title>
     <style>
+        /* ========== CSS VARIABLES - The Foundation of Our Fantasy Realm ========== */
+        /*
+         * These variables define our color palette and spacing, making it easy to maintain
+         * a consistent fantasy aesthetic throughout the entire page. Think of these as
+         * the "magical essences" that we'll mix together to create our visual effects.
+         */
+        :root {
+            --midnight-deep: #061012;
+            --forest-shadow: #0f1f14;
+            --stone-dark: #1a1612;
+            --bronze-frame: #3c2b19;
+            --gold-bright: #d9b261;
+            --gold-shadow: #8f6a36;
+            --parchment-light: #f7f3e7;
+            --text-aged: #cfc8b8;
+            --ember-glow: rgba(217, 178, 97, 0.25);
+            --magic-shimmer: rgba(150, 200, 255, 0.15);
+        }
+
+        /* ========== BACKGROUND - Creating Our Guild Hall Atmosphere ========== */
+        /*
+         * We're building a layered background effect here. The fixed pseudo-element creates
+         * a blurred backdrop that stays in place while content scrolls, giving depth.
+         * The blur effect simulates looking through torchlit, smoky air.
+         */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: "Georgia", "Palatino Linotype", serif;
+            color: var(--text-aged);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            background:
+                    linear-gradient(rgba(6, 10, 8, 0.75), rgba(3, 6, 5, 0.85)),
+                    url("https://w0.peakpx.com/wallpaper/1014/828/HD-wallpaper-fantasy-of-after-world-war-4-fantasy-vintage-art-retro.jpg")
+                    center center / cover no-repeat;
+            filter: blur(8px);
+            transform: scale(1.05);
+        }
+
+        /* ========== MAIN CONTAINER STYLING ========== */
         .parent {
             min-height: 80vh;
+            position: relative;
+            z-index: 1;
         }
+
+        /* ========== GUILD PLAQUE BUTTONS - The Heart of Our Design ========== */
+        /*
+         * These buttons are transformed into ornate stone plaques with metallic borders.
+         * The multiple box-shadows create depth: outer shadows for the raised effect,
+         * and inset shadows to simulate carved stone texture. The gradient background
+         * gives the impression of aged, weathered stone catching firelight.
+         */
         .main-buttons {
-            border: 2px solid rgba(0, 0, 0, 0.1);
-            border-radius: 10%;
-            transition: 0.3s ease-in-out;
-            padding-top: 5px;
+            position: relative;
+            background:
+                    linear-gradient(135deg,
+                    rgba(20, 16, 12, 0.95) 0%,
+                    rgba(30, 24, 18, 0.92) 50%,
+                    rgba(15, 12, 10, 0.95) 100%);
+            border: 3px solid var(--bronze-frame);
+            border-radius: 12px;
+            padding: 1.5rem 1rem;
+            margin: 0.75rem;
+            transition: all 0.4s cubic-bezier(0.4, 0.0, 0.2, 1);
+            box-shadow:
+                    0 8px 24px rgba(0, 0, 0, 0.8),
+                    inset 0 2px 0 rgba(255, 255, 255, 0.03),
+                    inset 0 -15px 40px rgba(0, 0, 0, 0.5),
+                    0 0 0 1px rgba(0, 0, 0, 0.6);
+            overflow: hidden;
         }
+
+        /*
+         * The ::before pseudo-element creates an ornate inner frame effect.
+         * This simulates decorative metalwork or carved borders you'd see
+         * on medieval plaques or treasure chest edges.
+         */
+        .main-buttons::before {
+            content: "";
+            position: absolute;
+            inset: 8px;
+            border: 2px solid rgba(217, 178, 97, 0.12);
+            border-radius: 8px;
+            pointer-events: none;
+            transition: all 0.4s ease;
+        }
+
+        /*
+         * The ::after pseudo-element creates a subtle glow effect that intensifies
+         * on hover, like magical energy responding to your presence. It starts
+         * nearly invisible and grows when you interact with it.
+         */
+        .main-buttons::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at center,
+            rgba(217, 178, 97, 0.0) 0%,
+            rgba(217, 178, 97, 0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        /* ========== HOVER EFFECTS - Bringing the Plaques to Life ========== */
+        /*
+         * On hover, we transform the plaque to appear as if it's being lifted
+         * slightly and illuminated by nearby torchlight. The border brightens,
+         * shadows deepen, and a golden glow emanates from within.
+         */
         .main-buttons:hover {
-            border: 2px solid rgba(0, 0, 0, 0.4);
+            transform: translateY(-4px) scale(1.02);
+            border-color: var(--gold-shadow);
+            box-shadow:
+                    0 16px 40px rgba(0, 0, 0, 0.9),
+                    0 0 30px rgba(217, 178, 97, 0.15),
+                    inset 0 2px 0 rgba(255, 255, 255, 0.06),
+                    inset 0 -15px 40px rgba(0, 0, 0, 0.4),
+                    0 0 0 1px rgba(217, 178, 97, 0.3);
+        }
+
+        .main-buttons:hover::before {
+            border-color: rgba(217, 178, 97, 0.35);
+            box-shadow: inset 0 0 20px rgba(217, 178, 97, 0.1);
+        }
+
+        .main-buttons:hover::after {
+            opacity: 1;
+        }
+
+        /*
+         * When actively clicking (active state), the plaque presses down slightly,
+         * simulating the tactile feeling of pressing a stone button in an old dungeon.
+         */
+        .main-buttons:active {
+            transform: translateY(-1px) scale(1.0);
+        }
+
+        /* ========== LINK STYLING - Making Text Readable and Thematic ========== */
+        /*
+         * Links inside our plaques need to feel like inscriptions rather than
+         * modern hyperlinks. We remove default underlines and use colors that
+         * complement our stone and metal aesthetic.
+         */
+        .main-buttons a {
+            text-decoration: none;
+            color: var(--parchment-light);
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+
+        .main-buttons:hover a {
+            color: var(--gold-bright);
+            text-shadow: 0 0 8px rgba(217, 178, 97, 0.4);
+        }
+
+        /* ========== ICON TREATMENT - Enchanted Symbols ========== */
+        /*
+         * Icons are treated as mystical symbols. The filter gives them a warm,
+         * aged appearance, and on hover they brighten as if catching firelight.
+         * The transform creates a gentle floating effect.
+         */
+        .main-buttons img {
+            filter: brightness(0.85) sepia(0.3) saturate(0.8);
+            transition: all 0.4s ease;
+            margin-bottom: 0.75rem;
+        }
+
+        .main-buttons:hover img {
+            filter: brightness(1.2) sepia(0.4) saturate(1.2) drop-shadow(0 0 8px rgba(217, 178, 97, 0.4));
+            transform: translateY(-3px) scale(1.1);
+        }
+
+        /* ========== TYPOGRAPHY - Carved Inscriptions ========== */
+        /*
+         * Headers use text shadows to create the impression of letters carved into
+         * stone and catching light. The letter-spacing gives a formal, ancient feel.
+         */
+        .main-buttons h4 {
+            font-family: "Palatino Linotype", "Book Antiqua", serif;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-top: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+            color: var(--gold-bright);
+            text-shadow:
+                    0 2px 0 rgba(0, 0, 0, 0.8),
+                    0 3px 10px rgba(60, 43, 25, 0.5);
+        }
+
+        /*
+         * Description text is more subtle, like explanatory inscriptions beneath
+         * the main title. We keep them readable but secondary in visual hierarchy.
+         */
+        .main-buttons p {
+            font-size: 0.9rem;
+            line-height: 1.4;
+            color: var(--text-aged);
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+            margin: 0;
+            opacity: 0.85;
+        }
+
+        .main-buttons:hover p {
+            opacity: 1;
+            color: #e9e1d6;
+        }
+
+        /* ========== DECORATIVE CORNER EMBELLISHMENTS ========== */
+        /*
+         * These create ornate corner decorations on each plaque, like the metal
+         * corner reinforcements you'd see on old books or treasure chests.
+         * They're purely decorative but add significant visual richness.
+         */
+        .corner-decoration {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--gold-shadow);
+            opacity: 0.4;
+            transition: all 0.4s ease;
+        }
+
+        /* Each corner gets positioned differently */
+        .corner-decoration.top-left {
+            top: 4px;
+            left: 4px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .corner-decoration.top-right {
+            top: 4px;
+            right: 4px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .corner-decoration.bottom-left {
+            bottom: 4px;
+            left: 4px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .corner-decoration.bottom-right {
+            bottom: 4px;
+            right: 4px;
+            border-left: none;
+            border-top: none;
+        }
+
+        /* On hover, corners brighten and expand slightly */
+        .main-buttons:hover .corner-decoration {
+            opacity: 0.8;
+            border-color: var(--gold-bright);
+            width: 24px;
+            height: 24px;
+        }
+
+        /* ========== RESPONSIVE DESIGN ========== */
+        /*
+         * On smaller screens, we adjust spacing and sizing to ensure the fantasy
+         * aesthetic remains intact while fitting mobile viewports.
+         */
+        @media (max-width: 768px) {
+            .main-buttons {
+                margin: 0.5rem;
+                padding: 1.25rem 0.75rem;
+            }
+
+            .main-buttons h4 {
+                font-size: 1.1rem;
+            }
+
+            .main-buttons img {
+                width: 40px !important;
+            }
+
+            .main-buttons p {
+                font-size: 0.85rem;
+            }
+        }
+
+        /* ========== CUSTOM SCROLLBAR - Even the Details Matter ========== */
+        /*
+         * Custom scrollbars maintain our fantasy aesthetic even in UI elements
+         * that are easy to overlook. They use our color palette to feel like
+         * aged metal or worn leather.
+         */
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #4a381f, #2b210c);
+            border-radius: 6px;
+            border: 2px solid rgba(0, 0, 0, 0.5);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #5a4825, #3a2815);
+        }
+
+        ::-webkit-scrollbar-track {
+            background: linear-gradient(180deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.35));
+        }
+
+        /* ========== ADDITIONAL ATMOSPHERIC EFFECTS ========== */
+        /*
+         * A subtle vignette effect darkens the edges of the viewport, focusing
+         * attention on the central plaques and adding to the dim guild hall ambiance.
+         */
+        body::after {
+            content: "";
+            position: fixed;
+            inset: 0;
+            background: radial-gradient(circle at center,
+            transparent 0%,
+            rgba(0, 0, 0, 0.4) 100%);
+            pointer-events: none;
+            z-index: 0;
         }
     </style>
 </head>
 <body>
 
-
+<!-- Keep the navbar fragment untouched as requested -->
 <nav th:replace="~{fragments::navbar}"></nav>
-<div class="parent container d-flex justify-content-center align-items-center h-100">
-    <div class="row">
-        <div class="col-6 col-lg-6 main-buttons">
-            <!--                    <a style="text-decoration: none; color: black" href="#"><img style="width: 20px;" src="https://img.icons8.com/material-sharp/50/today.png" alt="today"/> Events</a>-->
-            <a class="d-flex flex-column align-items-center" style="text-decoration: none; color: black" href="/events">
+
+<div class="parent container d-flex justify-content-center align-items-center h-80">
+    <div class="row justify-content-center">
+        <!-- ========== EVENTS PLAQUE ========== -->
+        <div class="col-11 col-lg-5 main-buttons">
+            <!-- Decorative corner embellishments -->
+            <span class="corner-decoration top-left"></span>
+            <span class="corner-decoration top-right"></span>
+            <span class="corner-decoration bottom-left"></span>
+            <span class="corner-decoration bottom-right"></span>
+
+            <a class="d-flex flex-column align-items-center" href="/events">
                 <img style="width: 50px;" src="https://img.icons8.com/ios/100/red-carpet.png" alt="red-carpet"/>
                 <h4>Events</h4>
                 <p class="text-center">Organize events with fellow heroes</p>
             </a>
         </div>
-        <div class="col-6 col-lg-6 main-buttons">
-            <!--                    <a style="text-decoration: none; color: black" href="/groups"><img style="width: 20px;" src="https://img.icons8.com/ios/50/conference-call&#45;&#45;v1.png" alt="conference-call&#45;&#45;v1"/> Groups</a>-->
-            <a class="d-flex flex-column align-items-center" style="text-decoration: none; color: black" href="/groups">
+
+        <!-- ========== GROUPS PLAQUE ========== -->
+        <div class="col-11 col-lg-5 main-buttons">
+            <span class="corner-decoration top-left"></span>
+            <span class="corner-decoration top-right"></span>
+            <span class="corner-decoration bottom-left"></span>
+            <span class="corner-decoration bottom-right"></span>
+
+            <a class="d-flex flex-column align-items-center" href="/groups">
                 <img style="width: 50px;" src="https://img.icons8.com/wired/128/crowd.png" alt="crowd"/>
                 <h4>Groups</h4>
                 <p class="text-center">Join together and play together</p>
             </a>
         </div>
-        <div class="col-6 col-lg-6 main-buttons">
-            <!--                    <a style="text-decoration: none; color: black" href="/users"><img style="width: 20px;" src="https://img.icons8.com/ios/50/conference-call&#45;&#45;v1.png" alt="conference-call&#45;&#45;v1"/> Users</a>-->
-            <a class="d-flex flex-column align-items-center" style="text-decoration: none; color: black" href="/users">
+
+        <!-- ========== USERS PLAQUE ========== -->
+        <div class="col-11 col-lg-5 main-buttons">
+            <span class="corner-decoration top-left"></span>
+            <span class="corner-decoration top-right"></span>
+            <span class="corner-decoration bottom-left"></span>
+            <span class="corner-decoration bottom-right"></span>
+
+            <a class="d-flex flex-column align-items-center" href="/users">
                 <img style="width: 50px;" src="https://img.icons8.com/ios/100/crown.png" alt="crown"/>
                 <h4>Users</h4>
                 <p class="text-center">Look up all users</p>
             </a>
         </div>
-        <div class="col-6 col-lg-6 main-buttons">
-            <!--                    <a style="text-decoration: none; color: black" href="/characters"><img style="width: 20px;" src="https://img.icons8.com/ios/50/conference-call&#45;&#45;v1.png" alt="conference-call&#45;&#45;v1"/> Characters</a>-->
-            <a class="d-flex flex-column align-items-center" style="text-decoration: none; color: black" href="/characters">
+
+        <!-- ========== HEROES PLAQUE ========== -->
+        <div class="col-11 col-lg-5 main-buttons">
+            <span class="corner-decoration top-left"></span>
+            <span class="corner-decoration top-right"></span>
+            <span class="corner-decoration bottom-left"></span>
+            <span class="corner-decoration bottom-right"></span>
+
+            <a class="d-flex flex-column align-items-center" href="/characters">
                 <img style="width: 50px;" src="https://img.icons8.com/ios/100/sword.png" alt="sword"/>
                 <h4>Heroes</h4>
                 <p class="text-center">Look up all heroes</p>
@@ -64,69 +414,5 @@
     </div>
 </div>
 
-<!--<div class="container">-->
-<!--    <div class="row">-->
-<!--        <div class="col-12 col-md-2 border">-->
-<!--            YOUR PROFILE PLACEHOLDER-->
-<!--            <img width="40" th:src="${loggedUser.imageUrl}" alt="">-->
-<!--        </div>-->
-<!--        <div class="col-12 col-md-8 border d-flex justify-content-center align-items-center">-->
-<!--            <div class="row">-->
-<!--                <div class="col-6 col-lg-3 main-buttons">-->
-<!--&lt;!&ndash;                    <a style="text-decoration: none; color: black" href="#"><img style="width: 20px;" src="https://img.icons8.com/material-sharp/50/today.png" alt="today"/> Events</a>&ndash;&gt;-->
-<!--                    <a class="d-flex flex-column align-items-center" style="text-decoration: none; color: black" href="/events">-->
-<!--                        <img style="width: 50px;" src="https://img.icons8.com/ios/100/red-carpet.png" alt="red-carpet"/>-->
-<!--                        <p>Events</p>-->
-<!--                    </a>-->
-<!--                </div>-->
-<!--                <div class="col-6 col-lg-3 main-buttons">-->
-<!--&lt;!&ndash;                    <a style="text-decoration: none; color: black" href="/groups"><img style="width: 20px;" src="https://img.icons8.com/ios/50/conference-call&#45;&#45;v1.png" alt="conference-call&#45;&#45;v1"/> Groups</a>&ndash;&gt;-->
-<!--                    <a class="d-flex flex-column align-items-center" style="text-decoration: none; color: black" href="/groups">-->
-<!--                        <img style="width: 50px;" src="https://img.icons8.com/wired/128/crowd.png" alt="crowd"/>-->
-<!--                        <p>Groups</p>-->
-<!--                    </a>-->
-<!--                </div>-->
-<!--                <div class="col-6 col-lg-3 main-buttons">-->
-<!--&lt;!&ndash;                    <a style="text-decoration: none; color: black" href="/users"><img style="width: 20px;" src="https://img.icons8.com/ios/50/conference-call&#45;&#45;v1.png" alt="conference-call&#45;&#45;v1"/> Users</a>&ndash;&gt;-->
-<!--                    <a class="d-flex flex-column align-items-center" style="text-decoration: none; color: black" href="/users">-->
-<!--                        <img style="width: 50px;" src="https://img.icons8.com/ios/100/crown.png" alt="crown"/>-->
-<!--                        <p>Users</p>-->
-<!--                    </a>-->
-<!--                </div>-->
-<!--                <div class="col-6 col-lg-3 main-buttons">-->
-<!--&lt;!&ndash;                    <a style="text-decoration: none; color: black" href="/characters"><img style="width: 20px;" src="https://img.icons8.com/ios/50/conference-call&#45;&#45;v1.png" alt="conference-call&#45;&#45;v1"/> Characters</a>&ndash;&gt;-->
-<!--                    <a class="d-flex flex-column align-items-center" style="text-decoration: none; color: black" href="/characters">-->
-<!--                        <img style="width: 50px;" src="https://img.icons8.com/ios/100/sword.png" alt="sword"/>-->
-<!--                        <p>Heroes</p>-->
-<!--                    </a>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--        <div class="col-12 col-md-2 border">-->
-<!--            <div class="container-fluid d-flex flex-column">-->
-<!--                <div class="container-fluid border">-->
-<!--                    <h3>Your Hero</h3>-->
-<!--                    <small><a style="text-decoration: none" th:href="'/profile/' + ${loggedUser.getId()} + '/edit-hero'">Edit</a></small>-->
-<!--                    <h5 th:text="${loggedUserHero.name}"></h5>-->
-<!--                    <div class="container border">-->
-<!--                        <img class="img-fluid" style="aspect-ratio: 1/1; min-width: 64px" th:src="${loggedUser.hero.imageUrl}" alt="">-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--                <div class="container-fluid border">-->
-<!--                    <h3>Invite your friends</h3>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
-
-
-
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
-        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
-        crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.min.js"
-        integrity="sha384-RuyvpeZCxMJCqVUGFI0Do1mQrods/hhxYlcVfGPOfQtPJh0JCw12tUAZ/Mv10S7D"
-        crossorigin="anonymous"></script>
 </body>
 </html>
