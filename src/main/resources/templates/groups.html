@@ -11,41 +11,204 @@
     <title>Find A Dice - Groups</title>
 
     <style>
+        :root{
+            --page-bg-1: #061012;
+            --page-bg-2: #0f1f14;
+            --panel-dark: #0c0f11;
+            --panel-accent: #3c2b19;
+            --gold: #d9b261;
+            --gold-dark: #8f6a36;
+            --muted-text: #cfc8b8;
+            --light-text: #f7f3e7;
+            --card-radius: 10px;
+            /* Change this to your background image path if you want an image.
+               If you don't want an image, leave the url as-is (it is a harmless placeholder). */
+            --bg-image: url('https://w0.peakpx.com/wallpaper/1014/828/HD-wallpaper-fantasy-of-after-world-war-4-fantasy-vintage-art-retro.jpg');
+        }
+
+        /* ---------- Page background (fixed, centered, no seam) ---------- */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            font-family: "Georgia", "Palatino Linotype", serif;
+            color: var(--muted-text);
+            overflow-x: hidden;
+        }
+
+        /* Blurred background layer */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+
+            background:
+                    linear-gradient(rgba(6,10,8,0.55), rgba(3,6,5,0.65)),
+                    var(--bg-image) center center / cover no-repeat;
+
+            filter: blur(10px);
+            transform: scale(1.05); /* prevents edge clipping after blur */
+        }
+
+        /* Mobile performance fallback */
+        @media (max-width: 768px){
+            html, body {
+                background:
+                        linear-gradient(rgba(6,10,8,0.65), rgba(3,6,5,0.75));
+                background-attachment: scroll;
+            }
+        }
+
+        /* ---------- Global container sizing (same as other page) ---------- */
+        .container { max-width: 1150px; margin-left:auto; margin-right:auto; padding-left:1rem; padding-right:1rem; }
+
+        /* Keep nav untouched */
+
+        /* ---------- Page heading / create button ---------- */
+        a.btn.btn-secondary.my-3 {
+            background: linear-gradient(180deg,#4b3a20,#2f2313);
+            color: var(--light-text);
+            border: 1px solid rgba(0,0,0,0.6);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.03);
+            border-radius: 8px;
+            padding: .5rem 1rem;
+            font-weight: 700;
+            text-decoration: none;
+        }
+        a.btn.btn-secondary.my-3:hover { transform: translateY(-1px); }
+
+        /* ---------- Card (group) look: fantasy / carved wood panel ---------- */
         .card {
-            aspect-ratio: 2/2;
-
+            background: linear-gradient(180deg, rgba(8,10,12,0.85), rgba(6,7,9,0.95));
+            border-radius: 12px;
+            padding: 0;
+            margin: 1rem 0;
+            overflow: hidden;
+            border: 3px solid var(--panel-accent);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.02);
+            transition: transform .18s ease, box-shadow .18s ease;
+            text-decoration: none;
+            color: var(--light-text);
         }
-        .card-body p {
-            overflow: hidden; /* if want ..., then text too long */
-            text-overflow: ellipsis; /* if want ..., then text too long */
-            display: -webkit-box; /* if want ..., in last row */
+
+        /* subtle lift on hover */
+        .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.75);
+        }
+
+        /* card image: treated like a banner with overlay to match theme */
+        .card .card-img-top {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            display: block;
+            filter: contrast(.95) saturate(.9) brightness(.8);
+            background: linear-gradient(180deg, rgba(0,0,0,0.12), rgba(0,0,0,0.45));
+        }
+
+        /* body: split columns handled by markup; give inner content carved background */
+        .card-body {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(180deg, rgba(10,12,10,0.06), rgba(0,0,0,0.04));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* text styles (titles and meta) */
+        .card .card-title, .card h5, .card h6 {
+            color: var(--light-text);
+            font-family: "Palatino Linotype", "Book Antiqua", serif;
+            margin: .25rem 0;
+            text-shadow: 0 1px 0 rgba(0,0,0,0.7);
+        }
+        .card p.card-text, .card small {
+            color: #e9e1d6;
+            line-height: 1.45;
+        }
+
+        /* truncate description while preserving look */
+        .card-body .card-text {
+            display: -webkit-box;
+            -webkit-line-clamp: 5;
             -webkit-box-orient: vertical;
-            -webkit-line-clamp: 5; /* as many lines as you need */
-        }
-        h2, h5, h6  {
-            font-family: "Metamorphous", serif;
-            font-weight: 400;
-            font-style: normal;
-        }
-        p, small {
-            font-family: "Macondo", cursive;
-            font-weight: 400;
-            font-style: normal;
-            font-size: 1.2rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin: 0;
+            font-size: 1rem;
         }
 
-        .text-overflow{
+        /* guildmaster area: centered stacked avatars */
+        .card-body .container {
+            padding: 0;
         }
-        .card img {
-            aspect-ratio: 5/3;
+        #outer-border {
+            display: block;
+            position: relative;
+            z-index: 2;
+            width: 96px;
+            height: 96px;
+            object-fit: cover;
+            border-radius: 50%;
+            filter: saturate(.95) contrast(.95);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.6);
+            background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.18));
         }
         #inner-img {
             position: absolute;
             z-index: 4;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%,-50%);
+            width: 84px;
+            height: 84px;
+            border-radius: 50%;
+            border: 3px solid rgba(0,0,0,0.6);
+            object-fit: cover;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.6), inset 0 2px 0 rgba(255,255,255,0.02);
         }
-        #outer-border {
-            z-index: 5;
+
+        /* small meta text */
+        .card small.text-center { display:block; color:#bfb6a6; margin-bottom: 6px; }
+
+        /* responsive: stack columns on small screens */
+        @media (max-width: 768px){
+            .card .card-body .row { flex-direction: column; }
+            .card .card-img-top { height: 120px; }
+            #outer-border, #inner-img { width: 72px; height: 72px; }
         }
+
+        /* override default anchor coloring inside cards and remove underline */
+        a { color: inherit; text-decoration: none; }
+        .card a:hover { text-decoration: none; }
+
+        /* keep a consistent button style across pages (primary/secondary look) */
+        .btn, .btn-primary, .btn-secondary {
+            border-radius: 8px;
+            font-weight: 700;
+        }
+
+        /* if your Guildmaster border image is local, keep it crisp on dark background */
+        img[alt=""] { display: inline-block; }
+
+        /* subtle page footer spacing */
+        footer { margin-top: 2.5rem; color: #9f967f; }
+
+        /* small scrollbar style for consistency */
+        ::-webkit-scrollbar { height:10px; width:10px; }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #4a381f, #2b210c);
+            border-radius: 10px;
+            border: 2px solid rgba(0,0,0,0.45);
+        }
+        ::-webkit-scrollbar-track {
+            background: linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.25));
+        }
+
     </style>
 </head>
 <body>
@@ -57,7 +220,7 @@
             <a href="groups/create-group" class="btn btn-secondary my-3">Create A Group</a>
         </div>
         <hr>
-        <div th:each="group: ${groups}" class="col-12 col-md-6">
+        <div th:each="group: ${groups}" class="col-12 col-md-4">
             <a style="text-decoration: none" th:href="'/groups/' +${group.id}">
                 <div style="box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.7); border: 2px solid rgba(0, 0, 0, 0.7);" class="card my-3 d-flex justify-content-center align-items-center flex-column">
                     <img class="card-img-top" th:src="${group.imageUrl}" alt="">

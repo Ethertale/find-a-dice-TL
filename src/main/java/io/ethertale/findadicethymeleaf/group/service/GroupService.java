@@ -2,11 +2,15 @@ package io.ethertale.findadicethymeleaf.group.service;
 
 import io.ethertale.findadicethymeleaf.exceptions.GroupDoesNotExistException;
 import io.ethertale.findadicethymeleaf.exceptions.GroupHeroAlreadyInGroupException;
+import io.ethertale.findadicethymeleaf.exceptions.GroupPostTooLongOrTooShort;
 import io.ethertale.findadicethymeleaf.group.model.Group;
 import io.ethertale.findadicethymeleaf.group.repo.GroupRepo;
 import io.ethertale.findadicethymeleaf.hero.model.Hero;
 import io.ethertale.findadicethymeleaf.hero.repo.HeroRepo;
+import io.ethertale.findadicethymeleaf.post.model.GroupPost;
+import io.ethertale.findadicethymeleaf.post.repo.GroupPostRepo;
 import io.ethertale.findadicethymeleaf.web.dto.GroupCreateDTO;
+import io.ethertale.findadicethymeleaf.web.dto.GroupPostDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,11 +30,13 @@ public class GroupService {
     private static final Logger logger = LoggerFactory.getLogger(GroupService.class);
     private final GroupRepo groupRepo;
     private final HeroRepo heroRepo;
+    private final GroupPostRepo groupPostRepo;
 
     @Autowired
-    public GroupService(GroupRepo groupRepo, HeroRepo heroRepo) {
+    public GroupService(GroupRepo groupRepo, HeroRepo heroRepo, GroupPostRepo groupPostRepo) {
         this.groupRepo = groupRepo;
         this.heroRepo = heroRepo;
+        this.groupPostRepo = groupPostRepo;
     }
 
     public List<Group> getAllGroupsSortedByCreationDesc() {
@@ -88,5 +94,25 @@ public class GroupService {
                 .build();
 
         groupRepo.save(group);
+    }
+
+    public void createPost(GroupPostDTO postDTO, UUID groupId, Hero hero) {
+        if  (postDTO.getDescription().isBlank() || postDTO.getDescription().length() > 1000 || postDTO.getTitle().isBlank() || postDTO.getTitle().length() > 100 || postDTO.getTitle().length() <= 2) {
+            throw new GroupPostTooLongOrTooShort();
+        }
+
+        GroupPost newPost = GroupPost.builder()
+                .group(groupRepo.findById(groupId).orElse(null))
+                .title(postDTO.getTitle())
+                .createdAt(LocalDateTime.now())
+                .hero(hero)
+                .comments(new HashSet<>())
+                .description(postDTO.getDescription())
+                .image(hero.getImageUrl())
+                .likes(0)
+                .build();
+
+        groupPostRepo.save(newPost);
+        log.info("User {} created post {} in group {}", hero.getUser().getId(), newPost.getId(), groupId);
     }
 }

@@ -9,32 +9,178 @@
           integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
     <title>Find A Dice - Users</title>
     <style>
-        .card {
-            aspect-ratio: 2/4;
-            overflow: hidden;
-            box-shadow: 0px 2px 2px 2px rgba(0, 0, 0, 0.3);
+        :root{
+            --page-bg-1: #061012;
+            --page-bg-2: #0f1f14;
+            --panel-dark: #0c0f11;
+            --panel-accent: #3c2b19;
+            --gold: #d9b261;
+            --gold-dark: #8f6a36;
+            --muted-text: #cfc8b8;
+            --light-text: #f7f3e7;
+            --card-radius: 10px;
+            /* Change this to your preferred background image path */
+            --bg-image: url('https://w0.peakpx.com/wallpaper/1014/828/HD-wallpaper-fantasy-of-after-world-war-4-fantasy-vintage-art-retro.jpg');
         }
-        .img-body {
-            aspect-ratio: 1/1;
-            overflow: hidden;
+
+        /* ---------- page & blurred background layer ---------- */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
             position: relative;
+            font-family: "Georgia", "Palatino Linotype", serif;
+            color: var(--muted-text);
+            overflow-x: hidden;
         }
+
+        /* place background on its own layer so page content stays sharp */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background:
+                    linear-gradient(rgba(6,10,8,0.55), rgba(3,6,5,0.65)),
+                    var(--bg-image) center center / cover no-repeat;
+            filter: blur(10px);
+            transform: scale(1.05); /* avoid blurred-edge artifacts */
+            will-change: transform, filter;
+        }
+
+        /* mobile fallback: disable heavy blur for performance */
+        @media (max-width: 768px){
+            body::before {
+                content: "";
+                position: fixed;
+                inset: 0;
+                z-index: -1;
+                background:
+                        linear-gradient(rgba(6,10,8,0.55), rgba(3,6,5,0.65)),
+                        var(--bg-image) center center / cover no-repeat;
+                filter: blur(10px);
+                transform: scale(1.05); /* avoid blurred-edge artifacts */
+                will-change: transform, filter;
+            }
+        }
+
+        /* ---------- container sizing ---------- */
+        .container { max-width: 1150px; margin-left:auto; margin-right:auto; padding-left:1rem; padding-right:1rem; }
+
+        /* ---------- grid & card base (characters) ---------- */
+        .col-6.col-md-4.col-lg-2 { padding: 0.5rem; }
+
+        .card {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background: linear-gradient(180deg, rgba(8,10,12,0.85), rgba(6,7,9,0.95));
+            border-radius: 12px;
+            padding: 0;
+            margin: 0.45rem 0;
+            overflow: hidden;
+            border: 3px solid var(--panel-accent);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.02);
+            transition: transform .18s ease, box-shadow .18s ease;
+            text-decoration: none;
+            color: var(--light-text);
+        }
+
+        /* hover lift */
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 26px 48px rgba(0,0,0,0.75);
+        }
+
+        /* ---------- image container: center & cover properly ---------- */
+        /* override previous extreme absolute rules and ensure image is centered and covers */
+        .img-body {
+            position: relative;
+            width: 100%;
+            padding-top: 100%; /* square container */
+            overflow: hidden;
+            background: linear-gradient(180deg, rgba(0,0,0,0.02), rgba(0,0,0,0.06));
+        }
+
         .img-body img {
             position: absolute;
-            left: -1000%;
-            right: -1000%;
-            top: -1000%;
-            bottom: -1000%;
-            margin: auto;
-            min-height: 100%;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: auto;
+            height: 100%;
             min-width: 100%;
+            min-height: 100%;
+            object-fit: cover;
+            display: block;
+            border-bottom: 1px solid rgba(255,255,255,0.02);
+            filter: contrast(.95) saturate(.9) brightness(.78);
         }
-        h5 {
+
+        /* if portrait tall image ends up with empty horizontal area, ensure it fills */
+        @media (min-aspect-ratio: 1/1) {
+            .img-body img { width: 100%; height: auto; min-height: 100%; min-width: 100%; }
+        }
+
+        /* ---------- card body: character meta ---------- */
+        .card-body {
+            padding: .8rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: .25rem;
+            flex: 1 1 auto;
+            background: linear-gradient(180deg, rgba(10,12,10,0.02), rgba(0,0,0,0.02));
+        }
+
+        .card-body h5 {
+            margin: 0;
             font-size: 1rem;
+            text-align: center;
+            color: var(--gold);
+            text-shadow: 0 1px 0 rgba(0,0,0,0.7);
+            font-family: "Palatino Linotype", "Book Antiqua", serif;
+            font-weight: 700;
         }
-        .container {
-            font-size: 0.8rem;
+
+        /* small stat lines */
+        .card-body p {
+            margin: 0;
+            font-size: .8rem;
+            text-align: center;
+            color: #e9e1d6;
+            line-height: 1.25;
+            opacity: 0.95;
         }
+
+        /* small stat groups (two rows) */
+        .card-body .container { padding: 0; display:flex; justify-content:center; gap: .6rem; margin-top: .35rem; }
+
+        /* ensure links inherit color and remove underline */
+        a { color: inherit; text-decoration: none; }
+        .card a:hover { text-decoration: none; }
+
+        /* responsive tweaks */
+        @media (max-width: 576px) {
+            .card { border-radius: 10px; }
+            .img-body { padding-top: 100%; }
+            .img-body img { height: 100%; width: auto; }
+            .card-body h5 { font-size: .95rem; }
+            .card-body p { font-size: .75rem; }
+        }
+
+        /* subtle scrollbar styling to match theme */
+        ::-webkit-scrollbar { height:10px; width:10px; }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #4a381f, #2b210c);
+            border-radius: 10px;
+            border: 2px solid rgba(0,0,0,0.45);
+        }
+        ::-webkit-scrollbar-track { background: linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.25)); }
+
+        /* footer spacing */
+        footer { margin-top: 2.5rem; color: #9f967f; }
+
     </style>
 </head>
 <body>

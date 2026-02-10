@@ -7,8 +7,11 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "game_groups")
@@ -63,5 +66,9 @@ public class Group {
 
     public String shortId(){
         return id.toString().substring(0, 8);
+    }
+
+    public List<GroupPost> getGroupPosts() {
+        return groupPosts.stream().sorted(Comparator.comparing(GroupPost::getCreatedAt).reversed()).collect(Collectors.toList());
     }
 }
