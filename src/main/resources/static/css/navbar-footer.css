@@ -1,0 +1,328 @@
+/* ========== FANTASY THEME COLOR PALETTE ========== */
+:root {
+    --panel-accent: #3c2b19;
+    --gold: #d9b261;
+    --gold-dark: #8f6a36;
+    --muted-text: #cfc8b8;
+    --light-text: #f7f3e7;
+}
+
+/* ========== NAVBAR STYLING - THE GUILD HALL BEAM ========== */
+/*
+ * The navbar is styled as an ornate wooden beam or stone ledge
+ * at the top of the guild hall, with bronze metalwork and golden inscriptions
+ */
+.navbar {
+    background: linear-gradient(180deg,
+    rgba(28, 22, 16, 0.97) 0%,
+    rgba(20, 16, 12, 0.98) 100%) !important;
+    border-bottom: 4px solid var(--panel-accent);
+    box-shadow:
+            0 4px 16px rgba(0, 0, 0, 0.8),
+            inset 0 -2px 8px rgba(0, 0, 0, 0.6);
+    padding: 0.75rem 0;
+    backdrop-filter: blur(8px);
+}
+
+/* Logo styling - guild crest */
+.navbar-brand img {
+    filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.8))
+    drop-shadow(0 0 12px rgba(217, 178, 97, 0.15));
+    transition: all 0.3s ease;
+}
+
+.navbar-brand img:hover {
+    filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.9))
+    drop-shadow(0 0 18px rgba(217, 178, 97, 0.3));
+    transform: scale(1.05);
+}
+
+/* Nav links - golden inscriptions */
+.navbar-nav .nav-link {
+    color: var(--gold) !important;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+    padding: 0.5rem 1rem !important;
+    margin: 0 0.25rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.navbar-nav .nav-link:hover {
+    color: var(--light-text) !important;
+    background: rgba(217, 178, 97, 0.1);
+    text-shadow: 0 0 8px rgba(217, 178, 97, 0.4);
+    transform: translateY(-1px);
+}
+
+.navbar-nav .nav-link:active {
+    transform: translateY(0px);
+}
+
+/* Dropdown menu styling - ornate scroll */
+.dropdown-menu {
+    background: linear-gradient(180deg,
+    rgba(25, 20, 15, 0.98) 0%,
+    rgba(18, 15, 12, 0.99) 100%);
+    border: 2px solid var(--panel-accent);
+    border-radius: 8px;
+    box-shadow:
+            0 8px 24px rgba(0, 0, 0, 0.9),
+            inset 0 1px 0 rgba(255, 255, 255, 0.02);
+    padding: 0.5rem 0;
+    margin-top: 0.5rem;
+}
+
+.dropdown-item {
+    color: var(--gold);
+    font-weight: 600;
+    padding: 0.6rem 1.25rem;
+    transition: all 0.3s ease;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+.dropdown-item:hover {
+    background: rgba(217, 178, 97, 0.15);
+    color: var(--light-text);
+    text-shadow: 0 0 6px rgba(217, 178, 97, 0.4);
+}
+
+.dropdown-item:active {
+    background: rgba(217, 178, 97, 0.2);
+}
+
+/* Logout button in navbar */
+.navbar-nav form button {
+    background: linear-gradient(180deg, #4a3616, var(--gold-dark));
+    color: #111;
+    border: 2px solid var(--gold-dark);
+    border-radius: 6px;
+    padding: 0.4rem 1.2rem;
+    font-weight: 700;
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow:
+            0 3px 8px rgba(0, 0, 0, 0.6),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.navbar-nav form button:hover {
+    background: linear-gradient(180deg, #5a4320, var(--gold));
+    transform: translateY(-1px);
+    box-shadow:
+            0 5px 12px rgba(0, 0, 0, 0.7),
+            0 0 12px rgba(217, 178, 97, 0.2);
+}
+
+.navbar-nav form button:active {
+    transform: translateY(0px);
+}
+
+/* Search input - carved leather */
+.navbar form.d-flex .form-control {
+    background: linear-gradient(180deg, rgba(14,12,10,0.7), rgba(8,6,5,0.8));
+    border: 2px solid rgba(60, 43, 25, 0.6);
+    border-radius: 6px;
+    color: var(--light-text);
+    padding: 0.5rem 0.85rem;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.7);
+    transition: all 0.3s ease;
+}
+
+.navbar form.d-flex .form-control:focus {
+    background: linear-gradient(180deg, rgba(18,15,12,0.8), rgba(10,8,6,0.9));
+    border-color: var(--gold-dark);
+    box-shadow:
+            inset 0 2px 8px rgba(0, 0, 0, 0.8),
+            0 0 0 2px rgba(217, 178, 97, 0.2);
+    color: var(--light-text);
+    outline: none;
+}
+
+.navbar form.d-flex .form-control::placeholder {
+    color: rgba(207, 200, 184, 0.4);
+    font-style: italic;
+}
+
+/* Search button */
+.navbar form.d-flex .btn-outline-success {
+    background: linear-gradient(180deg, #4a3616, var(--gold-dark));
+    color: #111;
+    border: 2px solid var(--gold-dark);
+    border-radius: 6px;
+    font-weight: 700;
+    padding: 0.5rem 1.25rem;
+    transition: all 0.3s ease;
+    box-shadow:
+            0 3px 8px rgba(0, 0, 0, 0.6),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.navbar form.d-flex .btn-outline-success:hover {
+    background: linear-gradient(180deg, #5a4320, var(--gold));
+    border-color: var(--gold);
+    transform: translateY(-1px);
+    box-shadow:
+            0 5px 12px rgba(0, 0, 0, 0.7),
+            0 0 12px rgba(217, 178, 97, 0.2);
+}
+
+.navbar form.d-flex .btn-outline-success:active {
+    transform: translateY(0px);
+}
+
+/* Mobile hamburger toggle */
+.navbar-toggler {
+    border: 2px solid var(--gold-dark);
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    transition: all 0.3s ease;
+}
+
+.navbar-toggler:hover {
+    background: rgba(217, 178, 97, 0.1);
+    border-color: var(--gold);
+}
+
+.navbar-toggler:focus {
+    box-shadow: 0 0 0 2px rgba(217, 178, 97, 0.25);
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='%23d9b261' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+
+/* ========== FOOTER STYLING - THE STONE TABLET ========== */
+/*
+ * The footer is styled as an engraved stone tablet or bronze plaque
+ * at the base of the guild hall
+ */
+footer {
+    margin-top: 3rem;
+    padding: 2rem 0 1.5rem 0;
+    background: linear-gradient(180deg,
+    rgba(15, 12, 10, 0.95) 0%,
+    rgba(10, 8, 6, 0.97) 100%);
+    border-top: 3px solid var(--panel-accent);
+    box-shadow:
+            inset 0 4px 16px rgba(0, 0, 0, 0.8),
+            0 -2px 8px rgba(0, 0, 0, 0.6);
+}
+
+/* Decorative divider line */
+footer hr {
+    border: 0;
+    height: 2px;
+    background: linear-gradient(90deg,
+    transparent 0%,
+    var(--gold-dark) 50%,
+    transparent 100%);
+    margin: 0 auto 1.5rem auto;
+    max-width: 80%;
+    opacity: 0.4;
+}
+
+/* Footer links container */
+footer ul {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+
+/* Footer links - golden inscriptions */
+footer a {
+    color: var(--gold) !important;
+    text-decoration: none !important;
+    font-weight: 600;
+    font-size: 0.9rem;
+    letter-spacing: 0.3px;
+    transition: all 0.3s ease;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+footer a:hover {
+    color: var(--light-text) !important;
+    text-shadow: 0 0 6px rgba(217, 178, 97, 0.4);
+    background: rgba(217, 178, 97, 0.08);
+    transform: translateY(-1px);
+}
+
+/* Copyright text (non-link) */
+footer li:last-child a {
+    cursor: default;
+}
+
+footer li:last-child a:hover {
+    background: transparent;
+    transform: none;
+    color: var(--gold) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* ========== RESPONSIVE ADJUSTMENTS ========== */
+@media (max-width: 991px) {
+    /* Mobile navbar adjustments */
+    .navbar-collapse {
+        background: linear-gradient(180deg,
+        rgba(20, 16, 12, 0.98) 0%,
+        rgba(15, 12, 10, 0.99) 100%);
+        border: 2px solid var(--panel-accent);
+        border-radius: 8px;
+        margin-top: 1rem;
+        padding: 1rem;
+        box-shadow:
+                0 8px 24px rgba(0, 0, 0, 0.9),
+                inset 0 1px 0 rgba(255, 255, 255, 0.02);
+    }
+
+    .navbar-nav {
+        margin-bottom: 1rem;
+    }
+
+    .navbar-nav .nav-link {
+        margin: 0.25rem 0;
+    }
+
+    .navbar form.d-flex {
+        margin-top: 0.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    /* Footer stacks vertically on mobile */
+    footer ul {
+        flex-direction: column !important;
+        align-items: center;
+    }
+
+    footer li {
+        padding: 0.5rem 0 !important;
+    }
+
+    footer a {
+        font-size: 0.85rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .navbar {
+        padding: 0.5rem 0;
+    }
+
+    .navbar-nav .nav-link {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.75rem !important;
+    }
+
+    footer a {
+        font-size: 0.8rem;
+    }
+}

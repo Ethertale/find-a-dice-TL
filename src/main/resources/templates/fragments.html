@@ -19,16 +19,31 @@
 </head>
 <body>
 
-<nav th:fragment="navbar" class="navbar navbar-expand-lg bg-body-tertiary">
+<nav th:fragment="navbar" class="navbar navbar-expand-lg">
     <div class="container">
-        <a class="navbar-brand" href="/home"><img style="width: 5vw; min-width: 50px; max-width: 80px" th:src="@{/imgs/Logo-Transparent.png}" alt=""></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <a class="navbar-brand" href="/home">
+            <img style="width: 5vw; min-width: 50px; max-width: 80px"
+                 th:src="@{/imgs/Logo-Transparent.png}"
+                 alt="Guild Emblem">
+        </a>
+
+        <button class="navbar-toggler"
+                type="button"
+                data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent"
+                aria-expanded="false"
+                aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" th:href="@{'/profile/' + ${session.get('SPRING_SECURITY_CONTEXT').authentication.principal.id}}">Profile</a>
+                    <a class="nav-link"
+                       th:href="@{'/profile/' + ${session.get('SPRING_SECURITY_CONTEXT').authentication.principal.id}}">
+                        Profile
+                    </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#">Friends</a>
@@ -37,7 +52,11 @@
                     <a class="nav-link" href="#">Inbox</a>
                 </li>
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <a class="nav-link dropdown-toggle"
+                       href="#"
+                       role="button"
+                       data-bs-toggle="dropdown"
+                       aria-expanded="false">
                         Guides
                     </a>
                     <ul class="dropdown-menu">
@@ -49,14 +68,19 @@
                 </li>
                 <li class="nav-item">
                     <form action="/logout" method="post">
-                        <!--        This returns CSRF token for the logout request since 6.x Spring Security requires it with a POST request instead of a GET request.-->
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                        <input type="hidden"
+                               th:name="${_csrf.parameterName}"
+                               th:value="${_csrf.token}" />
                         <button type="submit">Logout</button>
                     </form>
                 </li>
             </ul>
+
             <form class="d-flex" role="search">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search"/>
+                <input class="form-control me-2"
+                       type="search"
+                       placeholder="Search the realm..."
+                       aria-label="Search"/>
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
         </div>
@@ -65,19 +89,12 @@
 
 <footer th:fragment="footer">
     <hr>
-<!--    <div class="row d-flex flex-row justify-content-around">-->
-<!--        <div class="col-5 col-md-2 text-center w-auto"><a style="color: #DD3C49; text-decoration: none" href="">Rules</a></div>-->
-<!--        <div class="col-6 col-md-2 text-center w-auto"><a style="color: #DD3C49; text-decoration: none" href="">Privacy Policy</a></div>-->
-<!--        <div class="col-6 col-md-2 text-center w-auto"><a style="color: #DD3C49; text-decoration: none" href="">User Agreement</a></div>-->
-<!--        <div class="col-6 col-md-2 text-center w-auto"><a style="color: #DD3C49; text-decoration: none" href="">Accessibility</a></div>-->
-<!--        <div class="col-6 col-md-2 text-center w-auto"><a style="color: #DD3C49; text-decoration: none" href="">Ethertale © 2025. All rights reserved</a></div>-->
-<!--    </div>-->
-    <ul class="d-flex flex-row justify-content-center m-0" style="list-style: none;">
-        <li class="px-2"><a style="color: #DD3C49; text-decoration: none" href="">Rules</a></li>
-        <li class="px-2"><a style="color: #DD3C49; text-decoration: none" href="">Privacy Policy</a></li>
-        <li class="px-2"><a style="color: #DD3C49; text-decoration: none" href="">User Agreement</a></li>
-        <li class="px-2"><a style="color: #DD3C49; text-decoration: none" href="">Accessibility</a></li>
-        <li class="px-2"><a style="color: #DD3C49; text-decoration: none" href="">Ethertale © 2025. All rights reserved</a></li>
+    <ul class="d-flex flex-row justify-content-center m-0">
+        <li class="px-2"><a href="">Rules</a></li>
+        <li class="px-2"><a href="">Privacy Policy</a></li>
+        <li class="px-2"><a href="">User Agreement</a></li>
+        <li class="px-2"><a href="">Accessibility</a></li>
+        <li class="px-2"><a>Ethertale © 2025. All rights reserved</a></li>
     </ul>
 </footer>
 
