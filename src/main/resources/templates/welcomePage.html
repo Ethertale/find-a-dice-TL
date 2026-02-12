@@ -7,18 +7,426 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" th:href="@{css/btn_background_style.css}">
+<!--    <link rel="stylesheet" type="text/css" th:href="@{css/btn_background_style.css}">-->
+    <style>
+        /* ========== FANTASY THEME COLOR PALETTE ========== */
+        :root {
+            --page-bg-1: #061012;
+            --page-bg-2: #0f1f14;
+            --panel-dark: #0c0f11;
+            --panel-accent: #3c2b19;
+            --gold: #d9b261;
+            --gold-dark: #8f6a36;
+            --muted-text: #cfc8b8;
+            --light-text: #f7f3e7;
+            --accent-glow: rgba(200,150,60,0.12);
+            --parchment: #f4e8d0;
+        }
+
+        /* ========== BACKGROUND - THE GUILD HALL ATMOSPHERE ========== */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            font-family: "Georgia", "Palatino Linotype", serif;
+            color: var(--muted-text);
+            overflow-x: hidden;
+        }
+
+        /* Blurred, dimmed background layer creates depth and atmosphere */
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background:
+                    linear-gradient(rgba(6,10,8,0.55), rgba(3,6,5,0.65)),
+                    url("https://w0.peakpx.com/wallpaper/1014/828/HD-wallpaper-fantasy-of-after-world-war-4-fantasy-vintage-art-retro.jpg")
+                    center center / cover no-repeat;
+            filter: blur(10px);
+            transform: scale(1.05);
+        }
+
+        /* ========== MAIN CONTAINER ========== */
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========== WELCOME PANEL - THE GRAND ENTRANCE ========== */
+        /*
+         * The welcome panel is styled as an ornate guild crest or announcement
+         * board, welcoming new heroes to join the ranks
+         */
+        #backgr {
+            background:
+                    linear-gradient(180deg,
+                    rgba(25, 20, 15, 0.95) 0%,
+                    rgba(18, 15, 12, 0.97) 100%);
+            border: 4px solid var(--panel-accent);
+            border-radius: 12px;
+            padding: 3rem 2.5rem;
+            max-width: 600px;
+            width: 100%;
+            /* Make the panel scale to fit viewport height */
+            max-height: 100vh;
+            /*overflow-y: auto;*/
+            box-shadow:
+                    0 12px 40px rgba(0, 0, 0, 0.9),
+                    inset 0 2px 0 rgba(255, 255, 255, 0.03),
+                    inset 0 -20px 60px rgba(0, 0, 0, 0.6),
+                    0 0 0 1px rgba(0, 0, 0, 0.7);
+            position: relative;
+        }
+
+        /* Ornate inner border decoration */
+        #backgr::before {
+            content: "";
+            position: absolute;
+            inset: 12px;
+            border: 2px solid rgba(217, 178, 97, 0.15);
+            border-radius: 8px;
+            pointer-events: none;
+        }
+
+        /* Subtle glow effect */
+        #backgr::after {
+            content: "";
+            position: absolute;
+            inset: -8px;
+            background: radial-gradient(circle at center,
+            rgba(217, 178, 97, 0.08) 0%,
+            transparent 70%);
+            border-radius: 16px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* ========== LOGO STYLING ========== */
+        /*
+         * The logo gets a special treatment with a subtle glow and frame
+         * to make it appear like a guild crest or seal
+         */
+        #backgr img {
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.8))
+            drop-shadow(0 0 20px rgba(217, 178, 97, 0.2));
+            margin-bottom: 2rem;
+            transition: all 0.4s ease;
+        }
+
+        #backgr img:hover {
+            filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.9))
+            drop-shadow(0 0 30px rgba(217, 178, 97, 0.4));
+            transform: scale(1.05);
+        }
+
+        /* ========== WELCOME HEADING ========== */
+        /*
+         * The main heading is styled as a grand proclamation,
+         * with golden text and elegant shadows
+         */
+        #backgr h4 {
+            font-family: "Palatino Linotype", "Book Antiqua", serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 1.2px;
+            margin-bottom: 2rem;
+            text-shadow:
+                    0 2px 0 rgba(0,0,0,0.8),
+                    0 3px 12px rgba(60, 43, 25, 0.6);
+            line-height: 1.4;
+        }
+
+        /* ========== BUTTONS - GILDED SEALS ========== */
+        .btn {
+            background: linear-gradient(180deg, #5a4316, var(--gold));
+            color: #111;
+            border: 2px solid var(--gold-dark);
+            box-shadow:
+                    0 6px 16px rgba(0,0,0,0.7),
+                    inset 0 2px 0 rgba(255,255,255,0.15),
+                    inset 0 -2px 8px rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 0.75rem 2.5rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            min-width: 140px;
+        }
+
+        /* Subtle shine effect on button */
+        .btn::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.2),
+            transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover,
+        .btn:focus {
+            transform: translateY(-2px);
+            box-shadow:
+                    0 10px 25px rgba(0,0,0,0.8),
+                    0 0 30px rgba(217, 178, 97, 0.3),
+                    inset 0 2px 0 rgba(255,255,255,0.2);
+            background: linear-gradient(180deg, #6a5320, #e9c571);
+        }
+
+        .btn:active {
+            transform: translateY(0px);
+        }
+
+        /* Remove default link styling */
+        a {
+            text-decoration: none;
+        }
+
+        /* ========== BUTTON CONTAINER SPACING ========== */
+        #backgr > .container {
+            margin-top: 0.5rem;
+        }
+
+        /* ========== FOOTER SPACING ========== */
+        footer {
+            margin-top: 2rem;
+            color: #9f967f;
+        }
+
+        /* ========== RESPONSIVE DESIGN ========== */
+        @media (max-width: 768px) {
+            #backgr {
+                padding: 2rem 1.5rem;
+                margin: 1rem;
+            }
+
+            #backgr h4 {
+                font-size: 1.25rem;
+            }
+
+            .btn {
+                padding: 0.65rem 2rem;
+                font-size: 1rem;
+                min-width: 120px;
+            }
+
+            body::before {
+                background-attachment: scroll;
+            }
+        }
+
+        /* Aggressive scaling for short screens (ultra-wide monitors, landscape tablets) */
+        @media (max-height: 900px) {
+            #backgr {
+                padding: 2.5rem 2rem;
+            }
+
+            #backgr img {
+                margin-bottom: 1.5rem;
+            }
+
+            #backgr h4 {
+                font-size: 1.4rem;
+                margin-bottom: 1.5rem;
+            }
+        }
+
+        @media (max-height: 750px) {
+            #backgr {
+                padding: 2rem 1.75rem;
+            }
+
+            #backgr img {
+                margin-bottom: 1.25rem;
+                max-width: 110px !important;
+            }
+
+            #backgr h4 {
+                font-size: 1.3rem;
+                margin-bottom: 1.25rem;
+            }
+
+            .btn {
+                padding: 0.6rem 2rem;
+                font-size: 0.95rem;
+                margin: 0.5rem !important;
+            }
+
+            .corner-embellishment {
+                width: 30px;
+                height: 30px;
+            }
+        }
+
+        @media (max-height: 650px) {
+            #backgr {
+                padding: 1.5rem 1.5rem;
+            }
+
+            #backgr img {
+                margin-bottom: 1rem;
+                max-width: 90px !important;
+            }
+
+            #backgr h4 {
+                font-size: 1.15rem;
+                margin-bottom: 1rem;
+            }
+
+            .btn {
+                padding: 0.5rem 1.75rem;
+                font-size: 0.9rem;
+                margin: 0.4rem !important;
+                min-width: 110px;
+            }
+
+            .corner-embellishment {
+                width: 25px;
+                height: 25px;
+            }
+        }
+
+        @media (max-height: 550px) {
+            #backgr {
+                padding: 1.25rem 1.25rem;
+            }
+
+            #backgr img {
+                margin-bottom: 0.75rem;
+                max-width: 70px !important;
+            }
+
+            #backgr h4 {
+                font-size: 1rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .btn {
+                padding: 0.45rem 1.5rem;
+                font-size: 0.85rem;
+                margin: 0.3rem !important;
+                min-width: 100px;
+            }
+        }
+
+        /* ========== CUSTOM SCROLLBAR ========== */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #4a381f, #2b210c);
+            border-radius: 10px;
+            border: 2px solid rgba(0,0,0,0.45);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #5a4825, #3a2815);
+        }
+
+        ::-webkit-scrollbar-track {
+            background: linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.25));
+        }
+
+        /* Custom scrollbar for welcome panel */
+        #backgr::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #backgr::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #5a4316, var(--gold-dark));
+            border-radius: 6px;
+        }
+
+        #backgr::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.3);
+        }
+
+        /* Adjust outer container padding on very short screens */
+        @media (max-height: 700px) {
+            body > div[style*="min-height: 100vh"] {
+                padding: 0.5rem 0 !important;
+            }
+        }
+
+        /* ========== DECORATIVE CORNERS ========== */
+        .corner-embellishment {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--gold-dark);
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .corner-embellishment.top-left {
+            top: 8px;
+            left: 8px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .corner-embellishment.top-right {
+            top: 8px;
+            right: 8px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .corner-embellishment.bottom-left {
+            bottom: 8px;
+            left: 8px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .corner-embellishment.bottom-right {
+            bottom: 8px;
+            right: 8px;
+            border-left: none;
+            border-top: none;
+        }
+    </style>
     <title>Find A Dice - Portal</title>
 </head>
 <body>
 
-<div style="min-height: 95vh" class="container d-flex flex-column justify-content-center align-items-center align-content-center h-95">
-    <div class="row">
+<div style="min-height: 90vh; padding: 1rem 0;" class="container d-flex flex-column justify-content-center align-items-center">
+    <div class="row w-100" style="flex: 0 1 auto;">
         <div class="col-10 col-md-6 mx-auto">
             <div id="backgr" class="container d-flex flex-column justify-content-around align-items-center">
-                <img style="width: 15%; min-width: 130px" th:src="@{/imgs/Logo-Transparent.png}" alt="">
+                <!-- Decorative corner embellishments -->
+                <span class="corner-embellishment top-left"></span>
+                <span class="corner-embellishment top-right"></span>
+                <span class="corner-embellishment bottom-left"></span>
+                <span class="corner-embellishment bottom-right"></span>
+
+                <!-- Guild Logo/Crest -->
+                <img style="width: 15%; min-width: 130px"
+                     th:src="@{/imgs/Logo-Transparent.png}"
+                     alt="Guild Emblem">
+
+                <!-- Welcome Message -->
                 <h4 class="text-center">Find your next adventure partner!</h4>
-                <div class="container d-flex justify-content-center align-items-center align-content-center">
+
+                <!-- Action Buttons -->
+                <div class="container d-flex justify-content-center align-items-center align-content-center flex-wrap">
                     <a href="/login">
                         <button class="btn m-1">Login</button>
                     </a>
@@ -29,10 +437,11 @@
             </div>
         </div>
     </div>
-
 </div>
+
 <footer th:replace="~{fragments::footer}"></footer>
 
+<!-- Bootstrap JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
         crossorigin="anonymous"></script>
