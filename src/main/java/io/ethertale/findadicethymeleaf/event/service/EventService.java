@@ -51,7 +51,7 @@ public class EventService {
     }
 
     public List<Event> getAllEventsSortedByCreationDesc() {
-        return eventRepo.findAll().stream().sorted(Comparator.comparing(Event::getCreatedAt).reversed()).toList();
+        return eventRepo.findAll().stream().sorted(Comparator.comparing(Event::getStartTime).reversed()).toList();
     }
 
     public Event getSpecificGroup(UUID id) {

@@ -473,17 +473,11 @@
         <div class="col-12 col-md-6 col-lg-4" th:each="event: ${events}">
             <a th:href="'/events/' + ${event.id}">
                 <div class="card">
-                    <!-- Event banner image -->
                     <img th:src="${event.image}" class="card-img-top" alt="Event Banner">
-
-                    <!-- Card body -->
                     <div class="card-body">
-                        <!-- Event title - prominently displayed -->
                         <h2 class="event-title" th:text="${event.title}">Event Title</h2>
 
-                        <!-- Header section with avatar and event info -->
                         <div class="event-header">
-                            <!-- Creator avatar with ornate frame -->
                             <div class="avatar-container">
                                 <img class="avatar-border"
                                      th:src="@{/imgs/Guildmaster-Border.png}"
@@ -493,21 +487,27 @@
                                      alt="Event Creator">
                             </div>
 
-                            <!-- Event information and actions -->
                             <div class="event-info">
-                                <!-- Event metadata -->
                                 <div class="event-metadata">
-                                    <p><strong>Organized by:</strong> <span th:text="${event.createdByEvent.name}">Creator Name</span></p>
-                                    <p><strong>Location:</strong> <span th:text="${event.location}">Location</span></p>
-                                    <p><strong>Time:</strong> <span th:text="${event.startTime}">Date</span></p>
+                                    <p><strong>Organized by:</strong>
+                                        <span th:text="${event.createdByEvent.name}">Creator Name</span>
+                                    </p>
+                                    <p><strong>Location:</strong>
+                                        <span th:text="${event.location}">Location</span>
+                                    </p>
+                                    <p><strong>Time:</strong>
+                                        <span th:text="${event.startTime}">2026-02-13</span>
+                                        <span class="event-status"></span>
+                                    </p>
+                                    <span class="event-date-hidden"
+                                          th:text="${event.startTime}"
+                                          style="display:none;">2026-02-13</span>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Event description - full width at bottom -->
                         <div class="event-description">
                             <h5>Description</h5>
-                            <p th:text="${event.description}">Event description goes here...</p>
+                            <p th:text="${event.description}">Event description...</p>
                         </div>
                     </div>
                 </div>
@@ -518,12 +518,74 @@
 
 <footer th:replace="~{fragments::footer}"></footer>
 
-<!-- Bootstrap JavaScript -->
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
         crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.min.js"
         integrity="sha384-RuyvpeZCxMJCqVUGFI0Do1mQrods/hhxYlcVfGPOfQtPJh0JCw12tUAZ/Mv10S7D"
         crossorigin="anonymous"></script>
+<script>
+    function stringToDate(dateString) {
+        const parts = dateString.split('-');
+        const year = parseInt(parts[0], 10);
+        const month = parseInt(parts[1], 10) - 1;
+        const day = parseInt(parts[2], 10);
+
+        return new Date(year, month, day, 0, 0, 0, 0);
+    }
+    function getTodayAtMidnight() {
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return today;
+    }
+    function updateSingleEventStatus(statusElement, dateString) {
+        // Convert the date string to a Date object
+        const eventDate = stringToDate(dateString);
+        const today = getTodayAtMidnight();
+
+        if (eventDate > today) {
+            statusElement.textContent = 'UPCOMING';
+            statusElement.style.color = '#d9b261';
+            statusElement.style.textShadow = '0 0 8px rgba(217, 178, 97, 0.4)';
+        } else if (eventDate.getTime() === today.getTime()) {
+            statusElement.textContent = 'ONGOING';
+            statusElement.style.color = '#2ecc71';
+            statusElement.style.textShadow = '0 0 8px rgba(46, 204, 113, 0.4)';
+        } else {
+            statusElement.textContent = 'PASSED';
+            statusElement.style.color = '#95a5a6';
+            statusElement.style.textShadow = '0 1px 2px rgba(0, 0, 0, 0.6)';
+            statusElement.style.opacity = '0.6';
+        }
+
+        statusElement.style.fontWeight = '700';
+        statusElement.style.fontSize = '0.85rem';
+        statusElement.style.letterSpacing = '0.8px';
+        statusElement.style.padding = '0.25rem 0.75rem';
+        statusElement.style.borderRadius = '6px';
+        statusElement.style.display = 'inline-block';
+        statusElement.style.marginLeft = '0.5rem';
+        statusElement.style.backgroundColor = 'rgba(0, 0, 0, 0.3)';
+        statusElement.style.border = '1px solid rgba(255, 255, 255, 0.1)';
+    }
+
+    function updateAllEventStatuses() {
+        const eventCards = document.querySelectorAll('.card');
+
+        eventCards.forEach(function(card) {
+            const statusElement = card.querySelector('.event-status');
+            const dateElement = card.querySelector('.event-date-hidden');
+
+            if (statusElement && dateElement) {
+                const dateString = dateElement.textContent.trim();
+                updateSingleEventStatus(statusElement, dateString);
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        updateAllEventStatuses();
+    });
+</script>
 </body>
 </html>
