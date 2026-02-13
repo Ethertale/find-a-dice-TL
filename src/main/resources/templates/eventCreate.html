@@ -25,9 +25,33 @@
                     <input type="text" th:field="*{title}" id="eventName" class="form-control" placeholder="Event Name" required>
                 </div>
             </div>
-            <div class="col-12 mx-auto"></div>
-            <div class="col-12 mx-auto"></div>
-            <div class="col-12 mx-auto"></div>
+            <div class="col-12 mx-auto">
+                <div class="form-group">
+                    <label for="eventDescription">Description</label>
+                    <input type="text" th:field="*{description}" id="eventDescription" class="form-control" placeholder="Description (max 1000 chars)" required>
+                </div>
+            </div>
+            <div class="col-12 mx-auto">
+                <div class="form-group">
+                    <label for="eventImage">Image link</label>
+                    <input type="text" th:field="*{image}" id="eventImage" class="form-control" placeholder="Image Link" required>
+                </div>
+            </div>
+            <div class="col-12 mx-auto">
+                <div class="form-group">
+                    <label for="eventLocation">Location</label>
+                    <input type="text" th:field="*{location}" id="eventLocation" class="form-control" placeholder="Where..." required>
+                </div>
+            </div>
+            <div class="col-12 mx-auto">
+                <div class="form-group">
+                    <label for="eventStartDate">Date</label>
+                    <input type="date" th:field="*{startTime}" id="eventStartDate" class="form-control" required>
+                </div>
+            </div>
+            <div class="container d-flex flex-column justify-content-center align-items-center">
+                <button type="submit" class="btn m-3">Create Event</button>
+            </div>
         </div>
     </div>
 </form>

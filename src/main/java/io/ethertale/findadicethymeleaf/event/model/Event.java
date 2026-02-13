@@ -4,6 +4,7 @@ import io.ethertale.findadicethymeleaf.hero.model.Hero;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
@@ -32,10 +33,10 @@ public class Event {
 
     @ManyToOne
     @JoinColumn(name = "created_by_id", nullable = false)
-    private Hero createdBy;
+    private Hero createdByEvent;
 
     @Column(nullable = false)
-    private LocalDateTime startTime;
+    private LocalDate startTime;
 
     @Column(nullable = false)
     private String image;

@@ -27,18 +27,25 @@ public class EventService {
     }
 
     public void createEvent(EventCreateDTO eventCreateDTO, Hero hero) {
+
         Event event = Event.builder()
                 .title(eventCreateDTO.getTitle())
                 .description(eventCreateDTO.getDescription())
                 .location(eventCreateDTO.getLocation())
-                .createdBy(hero)
+                .createdByEvent(hero)
                 .createdAt(LocalDateTime.now())
                 .startTime(eventCreateDTO.getStartTime())
-                .image(eventCreateDTO.getImage())
                 .interested(0)
                 .going(0)
                 .heroes(new HashSet<>())
                 .build();
+
+        String imageTrack = eventCreateDTO.getImage();
+        if (!imageTrack.substring(0, 7).equals("https://")) {
+            event.setImage("https://i.ibb.co/WWDv4mYx/Logo-Transparent.png");
+        } else {
+            event.setImage(imageTrack);
+        }
 
         eventRepo.save(event);
     }
