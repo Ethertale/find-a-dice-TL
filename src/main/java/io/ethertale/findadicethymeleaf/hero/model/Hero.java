@@ -1,5 +1,6 @@
 package io.ethertale.findadicethymeleaf.hero.model;
 
+import io.ethertale.findadicethymeleaf.event.model.Event;
 import io.ethertale.findadicethymeleaf.group.model.Group;
 import io.ethertale.findadicethymeleaf.post.model.Comment;
 import io.ethertale.findadicethymeleaf.post.model.GroupPost;
@@ -96,8 +97,19 @@ public class Hero {
     )
     private Set<Group> groups;
 
+    @ManyToMany
+    @JoinTable(
+            name = "hero_event_link", // join table
+            joinColumns = @JoinColumn(name = "hero_id"),
+            inverseJoinColumns = @JoinColumn(name = "event_id")
+    )
+    private Set<Event> events;
+
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Group> createdGroups;
+
+    @OneToMany(mappedBy = "createdByEvent", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Event> createdEvents;
 
     public String getTimestamp() {
         return createdAt.getDayOfMonth()
