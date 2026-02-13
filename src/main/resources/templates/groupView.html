@@ -296,6 +296,17 @@
                 background-attachment: scroll;
             }
         }
+
+        #postPortrait {
+            transition: 0.2s ease-in-out;
+        }
+
+        #postPortrait:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.65), inset 0 2px 8px rgba(0,0,0,0.6);
+            border: 2px solid rgba(0,0,0,0.45);
+            border-radius: 10px;
+        }
     </style>
 
 </head>
@@ -345,7 +356,7 @@
             <div style="background-color: rgba(0,0,0,0.3);" class="container m-2">
                 <div class="row">
                     <div class="col-2 d-flex flex-row">
-                        <img class="m-1" style="aspect-ratio: 1/1; height: 100px; width: 100px" th:src="${post.hero.imageUrl}" alt="">
+                        <a class="align-content-center" th:href="@{'/profile/' + ${post.hero.user.id}}"><img id="postPortrait" class="m-1" style="aspect-ratio: 1/1; height: 100px; width: 100px" th:src="${post.hero.imageUrl}" alt=""></a>
                     </div>
                     <div class="col-12 col-lg-10">
                         <div class="container d-flex flex-column">
