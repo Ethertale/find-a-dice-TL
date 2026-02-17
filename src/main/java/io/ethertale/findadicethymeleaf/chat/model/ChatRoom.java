@@ -40,4 +40,16 @@ public class ChatRoom {
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    public String getTimeForChatUpdate() {
+        return updatedAt.getHour() +
+                ":" +
+                updatedAt.getMinute() +
+                " | " +
+                updatedAt.getDayOfMonth() +
+                " " +
+                updatedAt.getMonth() +
+                " " +
+                updatedAt.getYear();
+    }
 }

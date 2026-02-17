@@ -9,19 +9,312 @@
           integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="/css/navbar-footer.css">
     <title>Find A Dice - Chat Rooms</title>
+    <style>
+        /* ========== FANTASY THEME COLOR PALETTE ========== */
+        :root {
+            --panel-accent: #3c2b19;
+            --gold: #d9b261;
+            --gold-dark: #8f6a36;
+            --muted-text: #cfc8b8;
+            --light-text: #f7f3e7;
+            --card-radius: 10px;
+        }
+
+        /* ========== BACKGROUND ========== */
+        html, body {
+            min-height: 100%;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            font-family: "Georgia", "Palatino Linotype", serif;
+            color: var(--muted-text);
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background:
+                    linear-gradient(rgba(6,10,8,0.55), rgba(3,6,5,0.65)),
+                    url("https://w0.peakpx.com/wallpaper/1014/828/HD-wallpaper-fantasy-of-after-world-war-4-fantasy-vintage-art-retro.jpg")
+                    center center / cover no-repeat;
+            filter: blur(10px);
+            transform: scale(1.05);
+        }
+
+        /* ========== MAIN CONTAINER ========== */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========== PAGE TITLE ========== */
+        /*
+         * Acts as a header for the inbox, styled as an ornate guild
+         * proclamation carved above the list of active correspondences.
+         */
+        .inbox-title {
+            font-family: "Palatino Linotype", "Book Antiqua", serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gold);
+            text-align: center;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            text-shadow:
+                    0 2px 0 rgba(0,0,0,0.8),
+                    0 4px 15px rgba(60, 43, 25, 0.6);
+        }
+
+        /* A decorative line beneath the title, like a ruled inscription */
+        .inbox-title::after {
+            content: "";
+            display: block;
+            width: 60%;
+            height: 2px;
+            margin: 0.75rem auto 0 auto;
+            background: linear-gradient(90deg,
+            transparent 0%,
+            var(--gold-dark) 50%,
+            transparent 100%);
+            opacity: 0.5;
+        }
+
+        /* ========== CHATROOM ROW - THE ALLIANCE PLAQUE ========== */
+        /*
+         * Each chatroom is displayed as an ornate plaque listing two heroes
+         * who are in active correspondence. The left and right avatars face
+         * each other, with the names inscribed in the center.
+         *
+         * The design evokes a medieval "correspondence scroll" or diplomatic
+         * declaration between two guild members.
+         */
+        .chatroom-plaque {
+            background: linear-gradient(180deg, rgba(8,10,12,0.85), rgba(6,7,9,0.95));
+            border: 3px solid var(--panel-accent);
+            border-radius: var(--card-radius);
+            margin-bottom: 1rem;
+            padding: 1rem 1.25rem;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow:
+                    0 6px 16px rgba(0,0,0,0.7),
+                    inset 0 1px 0 rgba(255,255,255,0.02),
+                    inset 0 -10px 30px rgba(0,0,0,0.4);
+        }
+
+        /*
+         * On hover the plaque lifts and gains a subtle golden glow,
+         * as if being illuminated by a nearby torch.
+         */
+        .chatroom-plaque:hover {
+            transform: translateY(-3px);
+            border-color: var(--gold-dark);
+            box-shadow:
+                    0 12px 28px rgba(0,0,0,0.8),
+                    0 0 20px rgba(217, 178, 97, 0.12),
+                    inset 0 1px 0 rgba(255,255,255,0.03),
+                    inset 0 -10px 30px rgba(0,0,0,0.4);
+        }
+
+        /* The inner frame decorates the plaque like metalwork on a cabinet */
+        .chatroom-plaque::before {
+            content: "";
+            position: absolute;
+            inset: 8px;
+            border: 1px solid rgba(217, 178, 97, 0.1);
+            border-radius: 7px;
+            pointer-events: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .chatroom-plaque:hover::before {
+            border-color: rgba(217, 178, 97, 0.25);
+        }
+
+        /* Remove link decoration so the entire row is the clickable element */
+        a.chatroom-link {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        /* ========== AVATAR STYLING ========== */
+        /*
+         * Each avatar is framed as a portrait medallion, similar to how heroes
+         * are shown on the group page. The circular crop and shadow treatment
+         * makes them feel like stamped wax seals or painted portrait coins.
+         */
+        .participant-avatar {
+            width: 100%;
+            max-width: 80px;
+            aspect-ratio: 1 / 1;
+            min-width: 56px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(60, 43, 25, 0.8);
+            box-shadow:
+                    0 4px 12px rgba(0,0,0,0.7),
+                    0 0 0 2px rgba(217, 178, 97, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        /* When hovering the row, avatars brighten slightly */
+        .chatroom-plaque:hover .participant-avatar {
+            border-color: var(--gold-dark);
+            box-shadow:
+                    0 4px 12px rgba(0,0,0,0.7),
+                    0 0 0 2px rgba(217, 178, 97, 0.35),
+                    0 0 12px rgba(217, 178, 97, 0.15);
+        }
+
+        /* ========== CENTER NAMES SECTION ========== */
+        /*
+         * The names are inscribed in the center, separated by a "versus"
+         * style divider that evokes the feeling of a duel announcement or
+         * diplomatic correspondence between two parties.
+         */
+        .participants-names {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.35rem;
+        }
+
+        .participant-name {
+            font-family: "Palatino Linotype", "Book Antiqua", serif;
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--gold);
+            letter-spacing: 0.6px;
+            text-shadow: 0 1px 0 rgba(0,0,0,0.8);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .chatroom-plaque:hover .participant-name {
+            color: var(--light-text);
+            text-shadow: 0 0 8px rgba(217, 178, 97, 0.3);
+        }
+
+        /*
+         * The divider between the two names - styled as an ornate separator
+         * to make the "correspondence between" relationship visually clear.
+         */
+        .names-divider {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            width: 100%;
+        }
+
+        .names-divider::before,
+        .names-divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-dark), transparent);
+            opacity: 0.4;
+        }
+
+        .names-divider span {
+            color: var(--gold-dark);
+            font-size: 0.7rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.6;
+            white-space: nowrap;
+        }
+
+        /* ========== RESPONSIVE DESIGN ========== */
+        @media (max-width: 576px) {
+            .participant-avatar {
+                max-width: 56px;
+                min-width: 44px;
+            }
+
+            .participant-name {
+                font-size: 0.9rem;
+            }
+
+            .names-divider span {
+                font-size: 0.6rem;
+            }
+        }
+
+        /* ========== CUSTOM SCROLLBAR ========== */
+        ::-webkit-scrollbar { width: 10px; }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #4a381f, #2b210c);
+            border-radius: 10px;
+            border: 2px solid rgba(0,0,0,0.45);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #5a4825, #3a2815);
+        }
+
+        ::-webkit-scrollbar-track {
+            background: linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.25));
+        }
+        nav .container {
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+    </style>
 </head>
 <body>
 <nav th:replace="~{fragments::navbar}"></nav>
 
 <div class="container">
-    <div class="row">
-        <div th:each="chatroom: ${chats}" class="col-11">
-            <div class="row">
-                <div class="col-2"><img th:src="${chatroom.participants.get(0).imageUrl}" alt=""></div>
-                <div class="col-8">PLACEHOLDER</div>
-                <div class="col-2"><img th:src="${chatroom.participants.get(1).imageUrl}" alt=""></div>
-            </div>
-            <a th:href="'/chat-room/' + ${chatroom.id}" th:text="'Chat Room: ' + ${chatroom.getParticipants()}"></a>
+    <h2 class="inbox-title">Correspondence</h2>
+
+    <div class="row justify-content-center">
+        <div th:each="chatroom: ${chats}" class="col-12 col-md-10">
+
+            <!-- Each chatroom is an ornate correspondence plaque -->
+            <a class="chatroom-link" th:href="'chat-room/' + ${chatroom.roomCode}">
+                <div class="chatroom-plaque">
+                    <div class="row d-flex flex-row justify-content-center align-items-center">
+
+                        <!-- Left participant avatar -->
+                        <div class="col-2 d-flex justify-content-center">
+                            <img class="participant-avatar"
+                                 th:src="${chatroom.participants.get(0).imageUrl}"
+                                 alt="Participant">
+                        </div>
+
+                        <!-- Center: names with decorative divider -->
+                        <div class="col-8 participants-names">
+                            <span class="participant-name"
+                                  th:text="${chatroom.participants.get(0).name}">Hero One</span>
+                            <div class="names-divider d-flex flex-column">
+                                <span>⚔ correspondence ⚔</span>
+                                <span th:text="${chatroom.getTimeForChatUpdate()}"></span>
+                            </div>
+                            <span class="participant-name"
+                                  th:text="${chatroom.participants.get(1).name}">Hero Two</span>
+                        </div>
+
+                        <!-- Right participant avatar -->
+                        <div class="col-2 d-flex justify-content-center">
+                            <img class="participant-avatar"
+                                 th:src="${chatroom.participants.get(1).imageUrl}"
+                                 alt="Participant">
+                        </div>
+
+                    </div>
+                </div>
+            </a>
+
         </div>
     </div>
 </div>
@@ -33,5 +326,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.min.js"
         integrity="sha384-RuyvpeZCxMJCqVUGFI0Do1mQrods/hhxYlcVfGPOfQtPJh0JCw12tUAZ/Mv10S7D"
         crossorigin="anonymous"></script>
+
 </body>
 </html>
