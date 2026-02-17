@@ -30,11 +30,14 @@ public class ChatRoom {
     @JoinTable(name = "chat_room_participants",
     joinColumns = @JoinColumn(name = "room_id"),
     inverseJoinColumns = @JoinColumn(name = "hero_id"))
-    private Set<Hero> participants;
+    private List<Hero> participants;
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL)
     private List<ChatMessages> messages = new ArrayList<>();
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    @Column(nullable = false)
+    private LocalDateTime updatedAt;
 }

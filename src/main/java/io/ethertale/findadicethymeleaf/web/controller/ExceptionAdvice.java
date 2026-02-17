@@ -45,5 +45,20 @@ public class ExceptionAdvice {
         redirectAttributes.addFlashAttribute("groupPostTooLongOrTooShort", "Post input is outside the allowed range!");
         return "redirect:/groups";
     }
+    @ExceptionHandler(ChatRoomDoesNotExist.class)
+    public String handleChatRoomDoesNotExist(RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("chatRoomDoesNotExist", "Chat room does not exist!");
+        return "redirect:/";
+    }
+    @ExceptionHandler(ChatHeroNotInChatRoom.class)
+    public String handleChatHeroNotInChatRoom(RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("chatHeroNotInChatRoom", "Hero does not exist!");
+        return "redirect:/";
+    }
+    @ExceptionHandler(ChatRoomExistsRedirect.class)
+    public String handleChatRoomExistsRedirect(RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("chatRoomExistsRedirect", "Chat room already exists!");
+        return "redirect:/chatRooms";
+    }
 
 }

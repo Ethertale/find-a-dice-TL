@@ -218,7 +218,11 @@
                         <div class="profileStats rounded-0 rounded-start align-items-center"><p class="m-2"><span th:text="${user.hero.groups.size()}">0</span> Owned Groups</p></div>
                         <div class="profileStats rounded-0"><p class="m-2"><span th:text="${user.hero.groupPosts.size()}">0</span> Total Posts</p></div>
                         <div class="profileStats rounded-0 rounded-end"><p class="m-2"><span>0</span> Events Visited</p></div>
-                    </div>
+                        <div class="profileStats">
+                            <form th:action="@{'/chat-room/create-chatroom/' + ${user.id}}" method="post">
+                                <button type="submit">CHAT</button>
+                            </form>
+                        </div>                    </div>
                     <div th:if="${user.id == loggedUser.id} OR ${loggedUser.role.name()} == 'ADMIN'" class="container" >
                         <a class="btn btn-secondary my-2" th:href="'/profile/' + ${user.getId()} + '/edit-hero'">Edit Hero</a>
                     </div>

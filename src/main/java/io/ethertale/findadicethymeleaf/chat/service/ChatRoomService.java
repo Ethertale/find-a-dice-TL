@@ -4,9 +4,14 @@ import io.ethertale.findadicethymeleaf.chat.model.ChatRoom;
 import io.ethertale.findadicethymeleaf.chat.repo.ChatRoomRepo;
 import io.ethertale.findadicethymeleaf.exceptions.ChatHeroNotInChatRoom;
 import io.ethertale.findadicethymeleaf.exceptions.ChatRoomDoesNotExist;
+import io.ethertale.findadicethymeleaf.exceptions.ChatRoomExistsRedirect;
 import io.ethertale.findadicethymeleaf.hero.model.Hero;
+import io.ethertale.findadicethymeleaf.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.*;
 
 @Service
 public class ChatRoomService {
@@ -52,6 +57,47 @@ public class ChatRoomService {
         }
 
         return room;
+    }
+
+    public List<ChatRoom> getAllChatRoomsSortedByLastActivity(User loggedUser){
+        return loggedUser.getHero().getChatRooms().stream().sorted(Comparator.comparing(ChatRoom::getUpdatedAt).reversed()).toList();
+    }
+
+    public void createChatRoom(Hero hero1, Hero hero2) {
+
+        if (chatRoomRepo.existsChatRoomBetween(hero1, hero2)){
+            throw new ChatRoomExistsRedirect();
+        }
+
+        String roomCode;
+        List<Hero> chatRoomParticipants = new ArrayList<>();
+        chatRoomParticipants.add(hero1);
+        chatRoomParticipants.add(hero2);
+
+        do {
+            roomCode = generateRandomCode();
+        } while (chatRoomRepo.existsByRoomCode(roomCode));
+
+        ChatRoom room = ChatRoom.builder()
+                .roomCode(roomCode)
+                .participants(chatRoomParticipants)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+
+        chatRoomRepo.save(room);
+    }
+
+    private String generateRandomCode() {
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder code = new StringBuilder();
+        Random random = new Random();
+
+        for (int i = 0; i < 15; i++) {
+            code.append(characters.charAt(random.nextInt(characters.length())));
+        }
+
+        return code.toString();
     }
 }
 
