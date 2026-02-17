@@ -13,7 +13,36 @@
 <body>
 <nav th:replace="~{fragments::navbar}"></nav>
 
-
+<div class="container">
+    <div class="row">
+        <div class="col-6">
+            <div class="row">
+                <div class="col-4">
+                    <img th:src="${event.createdByEvent.imageUrl}" alt="">
+                </div>
+                <div class="col-8">
+                    <div class="row">
+                        <div class="col-12">
+                            <p th:text="${event.createdByEvent.name}"></p>
+                            <p th:text="${event.location}"></p>
+                            <p th:text="${event.startTime}"></p>
+                        </div>
+                        <div class="col-12">
+                            <a href=""><button th:text="${event.interested} + ' Interested'"></button></a>
+                            <a href=""><button th:text="${event.going} + ' Going'"></button></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <p th:text="${event.description}"></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-6">
+            <img th:src="${event.image}" alt="">
+        </div>
+    </div>
+</div>
 
 <footer th:replace="~{fragments::footer}"></footer>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
