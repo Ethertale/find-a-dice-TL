@@ -7,14 +7,12 @@ import io.ethertale.findadicethymeleaf.hero.service.HeroService;
 import io.ethertale.findadicethymeleaf.security.AuthenticationDetails;
 import io.ethertale.findadicethymeleaf.user.model.User;
 import io.ethertale.findadicethymeleaf.user.service.UserService;
+import io.ethertale.findadicethymeleaf.web.dto.ChatRoomMessageDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.UUID;
@@ -47,20 +45,31 @@ public class ChatRoomController {
     }
 
     @GetMapping("/{roomCode}")
-    public String chatRoom(@PathVariable String roomCode, @AuthenticationPrincipal AuthenticationDetails authenticationDetails, Model model) {
+    public String chatRoom(@PathVariable String roomCode,
+                           @AuthenticationPrincipal AuthenticationDetails authenticationDetails,
+                           Model model) {
+
         User loggedUser = userService.getUserById(authenticationDetails.getId());
         ChatRoom chatRoom = chatRoomService.getChatRoomIfAuthorized(roomCode, loggedUser.getHero());
-
-        ModelAndView modelAndView = new ModelAndView("chatRoomView");
-        modelAndView.addObject("chatRoom", chatRoom);
-        modelAndView.addObject("messages", chatRoom.getMessages());
-        modelAndView.addObject("loggedUser", loggedUser);
 
         if (chatRoom == null) {
             return "redirect:/";
         }
 
-        return modelAndView.toString();
+        model.addAttribute("chatRoom", chatRoom);
+        model.addAttribute("messages", chatRoom.getMessages().reversed());
+        model.addAttribute("loggedUser", loggedUser);
+        model.addAttribute("messageDTO", new ChatRoomMessageDTO());
+
+        return "chatRoomView";
+    }
+
+    @PostMapping("/{roomCode}/create-message")
+    public String sendMessage(@ModelAttribute ChatRoomMessageDTO chatRoomMessageDTO, @AuthenticationPrincipal AuthenticationDetails authenticationDetails, @PathVariable String roomCode, Model model) {
+        User loggedUser = userService.getUserById(authenticationDetails.getId());
+
+        chatMessagesService.sendMessage(roomCode, loggedUser, chatRoomMessageDTO);
+        return "redirect:/chat-room/" + roomCode;
     }
 
     @PostMapping("/create-chatroom/{id}")

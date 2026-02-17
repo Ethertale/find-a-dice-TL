@@ -5,10 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Getter
@@ -51,5 +48,9 @@ public class ChatRoom {
                 updatedAt.getMonth() +
                 " " +
                 updatedAt.getYear();
+    }
+
+    public List<ChatMessages> getAllMessagesSortedBySentAt(){
+        return messages.stream().sorted(Comparator.comparing(ChatMessages::getSentAt)).toList();
     }
 }

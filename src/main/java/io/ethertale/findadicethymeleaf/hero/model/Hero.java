@@ -12,9 +12,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "heroes")
@@ -118,7 +116,7 @@ public class Hero {
     private Set<ChatRoom> chatRooms = new HashSet<>();
 
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<ChatMessages> sentMessages = new HashSet<>();
+    private List<ChatMessages> sentMessages = new ArrayList<>();
 
     public String getTimestamp() {
         return createdAt.getDayOfMonth()

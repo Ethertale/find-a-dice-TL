@@ -7,10 +7,428 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
-    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="/css/navbar-footer.css">
+    <title>Find A Dice - Chat Room</title>
+    <style>
+        /* ========== FANTASY THEME COLOR PALETTE ========== */
+        :root {
+            --panel-accent: #3c2b19;
+            --gold: #d9b261;
+            --gold-dark: #8f6a36;
+            --muted-text: #cfc8b8;
+            --light-text: #f7f3e7;
+            --parchment-light: #f4e8d0;
+            --parchment-dark: #d4c4a8;
+        }
+
+        /* ========== BACKGROUND ========== */
+        /*
+         * Just like our other pages, we create an atmospheric blurred background
+         * that makes users feel they're inside the same guild hall building.
+         * The fixed positioning means it stays in place while content scrolls.
+         */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            font-family: "Georgia", "Palatino Linotype", serif;
+            color: var(--muted-text);
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background:
+                    linear-gradient(rgba(6,10,8,0.55), rgba(3,6,5,0.65)),
+                    url("https://w0.peakpx.com/wallpaper/1014/828/HD-wallpaper-fantasy-of-after-world-war-4-fantasy-vintage-art-retro.jpg")
+                    center center / cover no-repeat;
+            filter: blur(10px);
+            transform: scale(1.05);
+        }
+
+        /* ========== MESSAGE INPUT FORM - THE WRITING DESK ========== */
+        /*
+         * The form at the top is styled as a writing desk or scribe's station
+         * where the hero composes new messages. The dark panel with golden
+         * accents makes it feel like sitting down at an ornate wooden desk
+         * to write a letter by candlelight.
+         */
+        .message-input-container {
+            background: linear-gradient(180deg, rgba(25, 20, 15, 0.95), rgba(18, 15, 12, 0.97));
+            border: 3px solid var(--panel-accent);
+            border-radius: 10px;
+            padding: 1.25rem;
+            margin: 1.5rem auto;
+            max-width: 900px;
+            box-shadow:
+                    0 6px 16px rgba(0,0,0,0.7),
+                    inset 0 1px 0 rgba(255,255,255,0.02),
+                    inset 0 -10px 30px rgba(0,0,0,0.4);
+            position: relative;
+        }
+
+        /* An inner decorative border, like metalwork on a wooden desk */
+        .message-input-container::before {
+            content: "";
+            position: absolute;
+            inset: 8px;
+            border: 1px solid rgba(217, 178, 97, 0.12);
+            border-radius: 7px;
+            pointer-events: none;
+        }
+
+        /* Hide the default label since we're using a placeholder */
+        .message-input-container label {
+            display: none;
+        }
+
+        /*
+         * The input field is styled like parchment or vellum - a light surface
+         * where ink would be written. The subtle texture from the gradient and
+         * the inset shadow create the impression of a slightly recessed writing surface.
+         */
+        .message-input-container .form-control {
+            background: linear-gradient(180deg, #e8dcc4, #d9cdb5);
+            border: 2px solid var(--panel-accent);
+            border-radius: 8px;
+            color: #2c2416;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+        }
+
+        /* When focused, the parchment brightens as if catching more light */
+        .message-input-container .form-control:focus {
+            background: linear-gradient(180deg, #f0e4cc, #e1d5bd);
+            border-color: var(--gold-dark);
+            box-shadow:
+                    inset 0 2px 6px rgba(0,0,0,0.15),
+                    0 0 0 2px rgba(217, 178, 97, 0.25);
+            outline: none;
+        }
+
+        .message-input-container .form-control::placeholder {
+            color: rgba(60, 50, 35, 0.5);
+            font-style: italic;
+        }
+
+        /* The Send button is styled as a wax seal or official stamp */
+        .message-input-container .btn-primary {
+            background: linear-gradient(180deg, #5a4316, var(--gold));
+            color: #111;
+            border: 2px solid var(--gold-dark);
+            border-radius: 8px;
+            padding: 0.65rem 2rem;
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-top: 0.75rem;
+            box-shadow:
+                    0 4px 12px rgba(0,0,0,0.6),
+                    inset 0 1px 0 rgba(255,255,255,0.15);
+            transition: all 0.3s ease;
+        }
+
+        .message-input-container .btn-primary:hover {
+            background: linear-gradient(180deg, #6a5320, #e9c571);
+            transform: translateY(-2px);
+            box-shadow:
+                    0 6px 16px rgba(0,0,0,0.7),
+                    0 0 20px rgba(217, 178, 97, 0.2);
+        }
+
+        .message-input-container .btn-primary:active {
+            transform: translateY(0px);
+        }
+
+        /* ========== MESSAGE HISTORY CONTAINER ========== */
+        /*
+         * The scrollable chat history area is like flipping through old letters
+         * or scrolls. We style the scrollbar to match our theme and ensure
+         * the messages have room to breathe.
+         */
+        .chat-history {
+            height: 70vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1rem;
+            position: relative;
+        }
+
+        /* Custom scrollbar for the chat history */
+        .chat-history::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        .chat-history::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #5a4316, var(--gold-dark));
+            border-radius: 6px;
+            border: 2px solid rgba(0,0,0,0.3);
+        }
+
+        .chat-history::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #6a5320, var(--gold));
+        }
+
+        .chat-history::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.2);
+            border-radius: 6px;
+        }
+
+        /* ========== MESSAGE BUBBLES - SCROLLS AND PARCHMENTS ========== */
+        /*
+         * Each message is styled as a small scroll or parchment note.
+         * Messages from the logged-in user (right side) have a golden tone
+         * to indicate "your words," while messages from the other participant
+         * (left side) use a neutral parchment color.
+         */
+        .message-bubble {
+            background: linear-gradient(135deg, #e8dcc4, #d4c4a8);
+            border: 2px solid rgba(60, 43, 25, 0.6);
+            border-radius: 12px;
+            padding: 0.85rem 1.1rem;
+            max-width: 70%;
+            box-shadow:
+                    0 3px 8px rgba(0,0,0,0.5),
+                    inset 0 1px 0 rgba(255,255,255,0.3);
+            position: relative;
+            word-wrap: break-word;
+        }
+
+        /*
+         * Messages from the logged-in user get a golden highlight, as if
+         * written on finer parchment or with golden ink - they stand out
+         * as "your contributions" to the conversation.
+         */
+        .message-bubble.message-right {
+            background: linear-gradient(135deg, #f0e4a8, #dac97d);
+            border-color: var(--gold-dark);
+            box-shadow:
+                    0 3px 8px rgba(0,0,0,0.5),
+                    0 0 12px rgba(217, 178, 97, 0.15),
+                    inset 0 1px 0 rgba(255,255,255,0.4);
+        }
+
+        /*
+         * Messages from the other participant use standard parchment tones,
+         * distinguishing their words from yours without overwhelming the design.
+         */
+        .message-bubble.message-left {
+            background: linear-gradient(135deg, #e8dcc4, #d4c4a8);
+            border-color: rgba(60, 43, 25, 0.6);
+        }
+
+        /* The message text itself - dark ink on parchment */
+        .message-bubble p:first-child {
+            color: #2c2416;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            margin: 0 0 0.5rem 0;
+            font-weight: 500;
+        }
+
+        /* Only show the first paragraph as message content */
+        .message-bubble p:last-child {
+            color: rgba(60, 50, 35, 0.6);
+            font-size: 0.75rem;
+            margin: 0;
+            font-style: italic;
+            text-align: right;
+        }
+
+        /* ========== AVATAR STYLING ========== */
+        /*
+         * Avatars appear next to each message like portrait medallions
+         * or wax seal imprints. They help identify who said what and add
+         * personality to the conversation thread.
+         */
+        .avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(60, 43, 25, 0.7);
+            box-shadow:
+                    0 3px 8px rgba(0,0,0,0.6),
+                    0 0 0 2px rgba(217, 178, 97, 0.12);
+            flex-shrink: 0;
+        }
+
+        /* Messages aligned to the right (logged-in user) */
+        .message-right + .avatar {
+            border-color: var(--gold-dark);
+            box-shadow:
+                    0 3px 8px rgba(0,0,0,0.6),
+                    0 0 0 2px rgba(217, 178, 97, 0.25);
+        }
+
+        /* ========== MESSAGE ROW SPACING ========== */
+        /*
+         * Each message row gets comfortable vertical spacing so the
+         * conversation doesn't feel cramped. Think of it like leaving
+         * space between letters in a correspondence bundle.
+         */
+        .message-row {
+            margin: 1rem 0;
+            display: flex;
+            align-items: flex-start;
+            width: 100%;
+        }`
+
+        /* Right-aligned messages (user's own) */
+        .message-row.justify-content-end {
+            flex-direction: row-reverse;
+        }
+
+        .message-row.justify-content-end .avatar {
+            margin-left: 0.75rem;
+        }
+
+        /* Left-aligned messages (other participant) */
+        .message-row.justify-content-start .avatar {
+            margin-right: 0.75rem;
+        }
+
+        /* ========== RESPONSIVE DESIGN ========== */
+        @media (max-width: 768px) {
+            .message-bubble {
+                max-width: 85%;
+                font-size: 0.9rem;
+            }
+
+            .avatar {
+                width: 48px;
+                height: 48px;
+            }
+
+            .chat-history {
+                height: 65vh;
+                padding: 0.75rem;
+            }
+
+            .message-input-container {
+                padding: 1rem;
+                margin: 1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .message-bubble {
+                max-width: 90%;
+                padding: 0.7rem 0.9rem;
+            }
+
+            .avatar {
+                width: 42px;
+                height: 42px;
+            }
+
+            .message-input-container .btn-primary {
+                width: 100%;
+                padding: 0.75rem;
+            }
+        }
+
+        /* ========== CUSTOM SCROLLBAR FOR BODY ========== */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #4a381f, #2b210c);
+            border-radius: 10px;
+            border: 2px solid rgba(0,0,0,0.45);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #5a4825, #3a2815);
+        }
+
+        ::-webkit-scrollbar-track {
+            background: linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.25));
+        }
+    </style>
 </head>
 <body>
+<nav th:replace="~{fragments::navbar}"></nav>
 
+<!-- ========== MESSAGE COMPOSITION AREA ========== -->
+<div class="container">
+    <div class="message-input-container">
+        <form th:object="${messageDTO}"
+              th:method="POST"
+              th:action="@{'/chat-room/' + ${chatRoom.roomCode} + '/create-message'}">
+            <div class="form-group">
+                <label class="form-label" for="message">Message</label>
+                <input class="form-control"
+                       id="message"
+                       placeholder="Inscribe your message upon the parchment..."
+                       type="text"
+                       th:field="*{message}"
+                       autocomplete="off">
+            </div>
+            <button type="submit" class="btn btn-primary">Send</button>
+        </form>
+    </div>
+</div>
+
+<!-- ========== CHAT HISTORY - THE CORRESPONDENCE THREAD ========== -->
+<div class="chat-history">
+    <div class="container-fluid">
+        <div class="row">
+            <div th:each="message : ${chatRoom.getAllMessagesSortedBySentAt().reversed()}"
+                 class="col-12">
+
+                <!-- ============================================ -->
+                <!-- LOGGED-IN USER'S MESSAGES (Right-aligned)    -->
+                <!-- ============================================ -->
+                <div th:if="${message.sender.id == loggedUser.hero.id}"
+                     class="message-row d-flex justify-content-end w-100">
+
+                    <!-- Message bubble comes FIRST for right-aligned messages -->
+                    <div class="message-bubble message-right">
+                        <p th:text="${message.message}">Message text goes here</p>
+                        <p th:text="${message.getTimeForSentMessage()}">Timestamp</p>
+                    </div>
+
+                    <!-- Avatar comes SECOND, with margin on the left (ms-2 = margin-start) -->
+                    <img th:src="${message.sender.imageUrl}"
+                         alt="Your Avatar"
+                         class="avatar ms-2">
+                </div>
+
+                <!-- ============================================ -->
+                <!-- OTHER PARTICIPANT'S MESSAGES (Left-aligned)  -->
+                <!-- ============================================ -->
+                <div th:unless="${message.sender.id == loggedUser.hero.id}"
+                     class="message-row d-flex justify-content-start">
+
+                    <!-- Avatar comes FIRST for left-aligned messages, with margin on right (me-2 = margin-end) -->
+                    <img th:src="${message.sender.imageUrl}"
+                         alt="Sender Avatar"
+                         class="avatar me-2">
+
+                    <!-- Message bubble comes SECOND -->
+                    <div class="message-bubble message-left">
+                        <p th:text="${message.message}">Message text goes here</p>
+                        <p th:text="${message.getTimeForSentMessage()}">Timestamp</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments::footer}"></footer>
 
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
@@ -18,5 +436,19 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.min.js"
         integrity="sha384-RuyvpeZCxMJCqVUGFI0Do1mQrods/hhxYlcVfGPOfQtPJh0JCw12tUAZ/Mv10S7D"
         crossorigin="anonymous"></script>
+
+<!-- Optional: Auto-scroll to bottom on page load to show latest messages -->
+<script>
+    // When the page loads, scroll the chat history to the bottom
+    // so users see the most recent messages first
+    window.addEventListener('DOMContentLoaded', function() {
+        const chatHistory = document.querySelector('.chat-history');
+        if (chatHistory) {
+            // Since messages are in reverse order (newest first),
+            // we actually want to scroll to top to see the newest
+            chatHistory.scrollTop = 0;
+        }
+    });
+</script>
 </body>
 </html>

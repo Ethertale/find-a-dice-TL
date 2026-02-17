@@ -33,4 +33,16 @@ public class ChatMessages {
 
     @Column(nullable = false)
     private LocalDateTime sentAt;
+
+    public String getTimeForSentMessage() {
+        return sentAt.getHour() +
+                ":" +
+                sentAt.getMinute() +
+                " | " +
+                sentAt.getDayOfMonth() +
+                " " +
+                sentAt.getMonth() +
+                " " +
+                sentAt.getYear();
+    }
 }
