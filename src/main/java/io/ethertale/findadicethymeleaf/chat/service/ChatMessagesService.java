@@ -1,11 +1,13 @@
 package io.ethertale.findadicethymeleaf.chat.service;
 
 import io.ethertale.findadicethymeleaf.chat.model.ChatMessages;
+import io.ethertale.findadicethymeleaf.chat.model.ChatRoom;
 import io.ethertale.findadicethymeleaf.chat.repo.ChatMessagesRepo;
 import io.ethertale.findadicethymeleaf.chat.repo.ChatRoomRepo;
 import io.ethertale.findadicethymeleaf.user.model.User;
 import io.ethertale.findadicethymeleaf.web.dto.ChatRoomMessageDTO;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -20,6 +22,7 @@ public class ChatMessagesService {
         this.chatRoomRepo = chatRoomRepo;
     }
 
+    @Transactional
     public void sendMessage(String roomCode, User loggedUser, ChatRoomMessageDTO chatRoomMessageDTO) {
         ChatMessages newMessage = ChatMessages.builder()
                 .chatRoom(chatRoomRepo.findByRoomCode(roomCode))
@@ -28,6 +31,10 @@ public class ChatMessagesService {
                 .sentAt(LocalDateTime.now())
                 .build();
 
+        ChatRoom room = chatRoomRepo.findByRoomCode(roomCode);
+        room.setUpdatedAt(LocalDateTime.now());
+
         chatMessagesRepo.save(newMessage);
+        chatRoomRepo.save(room);
     }
 }
