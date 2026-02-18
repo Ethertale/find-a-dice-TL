@@ -8,127 +8,705 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="/css/main.css">
+    <style>
+        /* ========== FANTASY THEME COLOR PALETTE ========== */
+        :root {
+            --page-bg-1: #061012;
+            --page-bg-2: #0f1f14;
+            --panel-dark: #0c0f11;
+            --panel-accent: #3c2b19;
+            --gold: #d9b261;
+            --gold-dark: #8f6a36;
+            --muted-text: #cfc8b8;
+            --light-text: #f7f3e7;
+            --accent-glow: rgba(200,150,60,0.12);
+            --parchment: #f4e8d0;
+        }
+
+        /* ========== BACKGROUND - THE GUILD HALL ATMOSPHERE ========== */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            position: relative;
+            font-family: "Georgia", "Palatino Linotype", serif;
+            color: var(--muted-text);
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background:
+                    linear-gradient(rgba(6,10,8,0.55), rgba(3,6,5,0.65)),
+                    url("https://w0.peakpx.com/wallpaper/1014/828/HD-wallpaper-fantasy-of-after-world-war-4-fantasy-vintage-art-retro.jpg")
+                    center center / cover no-repeat;
+            filter: blur(10px);
+            transform: scale(1.05);
+        }
+
+        /* ========== MAIN CONTAINER ========== */
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========== CHARACTER REGISTRY SCROLL ========== */
+        #backgr {
+            background:
+                    linear-gradient(180deg,
+                    rgba(25, 20, 15, 0.95) 0%,
+                    rgba(18, 15, 12, 0.97) 100%);
+            border: 4px solid var(--panel-accent);
+            border-radius: 12px;
+            padding: 2rem 2rem;
+            max-width: 550px;
+            width: 100%;
+            max-height: 90vh;
+            overflow: auto;
+            overflow-x: hidden;
+            box-shadow:
+                    0 12px 40px rgba(0, 0, 0, 0.9),
+                    inset 0 2px 0 rgba(255, 255, 255, 0.03),
+                    inset 0 -20px 60px rgba(0, 0, 0, 0.6),
+                    0 0 0 1px rgba(0, 0, 0, 0.7);
+            position: relative;
+        }
+
+        #backgr::after {
+            content: "";
+            position: absolute;
+            inset: -8px;
+            background: radial-gradient(circle at center,
+            rgba(217, 178, 97, 0.08) 0%,
+            transparent 70%);
+            border-radius: 16px;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* ========== FORM LABELS - INSCRIBED TEXT ========== */
+        label {
+            color: var(--gold);
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.4rem;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+            display: block;
+        }
+
+        /* ========== FORM INPUTS & SELECTS ========== */
+        .form-control {
+            border-radius: 8px;
+            border: 2px solid rgba(60, 43, 25, 0.6);
+            background: linear-gradient(180deg, rgba(14,12,10,0.7), rgba(8,6,5,0.8));
+            color: var(--light-text);
+            box-shadow:
+                    inset 0 3px 8px rgba(0,0,0,0.7),
+                    0 1px 0 rgba(255, 255, 255, 0.02);
+            padding: 0.7rem 0.95rem;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            background: linear-gradient(180deg, rgba(18,15,12,0.8), rgba(10,8,6,0.9));
+            border-color: var(--gold-dark);
+            box-shadow:
+                    inset 0 3px 10px rgba(0,0,0,0.8),
+                    0 0 0 3px rgba(217, 178, 97, 0.25),
+                    0 0 20px rgba(217, 178, 97, 0.15);
+            color: var(--light-text);
+            outline: none;
+        }
+
+        .form-control::placeholder {
+            color: rgba(207, 200, 184, 0.4);
+            font-style: italic;
+        }
+
+        /* Select dropdown styling */
+        .form-control option {
+            background: #1a1612;
+            color: var(--light-text);
+            padding: 0.5rem;
+        }
+
+        /* ========== FORM GROUPS - SPACING ========== */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        /* ========== SECTION DIVIDERS ========== */
+        /* Optional: Add visual separation between different sections of the form */
+        .stats-section-title {
+            font-family: "Palatino Linotype", "Book Antiqua", serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 1.2px;
+            text-align: center;
+            margin: 1.5rem 0 1rem 0;
+            text-shadow:
+                    0 2px 0 rgba(0,0,0,0.8),
+                    0 2px 8px rgba(60,40,12,0.15);
+            position: relative;
+        }
+
+        .stats-section-title::after {
+            content: "";
+            display: block;
+            width: 50%;
+            height: 1px;
+            margin: 0.5rem auto 0 auto;
+            background: linear-gradient(90deg,
+            transparent 0%,
+            var(--gold-dark) 50%,
+            transparent 100%);
+            opacity: 0.4;
+        }
+
+        /* ========== SUBMIT BUTTON ========== */
+        .btn-secondary {
+            background: linear-gradient(180deg, #5a4316, var(--gold)) !important;
+            color: #111 !important;
+            border: 2px solid var(--gold-dark) !important;
+            box-shadow:
+                    0 6px 16px rgba(0,0,0,0.7),
+                    inset 0 2px 0 rgba(255,255,255,0.15),
+                    inset 0 -2px 8px rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            padding: 0.75rem 3rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-secondary::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg,
+            transparent,
+            rgba(255, 255, 255, 0.2),
+            transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-secondary:hover::before {
+            left: 100%;
+        }
+
+        .btn-secondary:hover,
+        .btn-secondary:focus {
+            transform: translateY(-2px);
+            box-shadow:
+                    0 10px 25px rgba(0,0,0,0.8),
+                    0 0 30px rgba(217, 178, 97, 0.3),
+                    inset 0 2px 0 rgba(255,255,255,0.2);
+            background: linear-gradient(180deg, #6a5320, #e9c571) !important;
+        }
+
+        .btn-secondary:active {
+            transform: translateY(0px);
+        }
+
+        /* ========== BACK LINK ========== */
+        .container a {
+            display: inline-flex;
+            align-items: center;
+            color: var(--gold);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            padding: 0.5rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        }
+
+        .container a p {
+            margin: 0;
+            margin-left: 0.5rem;
+            font-weight: 600;
+        }
+
+        #backArrow {
+            filter: brightness(0) saturate(100%) invert(73%) sepia(31%) saturate(542%) hue-rotate(358deg) brightness(93%) contrast(86%);
+            transition: all 0.3s ease;
+        }
+
+        .container a:hover {
+            transform: translateX(-3px);
+            background: rgba(217, 178, 97, 0.1);
+        }
+
+        #backArrow {
+            filter: brightness(0) saturate(100%) invert(93%) sepia(12%) saturate(1247%) hue-rotate(327deg) brightness(104%) contrast(92%) drop-shadow(0 0 6px rgba(217, 178, 97, 0.6));
+        }
+
+        /* ========== FOOTER SPACING ========== */
+        footer {
+            margin-top: 2rem;
+            color: #9f967f;
+        }
+
+        /* ========== RESPONSIVE DESIGN ========== */
+        @media (max-width: 768px) {
+            #backgr {
+                padding: 1.5rem 1.5rem;
+                margin: 1rem;
+            }
+
+            .btn-secondary {
+                padding: 0.65rem 2rem;
+                font-size: 1rem;
+            }
+
+            body::before {
+                background-attachment: scroll;
+            }
+
+            label {
+                font-size: 0.85rem;
+            }
+
+            .form-control {
+                padding: 0.6rem 0.85rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Aggressive scaling for short screens */
+        @media (max-height: 900px) {
+            #backgr {
+                padding: 1.5rem 2rem;
+            }
+
+            .form-group {
+                margin-bottom: 1rem;
+            }
+
+            label {
+                font-size: 0.85rem;
+                margin-bottom: 0.3rem;
+            }
+
+            .form-control {
+                padding: 0.6rem 0.9rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-height: 750px) {
+            #backgr {
+                padding: 1.25rem 1.75rem;
+            }
+
+            .form-group {
+                margin-bottom: 0.75rem;
+            }
+
+            label {
+                font-size: 0.8rem;
+                margin-bottom: 0.25rem;
+            }
+
+            .form-control {
+                padding: 0.5rem 0.8rem;
+                font-size: 0.85rem;
+            }
+
+            .btn-secondary {
+                padding: 0.6rem 2.5rem;
+                font-size: 0.95rem;
+                margin: 1rem 0 0.5rem 0 !important;
+            }
+
+            .stats-section-title {
+                font-size: 1.1rem;
+                margin: 1rem 0 0.75rem 0;
+            }
+
+            .corner-embellishment {
+                width: 30px;
+                height: 30px;
+            }
+        }
+
+        @media (max-height: 650px) {
+            #backgr {
+                padding: 1rem 1.5rem;
+            }
+
+            .form-group {
+                margin-bottom: 0.5rem;
+            }
+
+            label {
+                font-size: 0.75rem;
+                margin-bottom: 0.2rem;
+            }
+
+            .form-control {
+                padding: 0.45rem 0.75rem;
+                font-size: 0.8rem;
+            }
+
+            .btn-secondary {
+                padding: 0.5rem 2rem;
+                font-size: 0.9rem;
+                margin: 0.75rem 0 0.25rem 0 !important;
+            }
+
+            .stats-section-title {
+                font-size: 1rem;
+                margin: 0.75rem 0 0.5rem 0;
+            }
+
+            .corner-embellishment {
+                width: 25px;
+                height: 25px;
+            }
+        }
+
+        @media (max-height: 700px) {
+            body > div[style*="min-height: 100vh"] {
+                padding: 0.5rem 0 !important;
+            }
+        }
+
+        /* Reduce back button margin on short screens */
+        @media (max-height: 750px) {
+            form > .container a {
+                margin-bottom: 0.5rem;
+            }
+        }
+
+        @media (max-height: 650px) {
+            form > .container a {
+                margin-bottom: 0.25rem;
+                padding: 0.25rem;
+            }
+        }
+
+        /* ========== CUSTOM SCROLLBAR ========== */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #4a381f, #2b210c);
+            border-radius: 10px;
+            border: 2px solid rgba(0,0,0,0.45);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #5a4825, #3a2815);
+        }
+
+        ::-webkit-scrollbar-track {
+            background: linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.25));
+        }
+
+        #backgr::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #backgr::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #5a4316, var(--gold-dark));
+            border-radius: 6px;
+        }
+
+        #backgr::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.3);
+        }
+
+        /* ========== DECORATIVE CORNERS ========== */
+        .corner-embellishment {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--gold-dark);
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .corner-embellishment.top-left {
+            top: 8px;
+            left: 8px;
+            border-right: none;
+            border-bottom: none;
+        }
+
+        .corner-embellishment.top-right {
+            top: 8px;
+            right: 8px;
+            border-left: none;
+            border-bottom: none;
+        }
+
+        .corner-embellishment.bottom-left {
+            bottom: 8px;
+            left: 8px;
+            border-right: none;
+            border-top: none;
+        }
+
+        .corner-embellishment.bottom-right {
+            bottom: 8px;
+            right: 8px;
+            border-left: none;
+            border-top: none;
+        }
+        nav {
+            z-index: 5;
+        }
+    </style>
     <title>Find A Dice - Edit Hero</title>
 </head>
 <body>
 
 <nav th:replace="~{fragments::navbar}"></nav>
 
-<div style="min-height: 95vh" class="container d-flex flex-column justify-content-center align-items-center align-content-center h-95">
-    <div class="row">
+<div style="min-height: 90vh; padding: 1rem 0;" class="container d-flex flex-column justify-content-center align-items-center">
+    <div class="row w-90" style="flex: 0 1 auto;">
         <div class="col-12 mx-auto">
             <div id="backgr" class="container d-flex flex-column justify-content-around align-items-center">
-                <form th:method="POST" th:action="@{'/profile/' + ${loggedUser.id} + '/edit-hero/success'}" th:object="${editHeroDTO}">
+                <form th:method="POST"
+                      th:action="@{'/profile/' + ${loggedUser.id} + '/edit-hero/success'}"
+                      th:object="${editHeroDTO}">
+
+                    <!-- Back button -->
                     <div class="container">
-                        <a class="text-left d-flex flex-row" th:href="'/profile/' + ${loggedUser.id}"><img style="width: 40px" src="https://img.icons8.com/ios/50/left.png" alt="left"/><p>Go Back</p></a>
+                        <a class="text-left d-flex flex-row" th:href="'/profile/' + ${loggedUser.id}">
+                            <img id="backArrow" style="width: 40px" src="https://img.icons8.com/ios/50/left.png" alt="left"/>
+                            <p>Go Back</p>
+                        </a>
                     </div>
+
                     <div class="row">
+                        <!-- ========== BASIC INFORMATION ========== -->
                         <div class="col-12 col-md-4 mx-auto">
                             <div class="form-group">
                                 <label for="name">Name</label>
-                                <input th:field="*{name}" type="text" class="form-control" id="name" aria-describedby="nameHelp" placeholder="Name">
+                                <input th:field="*{name}"
+                                       type="text"
+                                       class="form-control"
+                                       id="name"
+                                       placeholder="Hero's name">
                             </div>
                         </div>
+
                         <div class="col-12 col-md-4 mx-auto">
                             <div class="form-group">
                                 <label for="age">Age (18-∞)</label>
-                                <input th:field="*{age}" type="text" class="form-control" id="age" aria-describedby="usernameHelp" placeholder="Age (18-∞)">
+                                <input th:field="*{age}"
+                                       type="text"
+                                       class="form-control"
+                                       id="age"
+                                       placeholder="Age">
                             </div>
                         </div>
+
                         <div class="col-12 col-md-4 mx-auto">
                             <div class="form-group">
                                 <label for="gender">Gender</label>
-                                <select class="form-control" th:field="*{gender}" name="gender" id="gender">
-                                    <option th:each="gender: ${genders}" th:value="${gender.name()}" th:text="${gender.name()}"></option>
+                                <select class="form-control"
+                                        th:field="*{gender}"
+                                        name="gender"
+                                        id="gender">
+                                    <option th:each="gender: ${genders}"
+                                            th:value="${gender.name()}"
+                                            th:text="${gender.name()}"></option>
                                 </select>
                             </div>
                         </div>
+
+                        <!-- ========== CHARACTER CLASS INFO ========== -->
                         <div class="col-12 col-md-4 mx-auto">
                             <div class="form-group">
                                 <label for="race">Race</label>
-                                <select class="form-control" th:field="*{race}" name="race" id="race">
-                                    <option th:each="race: ${races}" th:value="${race.name()}" th:text="${race}"></option>
+                                <select class="form-control"
+                                        th:field="*{race}"
+                                        name="race"
+                                        id="race">
+                                    <option th:each="race: ${races}"
+                                            th:value="${race.name()}"
+                                            th:text="${race}"></option>
                                 </select>
                             </div>
                         </div>
+
                         <div class="col-12 col-md-4 mx-auto">
                             <div class="form-group">
                                 <label for="class">Class</label>
-                                <select class="form-control" th:field="*{charClass}" name="class" id="class">
-                                    <option th:each="class: ${charClasses}" th:value="${class.name()}" th:text="${class}"></option>
+                                <select class="form-control"
+                                        th:field="*{charClass}"
+                                        name="class"
+                                        id="class">
+                                    <option th:each="class: ${charClasses}"
+                                            th:value="${class.name()}"
+                                            th:text="${class}"></option>
                                 </select>
                             </div>
                         </div>
+
                         <div class="col-12 col-md-4 mx-auto">
                             <div class="form-group">
                                 <label for="level">Level</label>
-                                <input th:field="*{level}" type="number" class="form-control" id="level" aria-describedby="usernameHelp" placeholder="Level">
+                                <input th:field="*{level}"
+                                       type="number"
+                                       class="form-control"
+                                       id="level"
+                                       placeholder="Character level">
                             </div>
                         </div>
-                        <div class="col-12 col-md-5 mx-auto">
+
+                        <!-- ========== BACKGROUND & ALIGNMENT ========== -->
+                        <div class="col-12 col-md-6 mx-auto">
                             <div class="form-group">
                                 <label for="alignment">Alignment</label>
-                                <select class="form-control" th:field="*{alignment}" name="alignment" id="alignment">
-                                    <option th:each="alignment: ${alignments}" th:value="${alignment.name()}" th:text="${alignment}"></option>
+                                <select class="form-control"
+                                        th:field="*{alignment}"
+                                        name="alignment"
+                                        id="alignment">
+                                    <option th:each="alignment: ${alignments}"
+                                            th:value="${alignment.name()}"
+                                            th:text="${alignment}"></option>
                                 </select>
                             </div>
                         </div>
-                        <div class="col-12 col-md-5 mx-auto">
+
+                        <div class="col-12 col-md-6 mx-auto">
                             <div class="form-group">
                                 <label for="background">Background</label>
-                                <select class="form-control" th:field="*{background}" name="background" id="background">
-                                    <option th:each="background: ${backgrounds}" th:value="${background.name()}" th:text="${background}"></option>
+                                <select class="form-control"
+                                        th:field="*{background}"
+                                        name="background"
+                                        id="background">
+                                    <option th:each="background: ${backgrounds}"
+                                            th:value="${background.name()}"
+                                            th:text="${background}"></option>
                                 </select>
                             </div>
                         </div>
+
+                        <!-- ========== ABILITY SCORES SECTION ========== -->
+                        <div class="col-12">
+                            <h3 class="stats-section-title">Ability Scores</h3>
+                        </div>
+
                         <div class="col-12 col-md-4 mx-auto">
                             <div class="form-group">
                                 <label for="strength">Strength (1-20)</label>
-                                <input th:field="*{strength}" type="number" min="1" max="20" class="form-control" id="strength" aria-describedby="usernameHelp" placeholder="Strength (1-20)">                                </select>
+                                <input th:field="*{strength}"
+                                       type="number"
+                                       min="1"
+                                       max="20"
+                                       class="form-control"
+                                       id="strength"
+                                       placeholder="STR">
                             </div>
                         </div>
+
                         <div class="col-12 col-md-4 mx-auto">
                             <div class="form-group">
                                 <label for="dexterity">Dexterity (1-20)</label>
-                                <input th:field="*{dexterity}" type="number" min="1" max="20" class="form-control" id="dexterity" aria-describedby="usernameHelp" placeholder="Dexterity (1-20)">                                </select>
+                                <input th:field="*{dexterity}"
+                                       type="number"
+                                       min="1"
+                                       max="20"
+                                       class="form-control"
+                                       id="dexterity"
+                                       placeholder="DEX">
                             </div>
                         </div>
+
                         <div class="col-12 col-md-4 mx-auto">
                             <div class="form-group">
                                 <label for="constitution">Constitution (1-20)</label>
-                                <input th:field="*{constitution}" type="number" min="1" max="20" class="form-control" id="constitution" aria-describedby="usernameHelp" placeholder="Constitution (1-20)">                                </select>
+                                <input th:field="*{constitution}"
+                                       type="number"
+                                       min="1"
+                                       max="20"
+                                       class="form-control"
+                                       id="constitution"
+                                       placeholder="CON">
                             </div>
                         </div>
+
                         <div class="col-12 col-md-4 mx-auto">
                             <div class="form-group">
                                 <label for="intelligence">Intelligence (1-20)</label>
-                                <input th:field="*{intelligence}" type="number" min="1" max="20" class="form-control" id="intelligence" aria-describedby="usernameHelp" placeholder="Intelligence (1-20)">                                </select>
+                                <input th:field="*{intelligence}"
+                                       type="number"
+                                       min="1"
+                                       max="20"
+                                       class="form-control"
+                                       id="intelligence"
+                                       placeholder="INT">
                             </div>
                         </div>
+
                         <div class="col-12 col-md-4 mx-auto">
                             <div class="form-group">
                                 <label for="wisdom">Wisdom (1-20)</label>
-                                <input th:field="*{wisdom}" type="number" min="1" max="20" class="form-control" id="wisdom" aria-describedby="usernameHelp" placeholder="Wisdom (1-20)">                                </select>
+                                <input th:field="*{wisdom}"
+                                       type="number"
+                                       min="1"
+                                       max="20"
+                                       class="form-control"
+                                       id="wisdom"
+                                       placeholder="WIS">
                             </div>
                         </div>
+
                         <div class="col-12 col-md-4 mx-auto">
                             <div class="form-group">
                                 <label for="charisma">Charisma (1-20)</label>
-                                <input th:field="*{charisma}" type="number" min="1" max="20" class="form-control" id="charisma" aria-describedby="usernameHelp" placeholder="Charisma (1-20)">                                </select>
+                                <input th:field="*{charisma}"
+                                       type="number"
+                                       min="1"
+                                       max="20"
+                                       class="form-control"
+                                       id="charisma"
+                                       placeholder="CHA">
                             </div>
                         </div>
+
+                        <!-- ========== CHARACTER DETAILS ========== -->
                         <div class="col-12 mx-auto">
                             <div class="form-group">
                                 <label for="description">Description</label>
-                                <input th:field="*{description}" type="text" class="form-control" id="description" aria-describedby="usernameHelp" placeholder="Description">                                </select>
+                                <input th:field="*{description}"
+                                       type="text"
+                                       class="form-control"
+                                       id="description"
+                                       placeholder="Describe your character's appearance and personality">
                             </div>
                         </div>
+
                         <div class="col-12 mx-auto">
                             <div class="form-group">
-                                <label for="imageUrl">Image Url</label>
-                                <input th:field="*{imageUrl}" type="text" class="form-control" id="imageUrl" aria-describedby="usernameHelp" placeholder="imageUrl">                                </select>
+                                <label for="imageUrl">Image URL</label>
+                                <input th:field="*{imageUrl}"
+                                       type="text"
+                                       class="form-control"
+                                       id="imageUrl"
+                                       placeholder="https://example.com/character-portrait.jpg">
                             </div>
                         </div>
+
+                        <!-- Submit button -->
                         <div class="container d-flex flex-column justify-content-center align-items-center">
                             <button type="submit" class="btn btn-secondary m-3">Submit</button>
                         </div>

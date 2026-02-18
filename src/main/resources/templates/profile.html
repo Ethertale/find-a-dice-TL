@@ -82,7 +82,7 @@
         }
 
         /* Edit button */
-        a.btn.btn-secondary.my-2 {
+        a.btn.btn-secondary.my-2, .chatButton {
             background: linear-gradient(180deg,#5a4316,var(--gold));
             color: #111;
             border: 1px solid var(--gold-dark);
@@ -109,6 +109,20 @@
             transform: translateY(-4px);
             box-shadow: 0 10px 26px rgba(0,0,0,0.6);
             background: linear-gradient(180deg, rgba(20,18,14,0.55), rgba(10,8,6,0.75));
+        }
+        .profileChat {
+            color: var(--light-text);
+            padding: 0;
+            transition: transform .12s ease, box-shadow .12s ease, background .12s ease;
+            display: inline-block;
+            min-width: 110px;
+            text-align: center;
+        }
+        .profileChat p {
+            .profileStats p { margin: .45rem .6rem; color: #e9e1d6; font-weight:700; }
+        }
+        .profileChat:hover {
+            transform: translateY(-4px);
         }
 
         /* group hero column left (avatar + hero stats) */
@@ -218,9 +232,9 @@
                         <div class="profileStats rounded-0 rounded-start align-items-center"><p class="m-2"><span th:text="${user.hero.groups.size()}">0</span> Owned Groups</p></div>
                         <div class="profileStats rounded-0"><p class="m-2"><span th:text="${user.hero.groupPosts.size()}">0</span> Total Posts</p></div>
                         <div class="profileStats rounded-0 rounded-end"><p class="m-2"><span>0</span> Events Visited</p></div>
-                        <div class="profileStats">
+                        <div class="profileChat">
                             <form th:action="@{'/chat-room/create-chatroom/' + ${user.id}}" method="post">
-                                <button type="submit">CHAT</button>
+                                <button class="chatButton" type="submit">CHAT</button>
                             </form>
                         </div>                    </div>
                     <div th:if="${user.id == loggedUser.id} OR ${loggedUser.role.name()} == 'ADMIN'" class="container" >
