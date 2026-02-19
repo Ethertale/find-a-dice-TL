@@ -80,4 +80,9 @@ public class MainController {
         mav.addObject("characters", heroService.getAllCharacters());
         return mav;
     }
+
+    @GetMapping("/documentation")
+    public ModelAndView documentationPage(){
+        return new ModelAndView("documentation");
+    }
 }
