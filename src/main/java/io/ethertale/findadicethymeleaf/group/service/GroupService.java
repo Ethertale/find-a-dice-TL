@@ -115,4 +115,8 @@ public class GroupService {
         groupPostRepo.save(newPost);
         log.info("User {} created post {} in group {}", hero.getUser().getId(), newPost.getId(), groupId);
     }
+
+    public List<Group> searchGroups(String query) {
+        return groupRepo.findGroupByNameContainingIgnoreCase(query);
+    }
 }

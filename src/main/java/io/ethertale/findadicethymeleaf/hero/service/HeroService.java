@@ -133,4 +133,8 @@ public class HeroService {
     public List<Hero> getAllCharacters() {
         return heroRepo.findAll().stream().toList();
     }
+
+    public List<Hero> searchHeroes(String query) {
+        return heroRepo.findHeroByNameContainingIgnoreCase(query);
+    }
 }

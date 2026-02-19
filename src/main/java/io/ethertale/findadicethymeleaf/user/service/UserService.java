@@ -73,4 +73,8 @@ public class UserService implements UserDetailsService {
     public List<User> getAllUsers() {
         return userRepo.findAll().stream().toList();
     }
+
+    public List<User> searchUsers(String query) {
+        return userRepo.findUserByUsernameContainingIgnoreCase(query);
+    }
 }

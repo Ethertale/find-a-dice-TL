@@ -73,13 +73,11 @@
                 </li>
             </ul>
 
-            <form class="d-flex" role="search">
+            <form class="d-flex" role="search" th:action="@{/search}" method="GET">
                 <input class="form-control me-2"
-                       th:action="@{/search}"
-                       th:method="GET"
-                       name="search"
                        type="search"
-                       placeholder="Explore the realm..."
+                       name="search"
+                       placeholder="Search the realm..."
                        aria-label="Search"/>
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>

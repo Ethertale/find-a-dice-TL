@@ -57,4 +57,8 @@ public class EventService {
     public Event getSpecificGroup(UUID id) {
         return eventRepo.findById(id).orElse(null);
     }
+
+    public List<Event> searchEvents(String query) {
+        return eventRepo.findEventByTitleContainingIgnoreCase(query);
+    }
 }
