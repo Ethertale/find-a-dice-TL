@@ -9,6 +9,12 @@
           integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="/css/navbar-footer.css">
     <title>Find A Dice - Docs</title>
+    <style>
+        .pending:after {
+            content: "*";
+            color: red;
+        }
+    </style>
 </head>
 <body>
 <nav th:replace="~{fragments::navbar}"></nav>
@@ -66,9 +72,9 @@
             <li>Spring Devtools</li>
             <li>Spring Actuator</li>
             <li>Lombok</li>
-            <li>JUnit<span style="color: red;">*</span></li>
-            <li>Docker<span style="color: red;">*</span></li>
-            <li>Grafana & Prometheus<span style="color: red;">*</span></li>
+            <li class="pending">JUnit</li>
+            <li class="pending">Docker</li>
+            <li class="pending">Grafana & Prometheus</li>
         </ul>
     </div>
     <hr>
@@ -79,24 +85,24 @@
     <div id="roadmap" class="container">
         <h2>Future Roadmap</h2>
         <div class="container">
-            <h4>Campaign Management Tools</h4>
-            <p></p>
+            <h4 class="pending">Campaign Management Tools</h4>
+            <p>Host will be the DM. </p>
         </div>
         <div class="container">
-            <h4>Character Sheet Integration</h4>
-            <p></p>
+            <h4 class="pending">Character Sheet Integration</h4>
+            <p>Create character sheets that will be used in the campaigns</p>
         </div>
         <div class="container">
-            <h4>Dice Rolling System</h4>
-            <p></p>
+            <h4 class="pending">Dice Rolling System</h4>
+            <p>d4, d6, d8, d10, d12, d20</p>
         </div>
         <div class="container">
-            <h4>Marketplace</h4>
-            <p></p>
+            <h4 class="pending">Marketplace</h4>
+            <p>Users can sell stuff here</p>
         </div>
         <div class="container">
-            <h4>Advanced Search & Filtering</h4>
-            <p></p>
+            <h4 class="pending">Advanced Search & Filtering</h4>
+            <p>Add filters to the search</p>
         </div>
     </div>
     <hr>
