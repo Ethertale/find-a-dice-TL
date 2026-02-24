@@ -213,6 +213,13 @@
                 flex-direction: column;
             }
         }
+        #heroDescription p {
+            overflow: auto;
+            display: -webkit-box;
+            -webkit-line-clamp: 20; /* number of lines to show */
+            line-clamp: 20;
+            -webkit-box-orient: vertical;
+        }
     </style>
 </head>
 <body>
@@ -311,7 +318,7 @@
                 </div>
         </div>
         <div class="col-12 col-md-7 d-flex flex-row justify-content-around align-items-center border-start">
-            <div class="col-12">
+            <div id="heroDescription" class="col-12">
                 <h5 th:text="'The story of ' + ${user.hero.name}"></h5>
                 <p th:text="${user.hero.description}"></p>
             </div>
