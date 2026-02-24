@@ -85,4 +85,7 @@ public class MainController {
     public ModelAndView documentationPage(){
         return new ModelAndView("documentation");
     }
+
+    @GetMapping("/dice-roll")
+    public ModelAndView diceRollPage(){return new ModelAndView("diceRolls");}
 }

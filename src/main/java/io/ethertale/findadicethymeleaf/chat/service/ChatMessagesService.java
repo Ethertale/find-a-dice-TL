@@ -6,12 +6,14 @@ import io.ethertale.findadicethymeleaf.chat.repo.ChatMessagesRepo;
 import io.ethertale.findadicethymeleaf.chat.repo.ChatRoomRepo;
 import io.ethertale.findadicethymeleaf.user.model.User;
 import io.ethertale.findadicethymeleaf.web.dto.ChatRoomMessageDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
 @Service
+@Slf4j
 public class ChatMessagesService {
 
     private final ChatMessagesRepo chatMessagesRepo;
@@ -36,5 +38,7 @@ public class ChatMessagesService {
 
         chatMessagesRepo.save(newMessage);
         chatRoomRepo.save(room);
+
+        log.info("{} {} - {}: {}", LocalDateTime.now(), loggedUser.getHero().getName(), roomCode, chatRoomMessageDTO.getMessage());
     }
 }
