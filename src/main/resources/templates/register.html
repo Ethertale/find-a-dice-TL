@@ -81,16 +81,6 @@
             position: relative;
         }
 
-        /* Ornate inner border decoration */
-        #backgr::before {
-            content: "";
-            position: absolute;
-            inset: 12px;
-            border: 2px solid rgba(217, 178, 97, 0.15);
-            border-radius: 8px;
-            pointer-events: none;
-        }
-
         /* Subtle glow effect that pulses gently */
         #backgr::after {
             content: "";
@@ -109,14 +99,6 @@
          * Add ornate corner decorations to the form, like metal corner guards
          * on an ancient tome or scroll case
          */
-        #backgr::before {
-            content: "";
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            border: 3px solid var(--gold-dark);
-            opacity: 0.6;
-        }
 
         /* ========== FORM LABELS - INSCRIBED TEXT ========== */
         /*
