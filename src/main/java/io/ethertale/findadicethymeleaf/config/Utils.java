@@ -1,7 +1,10 @@
 package io.ethertale.findadicethymeleaf.config;
 
+import org.springframework.context.annotation.Configuration;
+
 import java.time.LocalDateTime;
 
+@Configuration
 public class Utils {
 
     public String formattedTimeNow(){
