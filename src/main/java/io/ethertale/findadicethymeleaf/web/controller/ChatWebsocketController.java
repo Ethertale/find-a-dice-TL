@@ -12,9 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 
+import java.security.Principal;
 import java.time.LocalDateTime;
 
 @Controller
@@ -36,9 +38,14 @@ public class ChatWebsocketController {
     public WSOutgoingMessageDTO handleChatMessage(
             @DestinationVariable String roomCode,
             WSIncomingMessageDTO incomingMessage,
-            @AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
+            Principal principal) {
 
-        User loggedUser = userService.getUserById(authenticationDetails.getId());
+        // Unwrapping the Principal because with WebSockets there are no attached cookies, thus
+        // Spring does not store @AuthenticationPrincipal, but it stores it in java.security.Principal
+        // At the time of the handshake.
+        UsernamePasswordAuthenticationToken authToken = (UsernamePasswordAuthenticationToken) principal;
+        AuthenticationDetails authenticationDetailsDetails = (AuthenticationDetails) authToken.getPrincipal();
+        User loggedUser = userService.getUserById(authenticationDetailsDetails.getId());
 
         chatMessagesService.sendMessage(roomCode, loggedUser, new ChatRoomMessageDTO(incomingMessage.getMessage()));
 
