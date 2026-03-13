@@ -8,310 +8,316 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="/css/navbar-footer.css">
-    <title>Find A Dice - Chat Room</title>    <style>
-    /* ========== FANTASY THEME COLOR PALETTE ========== */
-    :root {
-        --panel-accent: #3c2b19;
-        --gold: #d9b261;
-        --gold-dark: #8f6a36;
-        --muted-text: #cfc8b8;
-        --light-text: #f7f3e7;
-        --parchment-light: #f4e8d0;
-        --parchment-dark: #d4c4a8;
-    }
+    <title>Find A Dice - Chat Room</title>
+    <style>
+        :root {
+            --panel-accent: #3c2b19;
+            --gold: #d9b261;
+            --gold-dark: #8f6a36;
+            --muted-text: #cfc8b8;
+            --light-text: #f7f3e7;
+            --parchment-light: #f4e8d0;
+            --parchment-dark: #d4c4a8;
+            --header-bg: rgba(12, 9, 6, 0.92);
+            --input-bar-bg: rgba(14, 11, 7, 0.95);
+        }
 
-    html, body {
-        height: 100%;
-        margin: 0;
-        padding: 0;
-        position: relative;
-        font-family: "Georgia", "Palatino Linotype", serif;
-        color: var(--muted-text);
-        overflow-x: hidden;
-    }
+        html {
+            height: 100%;
+        }
 
-    body::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        z-index: -1;
-        background:
-                linear-gradient(rgba(6,10,8,0.55), rgba(3,6,5,0.65)),
-                url("https://w0.peakpx.com/wallpaper/1014/828/HD-wallpaper-fantasy-of-after-world-war-4-fantasy-vintage-art-retro.jpg")
-                center center / cover no-repeat;
-        filter: blur(10px);
-        transform: scale(1.05);
-    }
+        body {
+            min-height: 100%;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            font-family: "Georgia", "Palatino Linotype", serif;
+            color: var(--muted-text);
+            overflow-x: hidden;
+        }
 
-    .message-input-container {
-        background: linear-gradient(180deg, rgba(25, 20, 15, 0.95), rgba(18, 15, 12, 0.97));
-        border: 3px solid var(--panel-accent);
-        border-radius: 10px;
-        padding: 1.25rem;
-        margin: 1.5rem auto;
-        max-width: 900px;
-        box-shadow:
-                0 6px 16px rgba(0,0,0,0.7),
-                inset 0 1px 0 rgba(255,255,255,0.02),
-                inset 0 -10px 30px rgba(0,0,0,0.4);
-        position: relative;
-    }
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background:
+                    linear-gradient(rgba(6,10,8,0.55), rgba(3,6,5,0.65)),
+                    url("https://w0.peakpx.com/wallpaper/1014/828/HD-wallpaper-fantasy-of-after-world-war-4-fantasy-vintage-art-retro.jpg")
+                    center center / cover no-repeat;
+            filter: blur(10px);
+            transform: scale(1.05);
+        }
 
-    .message-input-container::before {
-        content: "";
-        position: absolute;
-        inset: 8px;
-        border: 1px solid rgba(217, 178, 97, 0.12);
-        border-radius: 7px;
-        pointer-events: none;
-    }
+        .chat-page-container {
+            height: calc(100vh - 60px);
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            width: 100%;
+            max-width: 900px;
+            margin: 0 auto;
+        }
 
-    .message-input-container label {
-        display: none;
-    }
+        .participants-header {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 16px;
+            background: var(--header-bg);
+            border-bottom: 1px solid rgba(217, 178, 97, 0.2);
+        }
 
-    .message-input-container .form-control {
-        background: linear-gradient(180deg, #e8dcc4, #d9cdb5);
-        border: 2px solid var(--panel-accent);
-        border-radius: 8px;
-        color: #2c2416;
-        padding: 0.75rem 1rem;
-        font-size: 1rem;
-        box-shadow: inset 0 2px 6px rgba(0,0,0,0.15);
-        transition: all 0.3s ease;
-    }
+        .participant-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-    .message-input-container .form-control:focus {
-        background: linear-gradient(180deg, #f0e4cc, #e1d5bd);
-        border-color: var(--gold-dark);
-        box-shadow:
-                inset 0 2px 6px rgba(0,0,0,0.15),
-                0 0 0 2px rgba(217, 178, 97, 0.25);
-        outline: none;
-    }
+        .participant-chip img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid var(--gold-dark);
+            object-fit: cover;
+        }
 
-    .message-input-container .form-control::placeholder {
-        color: rgba(60, 50, 35, 0.5);
-        font-style: italic;
-    }
+        .participant-chip span {
+            font-size: 0.85rem;
+            color: var(--gold);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
 
-    .message-input-container .btn-primary {
-        background: linear-gradient(180deg, #5a4316, var(--gold));
-        color: #111;
-        border: 2px solid var(--gold-dark);
-        border-radius: 8px;
-        padding: 0.65rem 2rem;
-        font-weight: 700;
-        font-size: 0.95rem;
-        letter-spacing: 0.8px;
-        text-transform: uppercase;
-        margin-top: 0.75rem;
-        box-shadow:
-                0 4px 12px rgba(0,0,0,0.6),
-                inset 0 1px 0 rgba(255,255,255,0.15);
-        transition: all 0.3s ease;
-    }
+        .participant-divider {
+            font-size: 0.7rem;
+            color: var(--gold-dark);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.7;
+        }
 
-    .message-input-container .btn-primary:hover {
-        background: linear-gradient(180deg, #6a5320, #e9c571);
-        transform: translateY(-2px);
-        box-shadow:
-                0 6px 16px rgba(0,0,0,0.7),
-                0 0 20px rgba(217, 178, 97, 0.2);
-    }
+        .chat-history {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 12px 16px;
+        }
 
-    .message-input-container .btn-primary:active {
-        transform: translateY(0px);
-    }
+        .chat-history::-webkit-scrollbar { width: 6px; }
+        .chat-history::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #5a4316, var(--gold-dark));
+            border-radius: 4px;
+        }
+        .chat-history::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+        .chat-history::-webkit-scrollbar-track { background: transparent; }
 
-    .chat-history {
-        height: 70vh;
-        overflow-y: auto;
-        overflow-x: hidden;
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 1rem;
-        position: relative;
-    }
+        .chat-input-bar {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            background: var(--input-bar-bg);
+            border-top: 1px solid rgba(217, 178, 97, 0.15);
+        }
 
-    .chat-history::-webkit-scrollbar { width: 10px; }
-    .chat-history::-webkit-scrollbar-thumb {
-        background: linear-gradient(180deg, #5a4316, var(--gold-dark));
-        border-radius: 6px;
-        border: 2px solid rgba(0,0,0,0.3);
-    }
-    .chat-history::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(180deg, #6a5320, var(--gold));
-    }
-    .chat-history::-webkit-scrollbar-track {
-        background: rgba(0,0,0,0.2);
-        border-radius: 6px;
-    }
+        .chat-input-bar input {
+            flex: 1;
+            background: linear-gradient(180deg, #e8dcc4, #d9cdb5);
+            border: 1px solid var(--panel-accent);
+            border-radius: 20px;
+            color: #2c2416;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
 
-    .message-bubble {
-        background: linear-gradient(135deg, #e8dcc4, #d4c4a8);
-        border: 2px solid rgba(60, 43, 25, 0.6);
-        border-radius: 12px;
-        padding: 0.85rem 1.1rem;
-        max-width: 70%;
-        box-shadow:
-                0 3px 8px rgba(0,0,0,0.5),
-                inset 0 1px 0 rgba(255,255,255,0.3);
-        position: relative;
-        word-wrap: break-word;
-    }
+        .chat-input-bar input:focus {
+            border-color: var(--gold-dark);
+            box-shadow: 0 0 0 2px rgba(217, 178, 97, 0.2);
+            background: linear-gradient(180deg, #f0e4cc, #e1d5bd);
+        }
 
-    .message-bubble p {
-        margin: 0 0 0.25rem 0;
-        color: #2c1f0e;
-        font-size: 0.95rem;
-        line-height: 1.5;
-    }
+        .chat-input-bar input::placeholder {
+            color: rgba(60, 50, 35, 0.45);
+            font-style: italic;
+        }
 
-    .message-bubble p:last-child {
-        font-size: 0.75rem;
-        color: rgba(60, 43, 25, 0.6);
-        font-style: italic;
-        margin-bottom: 0;
-    }
+        /* Compact send button — inline, never full-width */
+        .chat-input-bar .send-btn {
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #5a4316, var(--gold));
+            color: #111;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 18px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+            white-space: nowrap;
+        }
 
-    .message-right {
-        background: linear-gradient(135deg, #f5e6c0, #e8d49e);
-        border-color: rgba(143, 106, 54, 0.7);
-    }
+        .chat-input-bar .send-btn:hover {
+            background: linear-gradient(135deg, #6a5320, #e9c571);
+            transform: translateY(-1px);
+        }
 
-    .avatar {
-        width: 56px;
-        height: 56px;
-        border-radius: 50%;
-        border: 2px solid var(--gold-dark);
-        object-fit: cover;
-        flex-shrink: 0;
-    }
+        .chat-input-bar .send-btn:active { transform: translateY(0); }
 
-    .message-row {
-        margin: 1rem 0;
-        display: flex;
-        align-items: flex-start;
-        width: 100%;
-    }
+        /* Small connection status shown while WebSocket is initialising */
+        #connection-status {
+            font-size: 0.7rem;
+            font-style: italic;
+            color: var(--gold-dark);
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
 
-    .message-row.justify-content-end { flex-direction: row-reverse; }
-    .message-row.justify-content-end .avatar { margin-left: 0.75rem; }
-    .message-row.justify-content-start .avatar { margin-right: 0.75rem; }
+        .message-bubble {
+            background: linear-gradient(135deg, #e8dcc4, #d4c4a8);
+            border: 1px solid rgba(60, 43, 25, 0.5);
+            border-radius: 14px;
+            padding: 0.6rem 0.9rem;
+            max-width: 65%;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            word-wrap: break-word;
+        }
 
-    @media (max-width: 768px) {
-        .message-bubble { max-width: 85%; font-size: 0.9rem; }
-        .avatar { width: 48px; height: 48px; }
-        .chat-history { height: 65vh; padding: 0.75rem; }
-        .message-input-container { padding: 1rem; margin: 1rem; }
-    }
+        .message-bubble p {
+            margin: 0 0 0.2rem 0;
+            color: #2c1f0e;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
 
-    @media (max-width: 576px) {
-        .message-bubble { max-width: 90%; padding: 0.7rem 0.9rem; }
-        .avatar { width: 42px; height: 42px; }
-        .message-input-container .btn-primary { width: 100%; padding: 0.75rem; }
-    }
+        .message-bubble p:last-child {
+            font-size: 0.68rem;
+            color: rgba(60, 43, 25, 0.55);
+            font-style: italic;
+            margin-bottom: 0;
+        }
 
-    nav { z-index: 5; }
+        .message-right {
+            background: linear-gradient(135deg, #f5e6c0, #e8d49e);
+            border-color: rgba(143, 106, 54, 0.6);
+        }
 
-    ::-webkit-scrollbar { width: 10px; }
-    ::-webkit-scrollbar-thumb {
-        background: linear-gradient(180deg, #4a381f, #2b210c);
-        border-radius: 10px;
-        border: 2px solid rgba(0,0,0,0.45);
-    }
-    ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #5a4825, #3a2815); }
-    ::-webkit-scrollbar-track { background: linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.25)); }
+        .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 1px solid var(--gold-dark);
+            object-fit: cover;
+            flex-shrink: 0;
+            align-self: flex-end;
+        }
 
-    /* Small "connecting..." indicator shown while WebSocket is being established */
-    #connection-status {
-        font-size: 0.8rem;
-        font-style: italic;
-        color: var(--gold-dark);
-        text-align: center;
-        margin-bottom: 0.5rem;
-        min-height: 1.2rem;
-    }
-</style>
+        .message-row {
+            margin: 0.5rem 0;
+            display: flex;
+            align-items: flex-end;
+            width: 100%;
+        }
+
+        .message-row.justify-content-end { flex-direction: row-reverse; }
+        .message-row.justify-content-end .avatar { margin-left: 6px; }
+        .message-row.justify-content-start .avatar { margin-right: 6px; }
+
+        @media (max-width: 768px) {
+            .chat-page-container { max-width: 100%; }
+            .message-bubble { max-width: 78%; }
+            .avatar { width: 32px; height: 32px; }
+            .participant-chip span { font-size: 0.78rem; }
+        }
+
+        @media (max-width: 576px) {
+            .message-bubble { max-width: 85%; }
+            .chat-input-bar { padding: 8px 10px; gap: 6px; }
+            .chat-input-bar .send-btn { padding: 8px 12px; font-size: 0.75rem; }
+        }
+
+        nav { z-index: 5; }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #4a381f, #2b210c);
+            border-radius: 8px;
+            border: 1px solid rgba(0,0,0,0.4);
+        }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.15); }
+    </style>
 </head>
 <body th:data-logged-hero-id="${loggedUser.hero.id}">
+
 <nav th:replace="~{fragments::navbar}"></nav>
 
-<!-- ========== MESSAGE COMPOSITION AREA ========== -->
-<div class="container">
-    <div class="message-input-container">
-        <form id="messageForm"
-              th:object="${messageDTO}"
-              th:method="POST"
-              th:action="@{'/chat-room/' + ${chatRoom.roomCode} + '/create-message'}">
+<div class="chat-page-container">
 
-            <div class="container participantsAvatars d-flex flex-row align-items-center justify-content-between">
-                <div class="row">
-                    <div class="col-12 col-lg-6 align-content-center">
-                        <div class="container d-flex flex-row align-items-center justify-content-start">
-                            <img width="64" th:src="${chatRoom.participants.getFirst().imageUrl}" alt="">
-                            <p class="ps-2" th:text="${chatRoom.participants.getFirst().name}"></p>
-                        </div>
-                    </div>
-                    <div class="col-12 col-lg-6 align-content-center">
-                        <div class="container d-flex flex-row align-items-center justify-content-end">
-                            <p class="pe-2" th:text="${chatRoom.participants.getLast().name}"></p>
-                            <img width="64" th:src="${chatRoom.participants.getLast().imageUrl}" alt="">
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div id="connection-status">Connecting to the tavern...</div>
-
-            <div class="form-group">
-                <label class="form-label" for="message">Message</label>
-                <input class="form-control"
-                       id="message"
-                       placeholder="Inscribe your message upon the parchment..."
-                       type="text"
-                       th:field="*{message}"
-                       autocomplete="off"
-                       maxlength="1500">
-            </div>
-            <button type="submit" class="btn btn-primary">Send</button>
-        </form>
+    <div class="participants-header">
+        <div class="participant-chip">
+            <img th:src="${chatRoom.participants.getFirst().imageUrl}" alt="">
+            <span th:text="${chatRoom.participants.getFirst().name}"></span>
+        </div>
+        <span class="participant-divider">— vs —</span>
+        <div class="participant-chip">
+            <span th:text="${chatRoom.participants.getLast().name}"></span>
+            <img th:src="${chatRoom.participants.getLast().imageUrl}" alt="">
+        </div>
     </div>
-</div>
 
-<!--TODO Flip the chat history upside down and add a background to the chat history-->
+    <div class="chat-history" id="chatHistory">
+        <div id="chatMessages">
 
-<!-- ========== CHAT HISTORY - THE CORRESPONDENCE THREAD ========== -->
-<div class="chat-history" id="chatHistory">
-    <div class="container-fluid">
-        <div class="row" id="chatMessages">
+            <div th:each="message : ${chatRoom.getAllMessagesSortedBySentAt()}" class="col-12">
 
-            <div th:each="message : ${chatRoom.getAllMessagesSortedBySentAt()}"
-                 class="col-12">
-
-                <!-- LOGGED-IN USER'S MESSAGES (Right-aligned) -->
+                <!-- Your messages — right aligned, golden bubble -->
                 <div th:if="${message.sender.id == loggedUser.hero.id}"
                      class="message-row d-flex justify-content-end w-100">
                     <div class="message-bubble message-right">
-                        <p th:text="${message.message}">Message text goes here</p>
-                        <p th:text="${message.getTimeForSentMessage()}">Timestamp</p>
+                        <p th:text="${message.message}"></p>
+                        <p th:text="${message.getTimeForSentMessage()}"></p>
                     </div>
-                    <img th:src="${message.sender.imageUrl}" alt="Your Avatar" class="avatar ms-2">
+                    <img th:src="${message.sender.imageUrl}" alt="You" class="avatar ms-2">
                 </div>
 
-                <!-- OTHER PARTICIPANT'S MESSAGES (Left-aligned) -->
+                <!-- Their messages — left aligned, parchment bubble -->
                 <div th:unless="${message.sender.id == loggedUser.hero.id}"
                      class="message-row d-flex justify-content-start">
-                    <img th:src="${message.sender.imageUrl}" alt="Sender Avatar" class="avatar me-2">
+                    <img th:src="${message.sender.imageUrl}" alt="Them" class="avatar me-2">
                     <div class="message-bubble message-left">
-                        <p th:text="${message.message}">Message text goes here</p>
-                        <p th:text="${message.getTimeForSentMessage()}">Timestamp</p>
+                        <p th:text="${message.message}"></p>
+                        <p th:text="${message.getTimeForSentMessage()}"></p>
                     </div>
                 </div>
 
             </div>
         </div>
+    </div>
+    <div class="chat-input-bar">
+        <span id="connection-status">Connecting...</span>
+        <form id="messageForm"
+              style="display:contents"
+              th:object="${messageDTO}"
+              th:method="POST"
+              th:action="@{'/chat-room/' + ${chatRoom.roomCode} + '/create-message'}">
+            <input id="message"
+                   type="text"
+                   th:field="*{message}"
+                   placeholder="Inscribe your message upon the parchment..."
+                   autocomplete="off"
+                   maxlength="1500">
+            <button type="submit" class="send-btn">Send</button>
+        </form>
     </div>
 </div>
 
@@ -326,19 +332,6 @@
 <script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
 
-<!-- Optional: Auto-scroll to bottom on page load to show latest messages -->
-<script>
-    // When the page loads, scroll the chat history to the bottom
-    // so users see the most recent messages first
-    window.addEventListener('DOMContentLoaded', function () {
-        const chatHistory = document.querySelector('.chat-history');
-        if (chatHistory) {
-            // Since messages are in reverse order (newest first),
-            // we actually want to scroll to top to see the newest
-            chatHistory.scrollTop = 0;
-        }
-    });
-</script>
 <script th:inline="javascript">
     // /*
     //  * th:inline="javascript" lets Thymeleaf inject server-side values
