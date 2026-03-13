@@ -10,7 +10,6 @@
     <link rel="stylesheet" type="text/css" href="/css/navbar-footer.css">
     <title>Find A Dice - Chat Room</title>
     <style>
-        /* ========== FANTASY THEME COLOR PALETTE ========== */
         :root {
             --panel-accent: #3c2b19;
             --gold: #d9b261;
@@ -19,19 +18,20 @@
             --light-text: #f7f3e7;
             --parchment-light: #f4e8d0;
             --parchment-dark: #d4c4a8;
+            --header-bg: rgba(12, 9, 6, 0.92);
+            --input-bar-bg: rgba(14, 11, 7, 0.95);
         }
 
-        /* ========== BACKGROUND ========== */
-        /*
-         * Just like our other pages, we create an atmospheric blurred background
-         * that makes users feel they're inside the same guild hall building.
-         * The fixed positioning means it stays in place while content scrolls.
-         */
-        html, body {
+        html {
             height: 100%;
+        }
+
+        body {
+            min-height: 100%;
             margin: 0;
             padding: 0;
-            position: relative;
+            display: flex;
+            flex-direction: column;
             font-family: "Georgia", "Palatino Linotype", serif;
             color: var(--muted-text);
             overflow-x: hidden;
@@ -50,405 +50,274 @@
             transform: scale(1.05);
         }
 
-        /* ========== MESSAGE INPUT FORM - THE WRITING DESK ========== */
-        /*
-         * The form at the top is styled as a writing desk or scribe's station
-         * where the hero composes new messages. The dark panel with golden
-         * accents makes it feel like sitting down at an ornate wooden desk
-         * to write a letter by candlelight.
-         */
-        .message-input-container {
-            background: linear-gradient(180deg, rgba(25, 20, 15, 0.95), rgba(18, 15, 12, 0.97));
-            border: 3px solid var(--panel-accent);
-            border-radius: 10px;
-            padding: 1.25rem;
-            margin: 1.5rem auto;
-            max-width: 900px;
-            box-shadow:
-                    0 6px 16px rgba(0,0,0,0.7),
-                    inset 0 1px 0 rgba(255,255,255,0.02),
-                    inset 0 -10px 30px rgba(0,0,0,0.4);
-            position: relative;
-        }
-
-        /* An inner decorative border, like metalwork on a wooden desk */
-        .message-input-container::before {
-            content: "";
-            position: absolute;
-            inset: 8px;
-            border: 1px solid rgba(217, 178, 97, 0.12);
-            border-radius: 7px;
-            pointer-events: none;
-        }
-
-        /* Hide the default label since we're using a placeholder */
-        .message-input-container label {
-            display: none;
-        }
-
-        /*
-         * The input field is styled like parchment or vellum - a light surface
-         * where ink would be written. The subtle texture from the gradient and
-         * the inset shadow create the impression of a slightly recessed writing surface.
-         */
-        .message-input-container .form-control {
-            background: linear-gradient(180deg, #e8dcc4, #d9cdb5);
-            border: 2px solid var(--panel-accent);
-            border-radius: 8px;
-            color: #2c2416;
-            padding: 0.75rem 1rem;
-            font-size: 1rem;
-            box-shadow: inset 0 2px 6px rgba(0,0,0,0.15);
-            transition: all 0.3s ease;
-        }
-
-        /* When focused, the parchment brightens as if catching more light */
-        .message-input-container .form-control:focus {
-            background: linear-gradient(180deg, #f0e4cc, #e1d5bd);
-            border-color: var(--gold-dark);
-            box-shadow:
-                    inset 0 2px 6px rgba(0,0,0,0.15),
-                    0 0 0 2px rgba(217, 178, 97, 0.25);
-            outline: none;
-        }
-
-        .message-input-container .form-control::placeholder {
-            color: rgba(60, 50, 35, 0.5);
-            font-style: italic;
-        }
-
-        /* The Send button is styled as a wax seal or official stamp */
-        .message-input-container .btn-primary {
-            background: linear-gradient(180deg, #5a4316, var(--gold));
-            color: #111;
-            border: 2px solid var(--gold-dark);
-            border-radius: 8px;
-            padding: 0.65rem 2rem;
-            font-weight: 700;
-            font-size: 0.95rem;
-            letter-spacing: 0.8px;
-            text-transform: uppercase;
-            margin-top: 0.75rem;
-            box-shadow:
-                    0 4px 12px rgba(0,0,0,0.6),
-                    inset 0 1px 0 rgba(255,255,255,0.15);
-            transition: all 0.3s ease;
-        }
-
-        .message-input-container .btn-primary:hover {
-            background: linear-gradient(180deg, #6a5320, #e9c571);
-            transform: translateY(-2px);
-            box-shadow:
-                    0 6px 16px rgba(0,0,0,0.7),
-                    0 0 20px rgba(217, 178, 97, 0.2);
-        }
-
-        .message-input-container .btn-primary:active {
-            transform: translateY(0px);
-        }
-
-        /* ========== MESSAGE HISTORY CONTAINER ========== */
-        /*
-         * The scrollable chat history area is like flipping through old letters
-         * or scrolls. We style the scrollbar to match our theme and ensure
-         * the messages have room to breathe.
-         */
-        .chat-history {
-            height: 70vh;
-            overflow-y: auto;
-            overflow-x: hidden;
+        .chat-page-container {
+            height: calc(100vh - 60px);
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            width: 100%;
             max-width: 900px;
             margin: 0 auto;
-            padding: 1rem;
-            position: relative;
         }
 
-        /* Custom scrollbar for the chat history */
-        .chat-history::-webkit-scrollbar {
-            width: 10px;
+        .participants-header {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 16px;
+            background: var(--header-bg);
+            border-bottom: 1px solid rgba(217, 178, 97, 0.2);
         }
 
+        .participant-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .participant-chip img {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid var(--gold-dark);
+            object-fit: cover;
+        }
+
+        .participant-chip span {
+            font-size: 0.85rem;
+            color: var(--gold);
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .participant-divider {
+            font-size: 0.7rem;
+            color: var(--gold-dark);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.7;
+        }
+
+        .chat-history {
+            flex: 1;
+            min-height: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 12px 16px;
+        }
+
+        .chat-history::-webkit-scrollbar { width: 6px; }
         .chat-history::-webkit-scrollbar-thumb {
             background: linear-gradient(180deg, #5a4316, var(--gold-dark));
-            border-radius: 6px;
-            border: 2px solid rgba(0,0,0,0.3);
+            border-radius: 4px;
+        }
+        .chat-history::-webkit-scrollbar-thumb:hover { background: var(--gold); }
+        .chat-history::-webkit-scrollbar-track { background: transparent; }
+
+        .chat-input-bar {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            background: var(--input-bar-bg);
+            border-top: 1px solid rgba(217, 178, 97, 0.15);
         }
 
-        .chat-history::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(180deg, #6a5320, var(--gold));
-        }
-
-        .chat-history::-webkit-scrollbar-track {
-            background: rgba(0,0,0,0.2);
-            border-radius: 6px;
-        }
-
-        /* ========== MESSAGE BUBBLES - SCROLLS AND PARCHMENTS ========== */
-        /*
-         * Each message is styled as a small scroll or parchment note.
-         * Messages from the logged-in user (right side) have a golden tone
-         * to indicate "your words," while messages from the other participant
-         * (left side) use a neutral parchment color.
-         */
-        .message-bubble {
-            background: linear-gradient(135deg, #e8dcc4, #d4c4a8);
-            border: 2px solid rgba(60, 43, 25, 0.6);
-            border-radius: 12px;
-            padding: 0.85rem 1.1rem;
-            max-width: 70%;
-            box-shadow:
-                    0 3px 8px rgba(0,0,0,0.5),
-                    inset 0 1px 0 rgba(255,255,255,0.3);
-            position: relative;
-            word-wrap: break-word;
-        }
-
-        /*
-         * Messages from the logged-in user get a golden highlight, as if
-         * written on finer parchment or with golden ink - they stand out
-         * as "your contributions" to the conversation.
-         */
-        .message-bubble.message-right {
-            background: linear-gradient(135deg, #f0e4a8, #dac97d);
-            border-color: var(--gold-dark);
-            box-shadow:
-                    0 3px 8px rgba(0,0,0,0.5),
-                    0 0 12px rgba(217, 178, 97, 0.15),
-                    inset 0 1px 0 rgba(255,255,255,0.4);
-        }
-
-        /*
-         * Messages from the other participant use standard parchment tones,
-         * distinguishing their words from yours without overwhelming the design.
-         */
-        .message-bubble.message-left {
-            background: linear-gradient(135deg, #e8dcc4, #d4c4a8);
-            border-color: rgba(60, 43, 25, 0.6);
-        }
-
-        /* The message text itself - dark ink on parchment */
-        .message-bubble p:first-child {
+        .chat-input-bar input {
+            flex: 1;
+            background: linear-gradient(180deg, #e8dcc4, #d9cdb5);
+            border: 1px solid var(--panel-accent);
+            border-radius: 20px;
             color: #2c2416;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            margin: 0 0 0.5rem 0;
-            font-weight: 500;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
 
-        /* Only show the first paragraph as message content */
-        .message-bubble p:last-child {
-            color: rgba(60, 50, 35, 0.6);
-            font-size: 0.75rem;
-            margin: 0;
+        .chat-input-bar input:focus {
+            border-color: var(--gold-dark);
+            box-shadow: 0 0 0 2px rgba(217, 178, 97, 0.2);
+            background: linear-gradient(180deg, #f0e4cc, #e1d5bd);
+        }
+
+        .chat-input-bar input::placeholder {
+            color: rgba(60, 50, 35, 0.45);
             font-style: italic;
-            text-align: right;
         }
 
-        /* ========== AVATAR STYLING ========== */
-        /*
-         * Avatars appear next to each message like portrait medallions
-         * or wax seal imprints. They help identify who said what and add
-         * personality to the conversation thread.
-         */
-        .avatar {
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 3px solid rgba(60, 43, 25, 0.7);
-            box-shadow:
-                    0 3px 8px rgba(0,0,0,0.6),
-                    0 0 0 2px rgba(217, 178, 97, 0.12);
+        /* Compact send button — inline, never full-width */
+        .chat-input-bar .send-btn {
+            flex-shrink: 0;
+            background: linear-gradient(135deg, #5a4316, var(--gold));
+            color: #111;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 18px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            letter-spacing: 0.6px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+            white-space: nowrap;
+        }
+
+        .chat-input-bar .send-btn:hover {
+            background: linear-gradient(135deg, #6a5320, #e9c571);
+            transform: translateY(-1px);
+        }
+
+        .chat-input-bar .send-btn:active { transform: translateY(0); }
+
+        /* Small connection status shown while WebSocket is initialising */
+        #connection-status {
+            font-size: 0.7rem;
+            font-style: italic;
+            color: var(--gold-dark);
+            white-space: nowrap;
             flex-shrink: 0;
         }
 
-        /* Messages aligned to the right (logged-in user) */
-        .message-right + .avatar {
-            border-color: var(--gold-dark);
-            box-shadow:
-                    0 3px 8px rgba(0,0,0,0.6),
-                    0 0 0 2px rgba(217, 178, 97, 0.25);
+        .message-bubble {
+            background: linear-gradient(135deg, #e8dcc4, #d4c4a8);
+            border: 1px solid rgba(60, 43, 25, 0.5);
+            border-radius: 14px;
+            padding: 0.6rem 0.9rem;
+            max-width: 65%;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+            word-wrap: break-word;
         }
 
-        /* ========== MESSAGE ROW SPACING ========== */
-        /*
-         * Each message row gets comfortable vertical spacing so the
-         * conversation doesn't feel cramped. Think of it like leaving
-         * space between letters in a correspondence bundle.
-         */
+        .message-bubble p {
+            margin: 0 0 0.2rem 0;
+            color: #2c1f0e;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .message-bubble p:last-child {
+            font-size: 0.68rem;
+            color: rgba(60, 43, 25, 0.55);
+            font-style: italic;
+            margin-bottom: 0;
+        }
+
+        .message-right {
+            background: linear-gradient(135deg, #f5e6c0, #e8d49e);
+            border-color: rgba(143, 106, 54, 0.6);
+        }
+
+        .avatar {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 1px solid var(--gold-dark);
+            object-fit: cover;
+            flex-shrink: 0;
+            align-self: flex-end;
+        }
+
         .message-row {
-            margin: 1rem 0;
+            margin: 0.5rem 0;
             display: flex;
-            align-items: flex-start;
+            align-items: flex-end;
             width: 100%;
         }
 
-        /* Right-aligned messages (user's own) */
-        .message-row.justify-content-end {
-            flex-direction: row-reverse;
-        }
+        .message-row.justify-content-end { flex-direction: row-reverse; }
+        .message-row.justify-content-end .avatar { margin-left: 6px; }
+        .message-row.justify-content-start .avatar { margin-right: 6px; }
 
-        .message-row.justify-content-end .avatar {
-            margin-left: 0.75rem;
-        }
-
-        /* Left-aligned messages (other participant) */
-        .message-row.justify-content-start .avatar {
-            margin-right: 0.75rem;
-        }
-
-        /* ========== RESPONSIVE DESIGN ========== */
         @media (max-width: 768px) {
-            .message-bubble {
-                max-width: 85%;
-                font-size: 0.9rem;
-            }
-
-            .avatar {
-                width: 48px;
-                height: 48px;
-            }
-
-            .chat-history {
-                height: 65vh;
-                padding: 0.75rem;
-            }
-
-            .message-input-container {
-                padding: 1rem;
-                margin: 1rem;
-            }
+            .chat-page-container { max-width: 100%; }
+            .message-bubble { max-width: 78%; }
+            .avatar { width: 32px; height: 32px; }
+            .participant-chip span { font-size: 0.78rem; }
         }
 
         @media (max-width: 576px) {
-            .message-bubble {
-                max-width: 90%;
-                padding: 0.7rem 0.9rem;
-            }
-
-            .avatar {
-                width: 42px;
-                height: 42px;
-            }
-
-            .message-input-container .btn-primary {
-                width: 100%;
-                padding: 0.75rem;
-            }
+            .message-bubble { max-width: 85%; }
+            .chat-input-bar { padding: 8px 10px; gap: 6px; }
+            .chat-input-bar .send-btn { padding: 8px 12px; font-size: 0.75rem; }
         }
 
-        nav {
-            z-index: 5;
-        }
+        nav { z-index: 5; }
 
-        /* ========== CUSTOM SCROLLBAR FOR BODY ========== */
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-
+        ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-thumb {
             background: linear-gradient(180deg, #4a381f, #2b210c);
-            border-radius: 10px;
-            border: 2px solid rgba(0,0,0,0.45);
+            border-radius: 8px;
+            border: 1px solid rgba(0,0,0,0.4);
         }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(180deg, #5a4825, #3a2815);
-        }
-
-        ::-webkit-scrollbar-track {
-            background: linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.25));
-        }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.15); }
     </style>
 </head>
-<body>
+<body th:data-logged-hero-id="${loggedUser.hero.id}">
+
 <nav th:replace="~{fragments::navbar}"></nav>
 
-<!-- ========== MESSAGE COMPOSITION AREA ========== -->
-<div class="container">
-    <div class="message-input-container">
-        <form th:object="${messageDTO}"
-              th:method="POST"
-              th:action="@{'/chat-room/' + ${chatRoom.roomCode} + '/create-message'}">
-<!--            TODO Fix avatars and style them-->
-            <div class="container participantsAvatars d-flex flex-row align-items-center justify-content-between">
-                <div class="row">
-                    <div class="col-12 col-lg-6 align-content-center">
-                        <div class="container d-flex flex-row align-items-center justify-content-start">
-                            <img width="64" th:src="${chatRoom.participants.getFirst().imageUrl}" alt="">
-                            <p class="ps-2" th:text="${chatRoom.participants.getFirst().name}"></p>
-                        </div>
-                    </div>
-                    <div class="col-12 col-lg-6 align-content-center">
-                        <div class="container d-flex flex-row align-items-center justify-content-end">
-                            <p class="pe-2" th:text="${chatRoom.participants.getLast().name}"></p>
-                            <img width="64" th:src="${chatRoom.participants.getLast().imageUrl}" alt="">
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="form-label" for="message">Message</label>
-                <input class="form-control"
-                       id="message"
-                       placeholder="Inscribe your message upon the parchment..."
-                       type="text"
-                       th:field="*{message}"
-                       autocomplete="off"
-                       maxlength="1500">
-            </div>
-            <button type="submit" class="btn btn-primary">Send</button>
-        </form>
+<div class="chat-page-container">
+
+    <div class="participants-header">
+        <div class="participant-chip">
+            <img th:src="${chatRoom.participants.getFirst().imageUrl}" alt="">
+            <span th:text="${chatRoom.participants.getFirst().name}"></span>
+        </div>
+        <span class="participant-divider">— vs —</span>
+        <div class="participant-chip">
+            <span th:text="${chatRoom.participants.getLast().name}"></span>
+            <img th:src="${chatRoom.participants.getLast().imageUrl}" alt="">
+        </div>
     </div>
-</div>
 
-<!--TODO Flip the chat history upside down and add a background to the chat history-->
+    <div class="chat-history" id="chatHistory">
+        <div id="chatMessages">
 
-<!-- ========== CHAT HISTORY - THE CORRESPONDENCE THREAD ========== -->
-<div class="chat-history">
-    <div class="container-fluid">
-        <div class="row">
-            <div th:each="message : ${chatRoom.getAllMessagesSortedBySentAt().reversed()}"
-                 class="col-12">
+            <div th:each="message : ${chatRoom.getAllMessagesSortedBySentAt()}" class="col-12">
 
-                <!-- ============================================ -->
-                <!-- LOGGED-IN USER'S MESSAGES (Right-aligned)    -->
-                <!-- ============================================ -->
+                <!-- Your messages — right aligned, golden bubble -->
                 <div th:if="${message.sender.id == loggedUser.hero.id}"
                      class="message-row d-flex justify-content-end w-100">
-
-                    <!-- Message bubble comes FIRST for right-aligned messages -->
                     <div class="message-bubble message-right">
-                        <p th:text="${message.message}">Message text goes here</p>
-                        <p th:text="${message.getTimeForSentMessage()}">Timestamp</p>
+                        <p th:text="${message.message}"></p>
+                        <p th:text="${message.getTimeForSentMessage()}"></p>
                     </div>
-
-                    <!-- Avatar comes SECOND, with margin on the left (ms-2 = margin-start) -->
-                    <img th:src="${message.sender.imageUrl}"
-                         alt="Your Avatar"
-                         class="avatar ms-2">
+                    <img th:src="${message.sender.imageUrl}" alt="You" class="avatar ms-2">
                 </div>
 
-                <!-- ============================================ -->
-                <!-- OTHER PARTICIPANT'S MESSAGES (Left-aligned)  -->
-                <!-- ============================================ -->
+                <!-- Their messages — left aligned, parchment bubble -->
                 <div th:unless="${message.sender.id == loggedUser.hero.id}"
                      class="message-row d-flex justify-content-start">
-
-                    <!-- Avatar comes FIRST for left-aligned messages, with margin on right (me-2 = margin-end) -->
-                    <img th:src="${message.sender.imageUrl}"
-                         alt="Sender Avatar"
-                         class="avatar me-2">
-
-                    <!-- Message bubble comes SECOND -->
+                    <img th:src="${message.sender.imageUrl}" alt="Them" class="avatar me-2">
                     <div class="message-bubble message-left">
-                        <p th:text="${message.message}">Message text goes here</p>
-                        <p th:text="${message.getTimeForSentMessage()}">Timestamp</p>
+                        <p th:text="${message.message}"></p>
+                        <p th:text="${message.getTimeForSentMessage()}"></p>
                     </div>
                 </div>
 
             </div>
         </div>
+    </div>
+    <div class="chat-input-bar">
+        <span id="connection-status">Connecting...</span>
+        <form id="messageForm"
+              style="display:contents"
+              th:object="${messageDTO}"
+              th:method="POST"
+              th:action="@{'/chat-room/' + ${chatRoom.roomCode} + '/create-message'}">
+            <input id="message"
+                   type="text"
+                   th:field="*{message}"
+                   placeholder="Inscribe your message upon the parchment..."
+                   autocomplete="off"
+                   maxlength="1500">
+            <button type="submit" class="send-btn">Send</button>
+        </form>
     </div>
 </div>
 
@@ -460,19 +329,171 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.min.js"
         integrity="sha384-RuyvpeZCxMJCqVUGFI0Do1mQrods/hhxYlcVfGPOfQtPJh0JCw12tUAZ/Mv10S7D"
         crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
 
-<!-- Optional: Auto-scroll to bottom on page load to show latest messages -->
-<script>
-    // When the page loads, scroll the chat history to the bottom
-    // so users see the most recent messages first
-    window.addEventListener('DOMContentLoaded', function() {
-        const chatHistory = document.querySelector('.chat-history');
-        if (chatHistory) {
-            // Since messages are in reverse order (newest first),
-            // we actually want to scroll to top to see the newest
-            chatHistory.scrollTop = 0;
-        }
+<script th:inline="javascript">
+    // /*
+    //  * th:inline="javascript" lets Thymeleaf inject server-side values
+    //  * directly into this <script> block using the /*[[ ... ]]*/ syntax.
+    // * This is how I pass roomCode and the logged user's hero ID from
+    // * Java/Thymeleaf into JavaScript.
+    // */
+    const ROOM_CODE = /*[[${chatRoom.roomCode}]]*/ 'default-room';
+    const LOGGED_HERO_ID = /*[[${loggedUser.hero.id}]]*/ 'unknown';
+    const LOGGED_HERO_IMAGE = /*[[${loggedUser.hero.imageUrl}]]*/ '';
+
+    // ---------------------------------------------------------------
+    // STEP 1: Grab references to the DOM elements we'll be working with
+    // ---------------------------------------------------------------
+    const chatMessages = document.getElementById('chatMessages');
+    const chatHistory = document.getElementById('chatHistory');
+    const messageInput = document.getElementById('message');
+    const messageForm = document.getElementById('messageForm');
+    const statusLabel = document.getElementById('connection-status');
+
+    // ---------------------------------------------------------------
+    // STEP 2: Create the SockJS connection and the STOMP client
+    //
+    // Think of SockJS as the pipe (the phone line).
+    // Think of STOMP as the language spoken over that pipe.
+    // ---------------------------------------------------------------
+    const socket = new SockJS('/ws');
+    const stompClient = Stomp.over(socket);
+
+    // Silence the STOMP debug logs in the browser console (optional, but cleaner)
+    stompClient.debug = null;
+
+    // ---------------------------------------------------------------
+    // STEP 3: Connect!
+    //
+    // stompClient.connect() takes:
+    //   - headers (empty object {} is fine, no special headers needed)
+    //   - a callback function that runs once the connection is established
+    // ---------------------------------------------------------------
+    stompClient.connect({}, function (frame) {
+
+        statusLabel.textContent = ''; // Clear the "Connecting..." message
+
+        // -----------------------------------------------------------
+        // STEP 4: Subscribe to this room's topic
+        //
+        // This is like "following" a channel. Whenever the server
+        // broadcasts a message to /topic/chat/{roomCode}, this
+        // callback function will be called with that message.
+        // -----------------------------------------------------------
+        stompClient.subscribe('/topic/chat/' + ROOM_CODE, function (stompMessage) {
+
+            // stompMessage.body is a JSON string — we parse it into an object
+            const msg = JSON.parse(stompMessage.body);
+
+            // Now render the new message bubble into the DOM
+            appendMessageBubble(msg);
+
+            // Auto-scroll to the bottom so the new message is visible
+            scrollToBottom();
+        });
+
+        // Scroll to the bottom on initial load so newest messages are visible
+        scrollToBottom();
+
+    }, function (error) {
+        // This callback runs if the connection fails
+        statusLabel.textContent = 'Could not connect to the tavern. Please refresh.';
+        console.error('WebSocket connection error:', error);
     });
+
+    // ---------------------------------------------------------------
+    // STEP 5: Intercept the form submit
+    //
+    // Instead of letting the browser do a normal HTTP POST (which
+    // would reload the page), we stop it and send via STOMP instead.
+    // ---------------------------------------------------------------
+    messageForm.addEventListener('submit', function (event) {
+        event.preventDefault(); // ← This is the magic: stops the page reload
+
+        const messageText = messageInput.value.trim();
+
+        // Don't send empty messages
+        if (!messageText) return;
+
+        // Send the message to /app/chat/{roomCode}
+        // Spring's @MessageMapping("/chat/{roomCode}") will pick this up
+        stompClient.send(
+            '/app/chat/' + ROOM_CODE,
+            {}, // headers — empty is fine
+            JSON.stringify({message: messageText}) // this becomes WsIncomingMessageDTO on the server
+        );
+
+        // Clear the input field immediately for a snappy feel
+        messageInput.value = '';
+        messageInput.focus();
+    });
+
+    // ---------------------------------------------------------------
+    // STEP 6: The function that builds and inserts a message bubble
+    //
+    // This is pure JavaScript DOM manipulation — we create HTML elements
+    // programmatically and attach them to the page. It mirrors what
+    // Thymeleaf renders on page load, but done in real time.
+    // ---------------------------------------------------------------
+    function appendMessageBubble(msg) {
+        // Is this message from the currently logged-in user?
+        const isMe = msg.senderHeroId === String(LOGGED_HERO_ID);
+
+        // Create the outer wrapper div (the "message-row")
+        const rowDiv = document.createElement('div');
+        rowDiv.classList.add('col-12');
+
+        // Create the inner alignment div
+        const alignDiv = document.createElement('div');
+        alignDiv.classList.add('message-row', 'd-flex', 'w-100');
+        alignDiv.classList.add(isMe ? 'justify-content-end' : 'justify-content-start');
+
+        // Create the avatar image
+        const avatar = document.createElement('img');
+        avatar.src = msg.senderHeroImageUrl;
+        avatar.alt = isMe ? 'Your Avatar' : 'Sender Avatar';
+        avatar.classList.add('avatar');
+        avatar.classList.add(isMe ? 'ms-2' : 'me-2');
+
+        // Create the message bubble
+        const bubble = document.createElement('div');
+        bubble.classList.add('message-bubble');
+        bubble.classList.add(isMe ? 'message-right' : 'message-left');
+
+        // Create the message text paragraph
+        const textP = document.createElement('p');
+        textP.textContent = msg.message;
+
+        // Create the timestamp paragraph
+        const timeP = document.createElement('p');
+        timeP.textContent = msg.sentAt;
+
+        // Assemble the bubble
+        bubble.appendChild(textP);
+        bubble.appendChild(timeP);
+
+        // For "my" messages: bubble first, then avatar (right-aligned layout)
+        // For "other" messages: avatar first, then bubble (left-aligned layout)
+        if (isMe) {
+            alignDiv.appendChild(bubble);
+            alignDiv.appendChild(avatar);
+        } else {
+            alignDiv.appendChild(avatar);
+            alignDiv.appendChild(bubble);
+        }
+
+        rowDiv.appendChild(alignDiv);
+        chatMessages.appendChild(rowDiv);
+    }
+
+    // ---------------------------------------------------------------
+    // Helper: scroll the chat history container to the very bottom
+    // ---------------------------------------------------------------
+    function scrollToBottom() {
+        chatHistory.scrollTop = chatHistory.scrollHeight;
+    }
 </script>
 </body>
 </html>

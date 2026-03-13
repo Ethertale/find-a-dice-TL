@@ -21,6 +21,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         .requestMatchers("/static/favicon.ico", "/imgs/**", "/css/**", "/fonts/**", "/js/**").permitAll()
                         .requestMatchers("/login", "/register", "/", "/documentation").permitAll()
                         .requestMatchers("favicon.ico").permitAll()
+                        .requestMatchers("/ws/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -35,6 +36,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/")
                         .permitAll()
+                ).csrf(csrf -> csrf.ignoringRequestMatchers("/ws/**")
                 );
 
         return http.build();
