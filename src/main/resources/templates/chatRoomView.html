@@ -184,7 +184,7 @@
         }
 
         .message-bubble {
-            background: linear-gradient(135deg, #e8dcc4, #d4c4a8);
+            background: linear-gradient(135deg, #e8dcc4, #dfc596);
             border: 1px solid rgba(60, 43, 25, 0.5);
             border-radius: 14px;
             padding: 0.6rem 0.9rem;
@@ -208,7 +208,7 @@
         }
 
         .message-right {
-            background: linear-gradient(135deg, #f5e6c0, #e8d49e);
+            background: linear-gradient(135deg, #edd7a0, #c2a24e);
             border-color: rgba(143, 106, 54, 0.6);
         }
 
@@ -282,7 +282,7 @@
 
                 <!-- Your messages — right aligned, golden bubble -->
                 <div th:if="${message.sender.id == loggedUser.hero.id}"
-                     class="message-row d-flex justify-content-end w-100">
+                     class="message-row flex-row d-flex justify-content-end w-100">
                     <div class="message-bubble message-right">
                         <p th:text="${message.message}"></p>
                         <p th:text="${message.getTimeForSentMessage()}"></p>
