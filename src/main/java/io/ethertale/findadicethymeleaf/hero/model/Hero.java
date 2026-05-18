@@ -91,20 +91,20 @@ public class Hero {
     private Set<Comment> comments;
 
     @ManyToMany
-    @JoinTable(
-            name = "hero_group_link", // join table
-            joinColumns = @JoinColumn(name = "hero_id"),
-            inverseJoinColumns = @JoinColumn(name = "group_id")
-    )
+    @JoinTable(name = "hero_group_link", joinColumns = @JoinColumn(name = "hero_id"), inverseJoinColumns = @JoinColumn(name = "group_id"))
     private Set<Group> groups;
 
     @ManyToMany
-    @JoinTable(
-            name = "hero_event_link", // join table
-            joinColumns = @JoinColumn(name = "hero_id"),
-            inverseJoinColumns = @JoinColumn(name = "event_id")
-    )
+    @JoinTable(name = "hero_event_link", joinColumns = @JoinColumn(name = "hero_id"), inverseJoinColumns = @JoinColumn(name = "event_id"))
     private Set<Event> events;
+
+    @ManyToMany(mappedBy = "interestedHeroes")
+    @Builder.Default
+    private Set<Event> interestedEvents = new HashSet<>();
+
+    @ManyToMany(mappedBy = "goingHeroes")
+    @Builder.Default
+    private Set<Event> goingEvents = new HashSet<>();
 
     @OneToMany(mappedBy = "createdBy", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Group> createdGroups;
@@ -129,5 +129,4 @@ public class Hero {
                 + ":"
                 + createdAt.getMinute();
     }
-
 }

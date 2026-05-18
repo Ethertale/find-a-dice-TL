@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -49,6 +50,16 @@ public class Event {
 
     @ManyToMany(mappedBy = "events")
     private Set<Hero> heroes;
+
+    @ManyToMany
+    @JoinTable(name = "event_interested_heroes", joinColumns = @JoinColumn(name = "event_id"), inverseJoinColumns = @JoinColumn(name = "hero_id"))
+    @Builder.Default
+    private Set<Hero> interestedHeroes = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(name = "event_going_heroes", joinColumns = @JoinColumn(name = "event_id"), inverseJoinColumns = @JoinColumn(name = "hero_id"))
+    @Builder.Default
+    private Set<Hero> goingHeroes = new HashSet<>();
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
