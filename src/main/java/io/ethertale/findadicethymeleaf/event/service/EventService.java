@@ -7,6 +7,7 @@ import io.ethertale.findadicethymeleaf.hero.repo.HeroRepo;
 import io.ethertale.findadicethymeleaf.web.dto.EventCreateDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Comparator;
@@ -60,5 +61,63 @@ public class EventService {
 
     public List<Event> searchEvents(String query) {
         return eventRepo.findEventByTitleContainingIgnoreCase(query);
+    }
+
+    /**
+     * Toggles the "Interested" state for a hero on an event.
+     * Mutually exclusive with "Going" - clicking Interested removes Going.
+     */
+    @Transactional
+    public void toggleInterested(UUID eventId, Hero hero) {
+        Event event = eventRepo.findById(eventId).orElseThrow();
+
+        boolean alreadyInterested = event.getInterestedHeroes().contains(hero);
+
+        // Remove from Going if present (mutual exclusivity)
+        if (event.getGoingHeroes().contains(hero)) {
+            event.getGoingHeroes().remove(hero);
+            event.setGoing(Math.max(0, event.getGoing() - 1));
+        }
+
+        if (alreadyInterested) {
+            // Toggle off
+            event.getInterestedHeroes().remove(hero);
+            event.setInterested(Math.max(0, event.getInterested() - 1));
+        } else {
+            // Toggle on
+            event.getInterestedHeroes().add(hero);
+            event.setInterested(event.getInterested() + 1);
+        }
+
+        eventRepo.save(event);
+    }
+
+    /**
+     * Toggles the "Going" state for a hero on an event.
+     * Mutually exclusive with "Interested" - clicking Going removes Interested.
+     */
+    @Transactional
+    public void toggleGoing(UUID eventId, Hero hero) {
+        Event event = eventRepo.findById(eventId).orElseThrow();
+
+        boolean alreadyGoing = event.getGoingHeroes().contains(hero);
+
+        // Remove from Interested if present (mutual exclusivity)
+        if (event.getInterestedHeroes().contains(hero)) {
+            event.getInterestedHeroes().remove(hero);
+            event.setInterested(Math.max(0, event.getInterested() - 1));
+        }
+
+        if (alreadyGoing) {
+            // Toggle off
+            event.getGoingHeroes().remove(hero);
+            event.setGoing(Math.max(0, event.getGoing() - 1));
+        } else {
+            // Toggle on
+            event.getGoingHeroes().add(hero);
+            event.setGoing(event.getGoing() + 1);
+        }
+
+        eventRepo.save(event);
     }
 }
