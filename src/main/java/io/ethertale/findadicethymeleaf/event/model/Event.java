@@ -6,9 +6,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Getter
 @Setter
@@ -63,4 +61,11 @@ public class Event {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    public List<Hero> getInterestedHeroesSortedAlphabeticallyAsc() {
+        return interestedHeroes.stream().sorted(Comparator.comparing(Hero::getName)).toList();
+    }
+    public List<Hero> getGoingHeroesSortedAlphabeticallyAsc() {
+        return goingHeroes.stream().sorted(Comparator.comparing(Hero::getName)).toList();
+    }
 }
