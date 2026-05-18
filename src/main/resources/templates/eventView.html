@@ -53,6 +53,7 @@
             z-index: 1;
         }
 
+        /* ========== EVENT PROCLAMATION PANEL ========== */
         .event-proclamation {
             background: linear-gradient(180deg, rgba(8,10,12,0.85), rgba(6,7,9,0.95));
             border-radius: var(--card-radius);
@@ -117,9 +118,7 @@
             line-height: 1.2;
         }
 
-        .event-metadata {
-            margin-bottom: 1.5rem;
-        }
+        .event-metadata { margin-bottom: 1.5rem; }
 
         .event-metadata p {
             color: var(--muted-text);
@@ -143,7 +142,6 @@
             flex-wrap: wrap;
         }
 
-        /* Base state — inactive */
         .rsvp-btn {
             background: linear-gradient(180deg, #2a1f0e, #1a1409);
             color: var(--muted-text);
@@ -167,7 +165,6 @@
             box-shadow: 0 6px 16px rgba(0,0,0,0.7), 0 0 12px rgba(217, 178, 97, 0.15);
         }
 
-        /* Active / selected state — the hero has clicked this button */
         .rsvp-btn.active-rsvp {
             background: linear-gradient(180deg, #5a4320, var(--gold));
             color: #111;
@@ -208,6 +205,128 @@
             text-shadow: 0 1px 2px rgba(0,0,0,0.6);
         }
 
+        /* ========== ATTENDEE LISTS ========== */
+        /*
+         * Styled as a guild registry scroll — dark panel with a gold header bar,
+         * each entry is a portrait coin + hero name. Clicking navigates to the profile.
+         */
+        .attendee-panel {
+            background: linear-gradient(180deg, rgba(8,10,12,0.85), rgba(6,7,9,0.95));
+            border: 3px solid var(--panel-accent);
+            border-radius: var(--card-radius);
+            box-shadow:
+                    0 6px 16px rgba(0,0,0,0.7),
+                    inset 0 1px 0 rgba(255,255,255,0.02),
+                    inset 0 -12px 45px rgba(0,0,0,0.5);
+            overflow: hidden;
+        }
+
+        /* Gold engraved header bar */
+        .attendee-panel-header {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.85rem 1.25rem;
+            background: linear-gradient(180deg, rgba(37,22,7,0.94), rgba(54,34,14,1));
+            border-bottom: 2px solid rgba(60, 43, 25, 0.8);
+        }
+
+        .attendee-panel-header h2 {
+            font-family: "Palatino Linotype", "Book Antiqua", serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 1.2px;
+            text-transform: uppercase;
+            margin: 0;
+            text-shadow: 0 1px 0 rgba(0,0,0,0.8);
+        }
+
+        /* Small count badge */
+        .attendee-count {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #111;
+            background: linear-gradient(180deg, #5a4320, var(--gold));
+            border-radius: 20px;
+            padding: 0.15rem 0.6rem;
+            letter-spacing: 0.4px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+        }
+
+        /* Scrollable body — capped height so long lists stay tidy */
+        .attendee-list {
+            list-style: none;
+            margin: 0;
+            padding: 0.5rem 0;
+            max-height: 320px;
+            overflow-y: auto;
+        }
+
+        .attendee-list::-webkit-scrollbar { width: 6px; }
+        .attendee-list::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #5a4316, var(--gold-dark));
+            border-radius: 4px;
+        }
+        .attendee-list::-webkit-scrollbar-track { background: transparent; }
+
+        /* Each hero row */
+        .attendee-item a {
+            display: flex;
+            align-items: center;
+            gap: 0.85rem;
+            padding: 0.6rem 1.25rem;
+            text-decoration: none;
+            color: var(--muted-text);
+            transition: all 0.25s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .attendee-item a:hover {
+            background: rgba(217, 178, 97, 0.07);
+            border-left-color: var(--gold-dark);
+            color: var(--light-text);
+        }
+
+        /* Portrait coin */
+        .attendee-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(60, 43, 25, 0.8);
+            box-shadow:
+                    0 2px 6px rgba(0,0,0,0.6),
+                    0 0 0 1px rgba(217, 178, 97, 0.1);
+            flex-shrink: 0;
+            transition: all 0.25s ease;
+        }
+
+        .attendee-item a:hover .attendee-avatar {
+            border-color: var(--gold-dark);
+            box-shadow:
+                    0 2px 8px rgba(0,0,0,0.7),
+                    0 0 0 1px rgba(217, 178, 97, 0.3);
+        }
+
+        .attendee-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            margin: 0;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+        }
+
+        /* Empty state */
+        .attendee-empty {
+            padding: 1.25rem;
+            text-align: center;
+            font-size: 0.9rem;
+            color: rgba(207, 200, 184, 0.4);
+            font-style: italic;
+        }
+
+        /* ========== RESPONSIVE ========== */
         @media (max-width: 992px) {
             .event-info h1 { font-size: 1.75rem; }
         }
@@ -250,6 +369,7 @@
 
 <div class="container">
     <div class="row">
+
         <!-- LEFT COLUMN: EVENT DETAILS -->
         <div class="col-12 col-lg-6 mb-4">
             <div class="event-proclamation">
@@ -283,14 +403,20 @@
                 <div class="rsvp-buttons">
                     <form th:action="@{'/events/' + ${event.id} + '/interested'}" method="post">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                        <button type="submit" class="rsvp-btn" th:classappend="${event.interestedHeroes.contains(loggedUser.hero)} ? 'active-rsvp' : ''" th:text="${event.interested} + ' Interested'">
+                        <button type="submit"
+                                class="rsvp-btn"
+                                th:classappend="${event.interestedHeroes.contains(loggedUser.hero)} ? 'active-rsvp' : ''"
+                                th:text="${event.interested} + ' Interested'">
                             0 Interested
                         </button>
                     </form>
 
                     <form th:action="@{'/events/' + ${event.id} + '/going'}" method="post">
                         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                        <button type="submit" class="rsvp-btn" th:classappend="${event.goingHeroes.contains(loggedUser.hero)} ? 'active-rsvp' : ''" th:text="${event.going} + ' Going'">
+                        <button type="submit"
+                                class="rsvp-btn"
+                                th:classappend="${event.goingHeroes.contains(loggedUser.hero)} ? 'active-rsvp' : ''"
+                                th:text="${event.going} + ' Going'">
                             0 Going
                         </button>
                     </form>
@@ -304,11 +430,61 @@
             </div>
         </div>
 
+        <!-- RIGHT COLUMN: EVENT BANNER -->
         <div class="col-12 col-lg-6 mb-4">
             <img th:src="${event.image}"
                  alt="Event Banner"
                  class="event-banner">
         </div>
+
+        <!-- INTERESTED LIST -->
+        <div class="col-12 col-lg-6 mb-4">
+            <div class="attendee-panel">
+                <div class="attendee-panel-header">
+                    <h2>Interested</h2>
+                    <span class="attendee-count" th:text="${event.interested}">0</span>
+                </div>
+                <ul class="attendee-list">
+                    <li th:if="${event.interestedHeroes.isEmpty()}" class="attendee-empty">
+                        No heroes have marked interest yet.
+                    </li>
+                    <li th:each="hero : ${event.getInterestedHeroesSortedAlphabeticallyAsc()}"
+                        class="attendee-item">
+                        <a th:href="@{'/profile/' + ${hero.user.id}}">
+                            <img class="attendee-avatar"
+                                 th:src="${hero.imageUrl}"
+                                 alt="Hero Portrait">
+                            <p class="attendee-name" th:text="${hero.name}">Hero Name</p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- GOING LIST -->
+        <div class="col-12 col-lg-6 mb-4">
+            <div class="attendee-panel">
+                <div class="attendee-panel-header">
+                    <h2>Going</h2>
+                    <span class="attendee-count" th:text="${event.going}">0</span>
+                </div>
+                <ul class="attendee-list">
+                    <li th:if="${event.goingHeroes.isEmpty()}" class="attendee-empty">
+                        No heroes have confirmed attendance yet.
+                    </li>
+                    <li th:each="hero : ${event.getGoingHeroesSortedAlphabeticallyAsc()}"
+                        class="attendee-item">
+                        <a th:href="@{'/profile/' + ${hero.user.id}}">
+                            <img class="attendee-avatar"
+                                 th:src="${hero.imageUrl}"
+                                 alt="Hero Portrait">
+                            <p class="attendee-name" th:text="${hero.name}">Hero Name</p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
     </div>
 </div>
 
