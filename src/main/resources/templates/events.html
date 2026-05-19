@@ -503,13 +503,20 @@
                                     <p><strong>Location:</strong>
                                         <span th:text="${event.location}">Location</span>
                                     </p>
-                                    <p><strong>Time:</strong>
+                                    <p><strong>Date:</strong>
                                         <span th:text="${event.startTime}">2026-02-13</span>
                                         <span class="event-status"></span>
                                     </p>
                                     <span class="event-date-hidden"
                                           th:text="${event.startTime}"
-                                          style="display:none;">2026-02-13</span>
+                                          style="display:none;">2026-02-13
+                                    </span>
+                                    <p><strong>Interested:</strong>
+                                        <span th:text="${event.interestedHeroes.size()}"></span>
+                                    </p>
+                                    <p><strong>Going:</strong>
+                                        <span th:text="${event.goingHeroes.size()}"></span>
+                                    </p>
                                 </div>
                             </div>
                         </div>
