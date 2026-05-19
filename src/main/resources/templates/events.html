@@ -509,7 +509,13 @@
                                     </p>
                                     <span class="event-date-hidden"
                                           th:text="${event.startTime}"
-                                          style="display:none;">2026-02-13</span>
+                                          style="display:none;">2026-02-13
+                                    </span>
+<!--                                    TODO Style it-->
+                                    <div class="container d-flex flex-column align-items-center">
+                                        <p th:text="'Interested: ' + ${event.interestedHeroes.size()}"></p>
+                                        <p th:text="'Going: ' + ${event.goingHeroes.size()}"></p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
