@@ -39,7 +39,6 @@ Access comprehensive guides covering D&D classes, races, alignments, and backgro
 - **Java**
 - **Spring Boot**
 - **Spring Data JPA**
-- **Hibernate**
 - **Spring Security**
 - **MySQL**
 
@@ -65,7 +64,7 @@ The design is fully responsive, ensuring that whether users are browsing on a de
 
 ## 🖼️ Screenshots
 
-*(Coming soon! Screenshots showcasing the guild hall interface, character profiles, event boards, and messaging system will be added here.)*
+You can check out the screenshots of the project on my portfolio [*here.*](https://galin-yan.com/projects/find-a-dice)
 
 ---
 
@@ -79,9 +78,9 @@ The design is fully responsive, ensuring that whether users are browsing on a de
 
 Find A Dice is an evolving platform with ambitious plans for growth. Potential future features include:
 
-- **Campaign Management Tools** - Dedicated spaces for Dungeon Masters to organize ongoing campaigns, track session notes, and manage player groups
-- **Character Sheet Integration** - Full digital character sheets with automatic calculations for stats, modifiers, and progression
-- **Dice Rolling System** - Built-in virtual dice roller for quick rolls during online planning or play-by-post games
+- **🛠️ Campaign Management Tools** - Dedicated spaces for Dungeon Masters to organize ongoing campaigns, track session notes, and manage player groups
+- **🛠️ Character Sheet Integration** - Full digital character sheets with automatic calculations for stats, modifiers, and progression
+- **✅ Dice Rolling System** - Built-in virtual dice roller for quick rolls during online planning or play-by-post games
 - **Marketplace & Resources** - Community-driven sharing of homebrew content, adventure modules, and character art
 - **Advanced Search & Filtering** - Find groups by location, game system, experience level, or playstyle preferences
 
