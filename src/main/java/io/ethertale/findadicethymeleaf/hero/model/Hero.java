@@ -1,5 +1,7 @@
 package io.ethertale.findadicethymeleaf.hero.model;
 
+import io.ethertale.findadicethymeleaf.campaign.model.Campaign;
+import io.ethertale.findadicethymeleaf.campaign.model.CampaignMembership;
 import io.ethertale.findadicethymeleaf.chat.model.ChatMessages;
 import io.ethertale.findadicethymeleaf.chat.model.ChatRoom;
 import io.ethertale.findadicethymeleaf.event.model.Event;
@@ -117,6 +119,12 @@ public class Hero {
 
     @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChatMessages> sentMessages = new ArrayList<>();
+
+    @OneToMany(mappedBy = "dm", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Campaign> campaignsAsDm = new HashSet<>();
+
+    @OneToMany(mappedBy = "hero", cascade = CascadeType.ALL)
+    private Set<CampaignMembership> memberships = new HashSet<>();
 
     public String getTimestamp() {
         return createdAt.getDayOfMonth()
