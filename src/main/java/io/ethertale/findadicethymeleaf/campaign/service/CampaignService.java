@@ -183,5 +183,12 @@ public class CampaignService {
                 campaignMembership.getHero().getName(), campaignMembership.getCampaign().getName());
     }
 
+    // DM Rejects a request, thus archiving it immediately
+    @Transactional
+    public void rejectMembership(UUID membershipId){
+        CampaignMembership campaignMembership = campaignMembershipRepo.findById(membershipId).orElseThrow();
+        campaignMembership.setStatus(MembershipStatus.ARCHIVED);
+        campaignMembershipRepo.save(campaignMembership);
+    }
 
 }
