@@ -5,6 +5,8 @@ import io.ethertale.findadicethymeleaf.campaign.repo.*;
 import io.ethertale.findadicethymeleaf.hero.model.Hero;
 import io.ethertale.findadicethymeleaf.web.dto.campaign.CampaignCreateDTO;
 import io.ethertale.findadicethymeleaf.web.dto.campaign.CampaignUpdateDTO;
+import io.ethertale.findadicethymeleaf.web.dto.campaign.CharacterSheetDTO;
+import io.ethertale.findadicethymeleaf.web.dto.campaign.DmNotesDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -199,5 +201,101 @@ public class CampaignService {
     public List<CampaignMembership> getActiveMembers(UUID campaignId) {
         Campaign campaign = campaignRepo.findById(campaignId).orElseThrow();
         return campaignMembershipRepo.findByCampaignAndStatus(campaign, MembershipStatus.ACTIVE);
+    }
+
+    // Character Sheets
+    public CharacterSheet getSheetForMembership(UUID membershipId){
+        CampaignMembership campaignMembership = campaignMembershipRepo.findById(membershipId).orElseThrow();
+        return characterSheetRepo.findByMembership(campaignMembership).orElseThrow();
+    }
+
+    @Transactional
+    public void updateSheet(UUID membershipId, CharacterSheetDTO sheetDTO){
+        CampaignMembership campaignMembership = campaignMembershipRepo.findById(membershipId).orElseThrow();
+        CharacterSheet sheet = characterSheetRepo.findByMembership(campaignMembership).orElseThrow();
+
+        sheet.setName(sheetDTO.getName());
+        sheet.setAge(sheetDTO.getAge());
+        sheet.setGender(sheetDTO.getGender());
+        sheet.setRace(sheetDTO.getRace());
+        sheet.setCharClass(sheetDTO.getCharClass());
+        sheet.setLevel(sheetDTO.getLevel());
+        sheet.setBackground(sheetDTO.getBackground());
+        sheet.setAlignment(sheetDTO.getAlignment());
+        sheet.setImageUrl(sheetDTO.getImageUrl());
+        sheet.setHealthPoints(sheetDTO.getHp());
+        sheet.setMaxHealthPoints(sheetDTO.getMaxHp());
+        sheet.setResourceName(sheetDTO.getResourceName());
+        sheet.setCurrResource(sheetDTO.getCurrentResource());
+        sheet.setMaxResource(sheetDTO.getMaxResource());
+        sheet.setStrength(sheetDTO.getStrength());
+        sheet.setDexterity(sheetDTO.getDexterity());
+        sheet.setConstitution(sheetDTO.getConstitution());
+        sheet.setIntelligence(sheetDTO.getIntelligence());
+        sheet.setWisdom(sheetDTO.getWisdom());
+        sheet.setCharisma(sheetDTO.getCharisma());
+        sheet.setBackstory(sheetDTO.getBackstory());
+        sheet.setInventory(sheetDTO.getInventory());
+        sheet.setSpells(sheetDTO.getSpells());
+        sheet.setNotes(sheetDTO.getNotes());
+
+        characterSheetRepo.save(sheet);
+    }
+
+    //DM Notes
+
+    public DmNotes getDmNotes(UUID campaignId){
+        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow();
+        return dmNotesRepo.findByCampaign(campaign).orElseThrow();
+    }
+
+    @Transactional
+    public void updateDmNotes(UUID campaignId, DmNotesDTO dmNotesDTO){
+        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow();
+        DmNotes dmNotes = dmNotesRepo.findByCampaign(campaign).orElseThrow();
+
+        dmNotes.setContent(dmNotesDTO.getContent());
+        dmNotesRepo.save(dmNotes);
+    }
+
+    // Messages
+
+    public List<CampaignMessage> getMessages(UUID campaignId){
+        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow();
+        return campaignMessageRepo.findByCampaignOrderBySentAtAsc(campaign);
+    }
+
+    @Transactional
+    public CampaignMessage saveMessage(UUID campaignId, Hero sender, String message){
+        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow();
+
+        CampaignMessage campaignMessage = CampaignMessage.builder()
+                .campaign(campaign)
+                .sender(sender)
+                .message(message)
+                .sentAt(LocalDateTime.now())
+                .build();
+        return campaignMessageRepo.save(campaignMessage);
+    }
+
+    // Authorization
+
+    public boolean isDm(UUID campaignId, Hero hero){
+        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow();
+        return campaign.getDm().getId().equals(hero.getId());
+    }
+
+    public boolean isActiveMember(UUID campaignId, Hero hero){
+        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow();
+        return  campaignMembershipRepo.findByCampaignAndHero(campaign, hero).map(member -> member.getStatus() == MembershipStatus.ACTIVE).orElse(false);
+    }
+
+    public boolean isDmOrActiveMember(UUID campaignId, Hero hero){
+        return isDm(campaignId, hero) || isActiveMember(campaignId, hero);
+    }
+
+    public CampaignMembership getMembership(UUID campaignId, Hero hero){
+        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow();
+        return campaignMembershipRepo.findByCampaignAndHero(campaign, hero).orElseThrow();
     }
 }
