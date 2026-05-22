@@ -1,9 +1,6 @@
 package io.ethertale.findadicethymeleaf.campaign.service;
 
-import io.ethertale.findadicethymeleaf.campaign.model.Campaign;
-import io.ethertale.findadicethymeleaf.campaign.model.CampaignMembership;
-import io.ethertale.findadicethymeleaf.campaign.model.CampaignStatus;
-import io.ethertale.findadicethymeleaf.campaign.model.DmNotes;
+import io.ethertale.findadicethymeleaf.campaign.model.*;
 import io.ethertale.findadicethymeleaf.campaign.repo.*;
 import io.ethertale.findadicethymeleaf.hero.model.Hero;
 import io.ethertale.findadicethymeleaf.web.dto.campaign.CampaignCreateDTO;
@@ -135,6 +132,56 @@ public class CampaignService {
      * Campaign must be ACTIVE, not full, and hero must not already have a membership.
      */
     @Transactional
-    public void requestToJoin (UUID campaignId, Hero hero){}
+    public void requestToJoin (UUID campaignId, Hero hero){
+        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow();
+
+        if (campaign.getStatus() == CampaignStatus.ARCHIVED){
+            throw new IllegalStateException("Campaign '"+campaign.getName()+"' is archived.");
+        }
+        if (campaign.getActiveMemberCount() <= campaign.getMaxPlayers()){
+            throw new IllegalStateException("Campaign '"+campaign.getName()+"' is full!");
+        }
+        if (campaignMembershipRepo.existsByCampaignAndHero(campaign, hero)){
+            throw new IllegalStateException("Campaign '"+campaign.getName()+"' is already member!");
+        }
+
+        CampaignMembership campaignMembership = CampaignMembership.builder()
+                .campaign(campaign)
+                .hero(hero)
+                .status(MembershipStatus.PENDING)
+                .joinedAt(LocalDateTime.now())
+                .build();
+
+        campaignMembershipRepo.save(campaignMembership);
+
+        log.info("Hero {} requested to join campaign '{}'.", hero.getName(), campaign.getName());
+    }
+
+    // DM Approved membership
+    @Transactional
+    public void approveMembership(UUID membershipId){
+        CampaignMembership campaignMembership = campaignMembershipRepo.findById(membershipId).orElseThrow();
+        campaignMembership.setStatus(MembershipStatus.ACTIVE);
+        campaignMembershipRepo.save(campaignMembership);
+
+        CharacterSheet sheet = CharacterSheet.builder()
+                .membership(campaignMembership)
+                .build();
+        characterSheetRepo.save(sheet);
+
+        log.info("Hero {} approved for campaign '{}'.", campaignMembership.getHero().getName(), campaignMembership.getCampaign().getName());
+    }
+
+    // DM Kicks a player, archiving their membership for future reference/invite
+    @Transactional
+    public void kickMember(UUID membershipId){
+        CampaignMembership campaignMembership = campaignMembershipRepo.findById(membershipId).orElseThrow();
+        campaignMembership.setStatus(MembershipStatus.ARCHIVED);
+        campaignMembershipRepo.save(campaignMembership);
+
+        log.info("Hero {} kicked from campaign '{}'.",
+                campaignMembership.getHero().getName(), campaignMembership.getCampaign().getName());
+    }
+
 
 }
