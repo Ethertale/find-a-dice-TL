@@ -54,4 +54,46 @@ public class CampaignController {
 
         return "redirect:/campaigns/" + campaign.getId();
     }
+
+    // Campaign view - it will differ based on role (isDm/isMember/isPending)
+    @GetMapping("/{id}")
+    public ModelAndView campaignView(@PathVariable UUID id, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
+        User loggedUser = userService.getUserById(authenticationDetails.getId());
+        Campaign campaign = campaignService.getCampaignById(id);
+
+        if (campaign == null) {
+            return new ModelAndView("redirect:/campaigns");
+        }
+
+        boolean isDm = campaignService.isDm(id, loggedUser.getHero());
+        boolean isActiveMember = campaignService.isActiveMember(id, loggedUser.getHero());
+        CampaignMembership membership = campaignService.getMembership(id, loggedUser.getHero());
+
+        ModelAndView mav = new ModelAndView("campaignView");
+        mav.addObject("campaign", campaign);
+        mav.addObject("loggedUser", loggedUser);
+        mav.addObject("isDm", isDm);
+        mav.addObject("isActiveMember", isActiveMember);
+        mav.addObject("activeMembers", campaignService.getActiveMembers(id));
+        mav.addObject("messages", campaignService.getMessages(id));
+
+        // Pass membership-specific objects if the user has a role in this campaign
+        if (isDm){
+            mav.addObject("pendingRequests", campaignService.getAllPendingRequests(id));
+            mav.addObject("dmNotes", campaignService.getDmNotes(id));
+        }
+        if (isActiveMember && membership != null){
+            mav.addObject("membership", membership);
+            mav.addObject("characterSheet", campaignService.getSheetForMembership(membership.getId()));
+            mav.addObject("sheetDTO", new CharacterSheetDTO());
+        }
+
+        // Pending Player - they can see the campaign exist but can't interact with it
+        if (!isDm && !isActiveMember){
+            boolean isPending = membership != null && membership.getStatus() == MembershipStatus.PENDING;
+            mav.addObject("isPending", isPending);
+        }
+
+        return mav;
+    }
 }
