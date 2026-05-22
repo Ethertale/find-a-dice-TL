@@ -191,4 +191,13 @@ public class CampaignService {
         campaignMembershipRepo.save(campaignMembership);
     }
 
+    public List<CampaignMembership> getAllPendingRequests(UUID campaignId){
+        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow();
+        return campaignMembershipRepo.findByCampaignAndStatus(campaign, MembershipStatus.PENDING);
+    }
+
+    public List<CampaignMembership> getActiveMembers(UUID campaignId) {
+        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow();
+        return campaignMembershipRepo.findByCampaignAndStatus(campaign, MembershipStatus.ACTIVE);
+    }
 }
