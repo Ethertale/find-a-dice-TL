@@ -15,8 +15,10 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.IOException;
 import java.util.UUID;
 
 @Controller
@@ -122,5 +124,24 @@ public class CampaignController {
 
         campaignService.archiveCampaign(id);
         return "redirect:/campaigns";
+    }
+
+    // Map Upload (DM Only)
+    @PostMapping("/{id}/upload-map")
+    public String uploadMap(@PathVariable UUID id, @RequestParam("mapFile")MultipartFile file, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
+        User loggedUser = userService.getUserById(authenticationDetails.getId());
+
+        if (!campaignService.isDm(id, loggedUser.getHero())) {
+            return "redirect:/campaigns/" + id;
+        }
+
+        try {
+            campaignService.uploadMap(id, file);
+        } catch (IOException e) {
+            // Redirect back, TODO add error message
+            return "redirect:/campaigns/" + id + "?mapError=true";
+        }
+
+        return "redirect:/campaigns/" + id;
     }
 }
