@@ -144,4 +144,23 @@ public class CampaignController {
 
         return "redirect:/campaigns/" + id;
     }
+
+    //Join request
+    @PostMapping("/{id}/request-join")
+    public String requestJoin(@PathVariable UUID id, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
+        User loggedUser = userService.getUserById(authenticationDetails.getId());
+
+        // DM cannot request to join their own campaign
+        if (campaignService.isDm(id, loggedUser.getHero())) {
+            return "redirect:/campaigns/" + id;
+        }
+
+        try {
+            campaignService.requestToJoin(id, loggedUser.getHero());
+        } catch (IllegalStateException e) {
+            return "redirect:/campaigns/" + id + "?joinError=true";
+        }
+
+        return "redirect:/campaigns/" + id;
+    }
 }
