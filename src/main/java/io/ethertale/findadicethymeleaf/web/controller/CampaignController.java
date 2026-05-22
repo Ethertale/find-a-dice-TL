@@ -8,6 +8,7 @@ import io.ethertale.findadicethymeleaf.security.AuthenticationDetails;
 import io.ethertale.findadicethymeleaf.user.model.User;
 import io.ethertale.findadicethymeleaf.user.service.UserService;
 import io.ethertale.findadicethymeleaf.web.dto.campaign.CampaignCreateDTO;
+import io.ethertale.findadicethymeleaf.web.dto.campaign.CampaignUpdateDTO;
 import io.ethertale.findadicethymeleaf.web.dto.campaign.CharacterSheetDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -95,5 +96,31 @@ public class CampaignController {
         }
 
         return mav;
+    }
+
+    // Update Campaign (DM Only)
+    @PostMapping("/{id}/update")
+    public String updateCampaign(@PathVariable UUID id, @ModelAttribute CampaignUpdateDTO updateDTO, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
+        User loggedUser = userService.getUserById(authenticationDetails.getId());
+
+        if (!campaignService.isDm(id, loggedUser.getHero())) {
+            return "redirect:/campaigns/" + id;
+        }
+
+        campaignService.updateCampaign(id, updateDTO);
+        return "redirect:/campaigns/" + id;
+    }
+
+    // Archive Campaign (DM Only)
+    @PostMapping("/{id}/archive")
+    public String archiveCampaign(@PathVariable UUID id, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
+        User loggedUser = userService.getUserById(authenticationDetails.getId());
+
+        if (!campaignService.isDm(id, loggedUser.getHero())) {
+            return "redirect:/campaigns/" + id;
+        }
+
+        campaignService.archiveCampaign(id);
+        return "redirect:/campaigns";
     }
 }
