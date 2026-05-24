@@ -13,9 +13,7 @@ import io.ethertale.findadicethymeleaf.web.dto.campaign.CharacterSheetDTO;
 import io.ethertale.findadicethymeleaf.web.dto.campaign.DmNotesDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -212,7 +210,7 @@ public class CampaignController {
             return "redirect:/campaigns/" + id;
         }
 
-        campaignService.updateSheet(id, sheetDTO);
+        campaignService.updateSheet(membershipId, sheetDTO);
         return "redirect:/campaigns/" + id;
     }
 
