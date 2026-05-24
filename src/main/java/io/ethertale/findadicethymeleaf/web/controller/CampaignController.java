@@ -12,6 +12,7 @@ import io.ethertale.findadicethymeleaf.web.dto.campaign.CampaignUpdateDTO;
 import io.ethertale.findadicethymeleaf.web.dto.campaign.CharacterSheetDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -161,6 +162,43 @@ public class CampaignController {
             return "redirect:/campaigns/" + id + "?joinError=true";
         }
 
+        return "redirect:/campaigns/" + id;
+    }
+
+    // Approve / Reject / Kick (DM Only)
+    @PostMapping("/{id}/approve/{membershipId}")
+    public String approveMember(@PathVariable UUID id, @PathVariable UUID membershipId, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
+        User loggedUser = userService.getUserById(authenticationDetails.getId());
+
+        if (!campaignService.isDm(id, loggedUser.getHero())) {
+            return "redirect:/campaigns/" + id;
+        }
+
+        campaignService.approveMembership(membershipId);
+        return "redirect:/campaigns/" + id;
+    }
+
+    @PostMapping("/{id}/reject/{membershipId}")
+    public String rejectMember(@PathVariable UUID id, @PathVariable UUID membershipId, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
+        User loggedUser = userService.getUserById(authenticationDetails.getId());
+
+        if (!campaignService.isDm(id, loggedUser.getHero())) {
+            return "redirect:/campaigns/" + id;
+        }
+
+        campaignService.rejectMembership(membershipId);
+        return "redirect:/campaigns/" + id;
+    }
+
+    @PostMapping("/{id}/kick/{membershipId}")
+    public String kickMember(@PathVariable UUID id, @PathVariable UUID membershipId, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
+        User loggedUser = userService.getUserById(authenticationDetails.getId());
+
+        if (!campaignService.isDm(id, loggedUser.getHero())) {
+            return "redirect:/campaigns/" + id;
+        }
+
+        campaignService.kickMember(membershipId);
         return "redirect:/campaigns/" + id;
     }
 }
