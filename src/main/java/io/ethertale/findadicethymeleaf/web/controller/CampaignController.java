@@ -10,6 +10,7 @@ import io.ethertale.findadicethymeleaf.user.service.UserService;
 import io.ethertale.findadicethymeleaf.web.dto.campaign.CampaignCreateDTO;
 import io.ethertale.findadicethymeleaf.web.dto.campaign.CampaignUpdateDTO;
 import io.ethertale.findadicethymeleaf.web.dto.campaign.CharacterSheetDTO;
+import io.ethertale.findadicethymeleaf.web.dto.campaign.DmNotesDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.parameters.P;
@@ -199,6 +200,32 @@ public class CampaignController {
         }
 
         campaignService.kickMember(membershipId);
+        return "redirect:/campaigns/" + id;
+    }
+
+    // Character Sheet (For the players)
+    @PostMapping("/{id}/sheet/{membershipId}/update")
+    public String updateSheet(@PathVariable UUID id, @PathVariable UUID membershipId, @ModelAttribute CharacterSheetDTO sheetDTO, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
+        User loggedUser = userService.getUserById(authenticationDetails.getId());
+
+        if (!campaignService.isActiveMember(id, loggedUser.getHero())) {
+            return "redirect:/campaigns/" + id;
+        }
+
+        campaignService.updateSheet(id, sheetDTO);
+        return "redirect:/campaigns/" + id;
+    }
+
+    // DM Notes (For the DM)
+    @PostMapping("/{id}/notes/update")
+    public String updateDmNotes(@PathVariable UUID id, @ModelAttribute DmNotesDTO notesDTO, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
+        User loggedUser = userService.getUserById(authenticationDetails.getId());
+
+        if (!campaignService.isDm(id, loggedUser.getHero())) {
+            return "redirect:/campaigns/" + id;
+        }
+
+        campaignService.updateDmNotes(id, notesDTO);
         return "redirect:/campaigns/" + id;
     }
 }
