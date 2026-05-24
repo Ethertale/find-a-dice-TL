@@ -23,7 +23,7 @@ public class Campaign {
     private UUID id;
 
     @Column(nullable = false, length = 100)
-    private String name;
+    private String title;
 
     @Column(nullable = false, length = 1000)
     private String description;

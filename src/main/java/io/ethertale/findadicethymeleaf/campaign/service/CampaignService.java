@@ -58,7 +58,7 @@ public class CampaignService {
     @Transactional
     public Campaign createCampaign(CampaignCreateDTO campaignCreateDTO, Hero dm) {
         Campaign campaign = Campaign.builder()
-                .name(campaignCreateDTO.getTitle())
+                .title(campaignCreateDTO.getTitle())
                 .description(campaignCreateDTO.getDescription())
                 .imageUrl(campaignCreateDTO.getImageUrl())
                 .maxPlayers(campaignCreateDTO.getMaxPlayers())
@@ -76,14 +76,14 @@ public class CampaignService {
                 .build();
         dmNotesRepo.save(notes);
 
-        log.info("Campaign '{}' created by hero {} at {}", campaign.getName(), dm.getName(), LocalDateTime.now());
+        log.info("Campaign '{}' created by hero {} at {}", campaign.getTitle(), dm.getName(), LocalDateTime.now());
         return campaign;
     }
 
     @Transactional
     public void updateCampaign(UUID campaignId, CampaignUpdateDTO dto) {
         Campaign campaign = campaignRepo.findById(campaignId).orElseThrow();
-        campaign.setName(dto.getTitle());
+        campaign.setTitle(dto.getTitle());
         campaign.setDescription(dto.getDescription());
         campaign.setImageUrl(dto.getImageUrl());
         campaign.setMaxPlayers(dto.getMaxPlayers());
@@ -95,7 +95,7 @@ public class CampaignService {
         Campaign campaign = campaignRepo.findById(id).orElseThrow();
         campaign.setStatus(CampaignStatus.ARCHIVED);
         campaignRepo.save(campaign);
-        log.info("Campaign '{}' archived.", campaign.getName());
+        log.info("Campaign '{}' archived.", campaign.getTitle());
     }
 
     /***
@@ -123,7 +123,7 @@ public class CampaignService {
         campaign.setImagePath(mapPath);
         campaignRepo.save(campaign);
 
-        log.info("Campaign '{}' uploaded a map: {}", campaign.getName(), mapPath);
+        log.info("Campaign '{}' uploaded a map: {}", campaign.getTitle(), mapPath);
 
         return mapPath;
     }
@@ -138,13 +138,13 @@ public class CampaignService {
         Campaign campaign = campaignRepo.findById(campaignId).orElseThrow();
 
         if (campaign.getStatus() == CampaignStatus.ARCHIVED){
-            throw new IllegalStateException("Campaign '"+campaign.getName()+"' is archived.");
+            throw new IllegalStateException("Campaign '"+campaign.getTitle()+"' is archived.");
         }
         if (campaign.getActiveMemberCount() <= campaign.getMaxPlayers()){
-            throw new IllegalStateException("Campaign '"+campaign.getName()+"' is full!");
+            throw new IllegalStateException("Campaign '"+campaign.getTitle()+"' is full!");
         }
         if (campaignMembershipRepo.existsByCampaignAndHero(campaign, hero)){
-            throw new IllegalStateException("Campaign '"+campaign.getName()+"' is already member!");
+            throw new IllegalStateException("Campaign '"+campaign.getTitle()+"' is already member!");
         }
 
         CampaignMembership campaignMembership = CampaignMembership.builder()
@@ -156,7 +156,7 @@ public class CampaignService {
 
         campaignMembershipRepo.save(campaignMembership);
 
-        log.info("Hero {} requested to join campaign '{}'.", hero.getName(), campaign.getName());
+        log.info("Hero {} requested to join campaign '{}'.", hero.getName(), campaign.getTitle());
     }
 
     // DM Approved membership
@@ -171,7 +171,7 @@ public class CampaignService {
                 .build();
         characterSheetRepo.save(sheet);
 
-        log.info("Hero {} approved for campaign '{}'.", campaignMembership.getHero().getName(), campaignMembership.getCampaign().getName());
+        log.info("Hero {} approved for campaign '{}'.", campaignMembership.getHero().getName(), campaignMembership.getCampaign().getTitle());
     }
 
     // DM Kicks a player, archiving their membership for future reference/invite
@@ -182,7 +182,7 @@ public class CampaignService {
         campaignMembershipRepo.save(campaignMembership);
 
         log.info("Hero {} kicked from campaign '{}'.",
-                campaignMembership.getHero().getName(), campaignMembership.getCampaign().getName());
+                campaignMembership.getHero().getName(), campaignMembership.getCampaign().getTitle());
     }
 
     // DM Rejects a request, thus archiving it immediately
