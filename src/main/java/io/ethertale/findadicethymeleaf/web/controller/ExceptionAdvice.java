@@ -80,5 +80,25 @@ public class ExceptionAdvice {
         redirectAttributes.addFlashAttribute("campaignSheetDoesNotExist", "Campaign sheet does not exist!");
         return "redirect:/campaigns";
     }
+    @ExceptionHandler(CampaignCreateDescriptionNotWithinBounds.class)
+    public String handleCampaignCreateDescriptionNotWithinBounds(RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("campaignCreateDescriptionNotWithinBounds", "Campaign description either too long or too short!");
+        return "redirect:/campaigns/campaignCreate";
+    }
+    @ExceptionHandler(CampaignCreateInvalidImageUrl.class)
+    public String handleCampaignCreateInvalidImageUrl(RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("campaignCreateInvalidImageUrl", "Invalid image URL!");
+        return "redirect:/campaigns/campaignCreate";
+    }
+    @ExceptionHandler(CampaignCreateInvalidMaxPlayers.class)
+    public String handleCampaignCreateInvalidMaxPlayers(RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("campaignCreateInvalidMaxPlayers", "Invalid max players!");
+        return "redirect:/campaigns/campaignCreate";
+    }
+    @ExceptionHandler(CampaignCreateTitleNotWithinBounds.class)
+    public String handleCampaignCreateTitleNotWithinBounds(RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("campaignCreateTitleNotWithinBounds", "Campaign Title either too long or too short!");
+        return "redirect:/campaigns/campaignCreate";
+    }
 
 }

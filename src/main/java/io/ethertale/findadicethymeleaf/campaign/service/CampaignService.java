@@ -2,10 +2,7 @@ package io.ethertale.findadicethymeleaf.campaign.service;
 
 import io.ethertale.findadicethymeleaf.campaign.model.*;
 import io.ethertale.findadicethymeleaf.campaign.repo.*;
-import io.ethertale.findadicethymeleaf.exceptions.CampaignDmNotesDoNotExist;
-import io.ethertale.findadicethymeleaf.exceptions.CampaignDoesNotExist;
-import io.ethertale.findadicethymeleaf.exceptions.CampaignMembershipDoesNotExist;
-import io.ethertale.findadicethymeleaf.exceptions.CampaignSheetDoesNotExist;
+import io.ethertale.findadicethymeleaf.exceptions.*;
 import io.ethertale.findadicethymeleaf.hero.model.Hero;
 import io.ethertale.findadicethymeleaf.web.dto.campaign.CampaignCreateDTO;
 import io.ethertale.findadicethymeleaf.web.dto.campaign.CampaignUpdateDTO;
@@ -76,7 +73,30 @@ public class CampaignService {
 //                .build();
 
         Campaign campaign = new Campaign();
-        if (campaignCreateDTO)
+
+        if (campaignCreateDTO.getTitle().length() > 50 || campaignCreateDTO.getTitle().length() <= 0 || campaignCreateDTO.getTitle().isBlank()) {
+            throw new CampaignCreateTitleNotWithinBounds();
+        }
+        campaign.setTitle(campaignCreateDTO.getTitle());
+
+        if (campaignCreateDTO.getDescription().length() > 1000 || campaignCreateDTO.getDescription().length() <= 0 || campaignCreateDTO.getDescription().isBlank()) {
+            throw new CampaignCreateDescriptionNotWithinBounds();
+        }
+        campaign.setDescription(campaignCreateDTO.getDescription());
+
+        if (!campaignCreateDTO.getImageUrl().startsWith("https://") || campaignCreateDTO.getImageUrl().isBlank()) {
+            throw new CampaignCreateInvalidImageUrl();
+        }
+        campaign.setImageUrl(campaignCreateDTO.getImageUrl());
+
+        if (campaignCreateDTO.getMaxPlayers() > 15 || campaignCreateDTO.getMaxPlayers() <= 0) {
+            throw new CampaignCreateInvalidMaxPlayers();
+        }
+        campaign.setMaxPlayers(campaignCreateDTO.getMaxPlayers());
+
+        campaign.setStatus(CampaignStatus.ACTIVE);
+        campaign.setCreatedAt(LocalDateTime.now());
+        campaign.setDm(dm);
 
         campaignRepo.save(campaign);
 
