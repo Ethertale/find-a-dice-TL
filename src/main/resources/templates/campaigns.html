@@ -214,7 +214,7 @@
                     </p>
                     <p class="campaign-description" th:text="${campaign.description}">Description...</p>
                     <span class="player-badge"
-                          th:text="${campaign.activeMemberCount <= campaign.getMaxPlayers()} ? 'FULL' : 'OPEN'">OPEN</span>
+                          th:text="${campaign.activeMemberCount >= campaign.getMaxPlayers()} ? 'FULL' : 'OPEN'">OPEN</span>
                 </div>
             </a>
         </div>
