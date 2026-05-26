@@ -2,6 +2,10 @@ package io.ethertale.findadicethymeleaf.campaign.service;
 
 import io.ethertale.findadicethymeleaf.campaign.model.*;
 import io.ethertale.findadicethymeleaf.campaign.repo.*;
+import io.ethertale.findadicethymeleaf.exceptions.CampaignDmNotesDoNotExist;
+import io.ethertale.findadicethymeleaf.exceptions.CampaignDoesNotExist;
+import io.ethertale.findadicethymeleaf.exceptions.CampaignMembershipDoesNotExist;
+import io.ethertale.findadicethymeleaf.exceptions.CampaignSheetDoesNotExist;
 import io.ethertale.findadicethymeleaf.hero.model.Hero;
 import io.ethertale.findadicethymeleaf.web.dto.campaign.CampaignCreateDTO;
 import io.ethertale.findadicethymeleaf.web.dto.campaign.CampaignUpdateDTO;
@@ -57,15 +61,22 @@ public class CampaignService {
 
     @Transactional
     public Campaign createCampaign(CampaignCreateDTO campaignCreateDTO, Hero dm) {
-        Campaign campaign = Campaign.builder()
-                .title(campaignCreateDTO.getTitle())
-                .description(campaignCreateDTO.getDescription())
-                .imageUrl(campaignCreateDTO.getImageUrl())
-                .maxPlayers(campaignCreateDTO.getMaxPlayers())
-                .status(CampaignStatus.ACTIVE)
-                .createdAt(LocalDateTime.now())
-                .dm(dm)
-                .build();
+//        Campaign campaign = Campaign.builder()
+//                // 50 Char max
+//                .title(campaignCreateDTO.getTitle())
+//                // 1000 Char Max
+//                .description(campaignCreateDTO.getDescription())
+//                // If link does not start with HTTPS://
+//                .imageUrl(campaignCreateDTO.getImageUrl())
+//                // 1-15
+//                .maxPlayers(campaignCreateDTO.getMaxPlayers())
+//                .status(CampaignStatus.ACTIVE)
+//                .createdAt(LocalDateTime.now())
+//                .dm(dm)
+//                .build();
+
+        Campaign campaign = new Campaign();
+        if (campaignCreateDTO)
 
         campaignRepo.save(campaign);
 
@@ -106,7 +117,7 @@ public class CampaignService {
      */
     @Transactional
     public String uploadMap(UUID campaignId, MultipartFile file) throws IOException {
-        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow();
+        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow(CampaignDoesNotExist::new);
 
         Path uploadDir = Paths.get(MAP_UPLOAD_DIR);
         if (!Files.exists(uploadDir)){
@@ -135,7 +146,7 @@ public class CampaignService {
      */
     @Transactional
     public void requestToJoin (UUID campaignId, Hero hero){
-        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow();
+        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow(CampaignDoesNotExist::new);
 
         if (campaign.getStatus() == CampaignStatus.ARCHIVED){
             throw new IllegalStateException("Campaign '"+campaign.getTitle()+"' is archived.");
@@ -162,7 +173,7 @@ public class CampaignService {
     // DM Approved membership
     @Transactional
     public void approveMembership(UUID membershipId){
-        CampaignMembership campaignMembership = campaignMembershipRepo.findById(membershipId).orElseThrow();
+        CampaignMembership campaignMembership = campaignMembershipRepo.findById(membershipId).orElseThrow(CampaignMembershipDoesNotExist::new);
         campaignMembership.setStatus(MembershipStatus.ACTIVE);
         campaignMembershipRepo.save(campaignMembership);
 
@@ -177,7 +188,7 @@ public class CampaignService {
     // DM Kicks a player, archiving their membership for future reference/invite
     @Transactional
     public void kickMember(UUID membershipId){
-        CampaignMembership campaignMembership = campaignMembershipRepo.findById(membershipId).orElseThrow();
+        CampaignMembership campaignMembership = campaignMembershipRepo.findById(membershipId).orElseThrow(CampaignMembershipDoesNotExist::new);
         campaignMembership.setStatus(MembershipStatus.ARCHIVED);
         campaignMembershipRepo.save(campaignMembership);
 
@@ -188,31 +199,31 @@ public class CampaignService {
     // DM Rejects a request, thus archiving it immediately
     @Transactional
     public void rejectMembership(UUID membershipId){
-        CampaignMembership campaignMembership = campaignMembershipRepo.findById(membershipId).orElseThrow();
+        CampaignMembership campaignMembership = campaignMembershipRepo.findById(membershipId).orElseThrow(CampaignMembershipDoesNotExist::new);
         campaignMembership.setStatus(MembershipStatus.ARCHIVED);
         campaignMembershipRepo.save(campaignMembership);
     }
 
     public List<CampaignMembership> getAllPendingRequests(UUID campaignId){
-        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow();
+        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow(CampaignDoesNotExist::new);
         return campaignMembershipRepo.findByCampaignAndStatus(campaign, MembershipStatus.PENDING);
     }
 
     public List<CampaignMembership> getActiveMembers(UUID campaignId) {
-        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow();
+        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow(CampaignDoesNotExist::new);
         return campaignMembershipRepo.findByCampaignAndStatus(campaign, MembershipStatus.ACTIVE);
     }
 
     // Character Sheets
     public CharacterSheet getSheetForMembership(UUID membershipId){
-        CampaignMembership campaignMembership = campaignMembershipRepo.findById(membershipId).orElseThrow();
-        return characterSheetRepo.findByMembership(campaignMembership).orElseThrow();
+        CampaignMembership campaignMembership = campaignMembershipRepo.findById(membershipId).orElseThrow(CampaignMembershipDoesNotExist::new);
+        return characterSheetRepo.findByMembership(campaignMembership).orElseThrow(CampaignMembershipDoesNotExist::new);
     }
 
     @Transactional
     public void updateSheet(UUID membershipId, CharacterSheetDTO sheetDTO){
-        CampaignMembership campaignMembership = campaignMembershipRepo.findById(membershipId).orElseThrow();
-        CharacterSheet sheet = characterSheetRepo.findByMembership(campaignMembership).orElseThrow();
+        CampaignMembership campaignMembership = campaignMembershipRepo.findById(membershipId).orElseThrow(CampaignMembershipDoesNotExist::new);
+        CharacterSheet sheet = characterSheetRepo.findByMembership(campaignMembership).orElseThrow(CampaignSheetDoesNotExist::new);
 
         sheet.setName(sheetDTO.getName());
         sheet.setAge(sheetDTO.getAge());
@@ -245,14 +256,14 @@ public class CampaignService {
     //DM Notes
 
     public DmNotes getDmNotes(UUID campaignId){
-        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow();
+        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow(CampaignDoesNotExist::new);
         return dmNotesRepo.findByCampaign(campaign).orElseThrow();
     }
 
     @Transactional
     public void updateDmNotes(UUID campaignId, DmNotesDTO dmNotesDTO){
-        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow();
-        DmNotes dmNotes = dmNotesRepo.findByCampaign(campaign).orElseThrow();
+        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow(CampaignDoesNotExist::new);
+        DmNotes dmNotes = dmNotesRepo.findByCampaign(campaign).orElseThrow(CampaignDmNotesDoNotExist::new);
 
         dmNotes.setContent(dmNotesDTO.getContent());
         dmNotesRepo.save(dmNotes);
@@ -261,13 +272,13 @@ public class CampaignService {
     // Messages
 
     public List<CampaignMessage> getMessages(UUID campaignId){
-        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow();
+        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow(CampaignDoesNotExist::new);
         return campaignMessageRepo.findByCampaignOrderBySentAtAsc(campaign);
     }
 
     @Transactional
     public CampaignMessage saveMessage(UUID campaignId, Hero sender, String message){
-        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow();
+        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow(CampaignDoesNotExist::new);
 
         CampaignMessage campaignMessage = CampaignMessage.builder()
                 .campaign(campaign)
@@ -281,12 +292,12 @@ public class CampaignService {
     // Authorization
 
     public boolean isDm(UUID campaignId, Hero hero){
-        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow();
+        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow(CampaignDoesNotExist::new);
         return campaign.getDm().getId().equals(hero.getId());
     }
 
     public boolean isActiveMember(UUID campaignId, Hero hero){
-        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow();
+        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow(CampaignDoesNotExist::new);
         return  campaignMembershipRepo.findByCampaignAndHero(campaign, hero).map(member -> member.getStatus() == MembershipStatus.ACTIVE).orElse(false);
     }
 
@@ -295,7 +306,7 @@ public class CampaignService {
     }
 
     public CampaignMembership getMembership(UUID campaignId, Hero hero){
-        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow();
+        Campaign campaign = campaignRepo.findById(campaignId).orElseThrow(CampaignDoesNotExist::new);
         return campaignMembershipRepo.findByCampaignAndHero(campaign, hero).orElseThrow();
     }
 }

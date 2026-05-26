@@ -60,5 +60,25 @@ public class ExceptionAdvice {
         redirectAttributes.addFlashAttribute("chatRoomExistsRedirect", "Chat room already exists!");
         return "redirect:/chatRooms";
     }
+    @ExceptionHandler(CampaignDmNotesDoNotExist.class)
+    public String handleCampaignDmNotesDoNotExist(RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("campaignDmNotesDoNotExist", "Campaign DM notes do not exist!");
+        return "redirect:/campaigns";
+    }
+    @ExceptionHandler(CampaignDoesNotExist.class)
+    public String handleCampaignDoesNotExist(RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("campaignDoesNotExist", "Campaign does not exist!");
+        return "redirect:/campaigns";
+    }
+    @ExceptionHandler(CampaignMembershipDoesNotExist.class)
+    public String handleCampaignMembershipDoesNotExist(RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("campaignMembershipDoesNotExist", "Campaign Membership does not exist!");
+        return "redirect:/campaigns";
+    }
+    @ExceptionHandler(CampaignSheetDoesNotExist.class)
+    public String handleCampaignSheetDoesNotExist(RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("campaignSheetDoesNotExist", "Campaign sheet does not exist!");
+        return "redirect:/campaigns";
+    }
 
 }
