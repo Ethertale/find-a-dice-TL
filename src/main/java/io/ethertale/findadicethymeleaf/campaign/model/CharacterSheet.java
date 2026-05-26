@@ -71,15 +71,15 @@ public class CharacterSheet {
     private String charisma;
 
     // Free form text areas
-    @Column(length = 10000)
+    @Column(columnDefinition = "TEXT")
     private String backstory;
 
-    @Column(length = 10000)
+    @Column(columnDefinition = "TEXT")
     private String inventory;
 
-    @Column(length = 10000)
+    @Column(columnDefinition = "TEXT")
     private String spells;
 
-    @Column(length = 10000)
+    @Column(columnDefinition = "TEXT")
     private String notes;
 }

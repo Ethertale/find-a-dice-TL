@@ -23,7 +23,7 @@ public class DmNotes {
     private Campaign campaign;
 
     // Free form text where the DM writes whatever they need (NPCs, enemies, story notes, etc.)
-    @Column(length = 100000)
+    @Column(columnDefinition = "LONGTEXT")
     private String content;
 }
 
