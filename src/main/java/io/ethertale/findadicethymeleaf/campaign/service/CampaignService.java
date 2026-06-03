@@ -22,6 +22,7 @@ import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -85,9 +86,10 @@ public class CampaignService {
         campaign.setDescription(campaignCreateDTO.getDescription());
 
         if (!campaignCreateDTO.getImageUrl().startsWith("https://") || campaignCreateDTO.getImageUrl().isBlank()) {
-            throw new CampaignCreateInvalidImageUrl();
+            campaign.setImageUrl(dm.getImageUrl());
         }
         campaign.setImageUrl(campaignCreateDTO.getImageUrl());
+        campaign.setImagePath("/static/imgs/new-background.jpeg");
 
         if (campaignCreateDTO.getMaxPlayers() > 15 || campaignCreateDTO.getMaxPlayers() <= 0) {
             throw new CampaignCreateInvalidMaxPlayers();
@@ -144,7 +146,12 @@ public class CampaignService {
             Files.createDirectories(uploadDir);
         }
 
-        String filename = campaignId + "_map.png";
+        String fileExtension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
+
+        if (!fileExtension.equals(".png") && !fileExtension.equals(".jpg") && !fileExtension.equals(".jpeg")) {
+            throw new CampaignCreateInvalidImageUrl();
+        }
+        String filename = campaignId + "_map" + fileExtension;
         Path destination = uploadDir.resolve(filename);
 
         Files.copy(file.getInputStream(), destination, StandardCopyOption.REPLACE_EXISTING);
@@ -171,21 +178,37 @@ public class CampaignService {
         if (campaign.getStatus() == CampaignStatus.ARCHIVED){
             throw new IllegalStateException("Campaign '"+campaign.getTitle()+"' is archived.");
         }
-        if (campaign.getActiveMemberCount() <= campaign.getMaxPlayers()){
+        if (campaign.getActiveMemberCount() >= campaign.getMaxPlayers()){
             throw new IllegalStateException("Campaign '"+campaign.getTitle()+"' is full!");
         }
-        if (campaignMembershipRepo.existsByCampaignAndHero(campaign, hero)){
-            throw new IllegalStateException("Campaign '"+campaign.getTitle()+"' is already member!");
+
+        // If a player has a membership but has been kicked, they can reapply again
+        boolean hasActiveMembership = campaignMembershipRepo
+                .findByCampaignAndHero(campaign, hero)
+                .map(membership -> membership.getStatus() == MembershipStatus.ACTIVE
+                        || membership.getStatus() == MembershipStatus.PENDING)
+                .orElse(false);
+        if (hasActiveMembership) {
+            throw new IllegalStateException("Already a member or request pending.");
         }
 
-        CampaignMembership campaignMembership = CampaignMembership.builder()
-                .campaign(campaign)
-                .hero(hero)
-                .status(MembershipStatus.PENDING)
-                .joinedAt(LocalDateTime.now())
-                .build();
-
-        campaignMembershipRepo.save(campaignMembership);
+        Optional<CampaignMembership> existing = campaignMembershipRepo.findByCampaignAndHero(campaign, hero);
+        if (existing.isPresent()) {
+            // Reuse the archived membership by flipping it back to PENDING
+            CampaignMembership membership = existing.get();
+            membership.setStatus(MembershipStatus.PENDING);
+            membership.setJoinedAt(LocalDateTime.now());
+            campaignMembershipRepo.save(membership);
+        } else {
+            // Fresh request - create a new membership
+            CampaignMembership membership = CampaignMembership.builder()
+                    .campaign(campaign)
+                    .hero(hero)
+                    .status(MembershipStatus.PENDING)
+                    .joinedAt(LocalDateTime.now())
+                    .build();
+            campaignMembershipRepo.save(membership);
+        }
 
         log.info("Hero {} requested to join campaign '{}'.", hero.getName(), campaign.getTitle());
     }
@@ -327,6 +350,6 @@ public class CampaignService {
 
     public CampaignMembership getMembership(UUID campaignId, Hero hero){
         Campaign campaign = campaignRepo.findById(campaignId).orElseThrow(CampaignDoesNotExist::new);
-        return campaignMembershipRepo.findByCampaignAndHero(campaign, hero).orElseThrow();
+        return campaignMembershipRepo.findByCampaignAndHero(campaign, hero).orElse(null);
     }
 }

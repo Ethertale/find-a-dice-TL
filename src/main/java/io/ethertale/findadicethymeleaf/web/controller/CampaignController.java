@@ -4,14 +4,14 @@ import io.ethertale.findadicethymeleaf.campaign.model.Campaign;
 import io.ethertale.findadicethymeleaf.campaign.model.CampaignMembership;
 import io.ethertale.findadicethymeleaf.campaign.model.MembershipStatus;
 import io.ethertale.findadicethymeleaf.campaign.service.CampaignService;
+import io.ethertale.findadicethymeleaf.config.Utils;
 import io.ethertale.findadicethymeleaf.security.AuthenticationDetails;
 import io.ethertale.findadicethymeleaf.user.model.User;
 import io.ethertale.findadicethymeleaf.user.service.UserService;
-import io.ethertale.findadicethymeleaf.web.dto.campaign.CampaignCreateDTO;
-import io.ethertale.findadicethymeleaf.web.dto.campaign.CampaignUpdateDTO;
-import io.ethertale.findadicethymeleaf.web.dto.campaign.CharacterSheetDTO;
-import io.ethertale.findadicethymeleaf.web.dto.campaign.DmNotesDTO;
+import io.ethertale.findadicethymeleaf.web.dto.campaign.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -27,11 +27,15 @@ public class CampaignController {
 
     private final CampaignService campaignService;
     private final UserService userService;
+    private final SimpMessagingTemplate messagingTemplate;
+    private final Utils utils;
 
     @Autowired
-    public CampaignController(CampaignService campaignService, UserService userService) {
+    public CampaignController(CampaignService campaignService, UserService userService, SimpMessagingTemplate messagingTemplate, Utils utils) {
         this.campaignService = campaignService;
         this.userService = userService;
+        this.messagingTemplate = messagingTemplate;
+        this.utils = utils;
     }
 
     // Listing
@@ -54,7 +58,6 @@ public class CampaignController {
     public String createCampaign(@ModelAttribute("campaignDTO") CampaignCreateDTO campaignDTO, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
         User loggedUser = userService.getUserById(authenticationDetails.getId());
         Campaign campaign = campaignService.createCampaign(campaignDTO, loggedUser.getHero());
-
         return "redirect:/campaigns/" + campaign.getId();
     }
 
@@ -84,6 +87,7 @@ public class CampaignController {
         if (isDm){
             mav.addObject("pendingRequests", campaignService.getAllPendingRequests(id));
             mav.addObject("dmNotes", campaignService.getDmNotes(id));
+            mav.addObject("dmNotesDTO", new DmNotesDTO());
         }
         if (isActiveMember && membership != null){
             mav.addObject("membership", membership);
@@ -91,7 +95,6 @@ public class CampaignController {
             mav.addObject("sheetDTO", new CharacterSheetDTO());
         }
 
-        // Pending Player - they can see the campaign exist but can't interact with it
         if (!isDm && !isActiveMember){
             boolean isPending = membership != null && membership.getStatus() == MembershipStatus.PENDING;
             mav.addObject("isPending", isPending);
@@ -104,11 +107,9 @@ public class CampaignController {
     @PostMapping("/{id}/update")
     public String updateCampaign(@PathVariable UUID id, @ModelAttribute CampaignUpdateDTO updateDTO, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
         User loggedUser = userService.getUserById(authenticationDetails.getId());
-
         if (!campaignService.isDm(id, loggedUser.getHero())) {
             return "redirect:/campaigns/" + id;
         }
-
         campaignService.updateCampaign(id, updateDTO);
         return "redirect:/campaigns/" + id;
     }
@@ -117,50 +118,49 @@ public class CampaignController {
     @PostMapping("/{id}/archive")
     public String archiveCampaign(@PathVariable UUID id, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
         User loggedUser = userService.getUserById(authenticationDetails.getId());
-
         if (!campaignService.isDm(id, loggedUser.getHero())) {
             return "redirect:/campaigns/" + id;
         }
-
         campaignService.archiveCampaign(id);
         return "redirect:/campaigns";
     }
 
-    // Map Upload (DM Only)
+    /***
+     * Map Upload (DM only)
+     * Returns ResponseEntity so fetch() in the view handles it
+     * async, then broadcasts new map path to all clients.
+     */
     @PostMapping("/{id}/upload-map")
-    public String uploadMap(@PathVariable UUID id, @RequestParam("mapFile")MultipartFile file, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
+    @ResponseBody
+    public ResponseEntity<Void> uploadMap(@PathVariable UUID id, @RequestParam("mapFile") MultipartFile file, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
         User loggedUser = userService.getUserById(authenticationDetails.getId());
-
         if (!campaignService.isDm(id, loggedUser.getHero())) {
-            return "redirect:/campaigns/" + id;
+            return ResponseEntity.status(403).build();
         }
-
         try {
-            campaignService.uploadMap(id, file);
+            String mapPath = campaignService.uploadMap(id, file);
+            messagingTemplate.convertAndSend(
+                    "/topic/campaign/" + id + "/map",
+                    new WSMapUpdateDTO(mapPath)
+            );
         } catch (IOException e) {
-            // Redirect back, TODO add error message
-            return "redirect:/campaigns/" + id + "?mapError=true";
+            return ResponseEntity.internalServerError().build();
         }
-
-        return "redirect:/campaigns/" + id;
+        return ResponseEntity.ok().build();
     }
 
     //Join request
     @PostMapping("/{id}/request-join")
     public String requestJoin(@PathVariable UUID id, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
         User loggedUser = userService.getUserById(authenticationDetails.getId());
-
-        // DM cannot request to join their own campaign
         if (campaignService.isDm(id, loggedUser.getHero())) {
             return "redirect:/campaigns/" + id;
         }
-
         try {
             campaignService.requestToJoin(id, loggedUser.getHero());
         } catch (IllegalStateException e) {
             return "redirect:/campaigns/" + id + "?joinError=true";
         }
-
         return "redirect:/campaigns/" + id;
     }
 
@@ -168,11 +168,9 @@ public class CampaignController {
     @PostMapping("/{id}/approve/{membershipId}")
     public String approveMember(@PathVariable UUID id, @PathVariable UUID membershipId, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
         User loggedUser = userService.getUserById(authenticationDetails.getId());
-
         if (!campaignService.isDm(id, loggedUser.getHero())) {
             return "redirect:/campaigns/" + id;
         }
-
         campaignService.approveMembership(membershipId);
         return "redirect:/campaigns/" + id;
     }
@@ -180,11 +178,9 @@ public class CampaignController {
     @PostMapping("/{id}/reject/{membershipId}")
     public String rejectMember(@PathVariable UUID id, @PathVariable UUID membershipId, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
         User loggedUser = userService.getUserById(authenticationDetails.getId());
-
         if (!campaignService.isDm(id, loggedUser.getHero())) {
             return "redirect:/campaigns/" + id;
         }
-
         campaignService.rejectMembership(membershipId);
         return "redirect:/campaigns/" + id;
     }
@@ -192,38 +188,59 @@ public class CampaignController {
     @PostMapping("/{id}/kick/{membershipId}")
     public String kickMember(@PathVariable UUID id, @PathVariable UUID membershipId, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
         User loggedUser = userService.getUserById(authenticationDetails.getId());
-
         if (!campaignService.isDm(id, loggedUser.getHero())) {
             return "redirect:/campaigns/" + id;
         }
-
         campaignService.kickMember(membershipId);
         return "redirect:/campaigns/" + id;
     }
 
-    // Character Sheet (For the players)
+    /***
+     * Character Sheet (For the players)
+     * Returns ResponseEntity so fetch() handles it async,
+     * then broadcasts HUD values to all connected clients.
+     */
     @PostMapping("/{id}/sheet/{membershipId}/update")
-    public String updateSheet(@PathVariable UUID id, @PathVariable UUID membershipId, @ModelAttribute CharacterSheetDTO sheetDTO, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
+    @ResponseBody
+    public ResponseEntity<Void> updateSheet(@PathVariable UUID id, @PathVariable UUID membershipId, @ModelAttribute CharacterSheetDTO sheetDTO, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
         User loggedUser = userService.getUserById(authenticationDetails.getId());
-
         if (!campaignService.isActiveMember(id, loggedUser.getHero())) {
-            return "redirect:/campaigns/" + id;
+            return ResponseEntity.status(403).build();
         }
 
         campaignService.updateSheet(membershipId, sheetDTO);
-        return "redirect:/campaigns/" + id;
+
+        // Broadcast only the HUD-relevant fields, no need to send the full sheet
+        messagingTemplate.convertAndSend(
+                "/topic/campaign/" + id + "/hud",
+                new WSHudUpdateDTO(
+                        loggedUser.getHero().getId().toString(),
+                        loggedUser.getHero().getName(),
+                        loggedUser.getHero().getImageUrl(),
+                        sheetDTO.getHp(),
+                        sheetDTO.getMaxHp(),
+                        sheetDTO.getResourceName(),
+                        sheetDTO.getCurrentResource(),
+                        sheetDTO.getMaxResource()
+                )
+        );
+
+        return ResponseEntity.ok().build();
     }
 
-    // DM Notes (For the DM)
+    /***
+     * DM Notes (For the DM)
+     * Returns ResponseEntity so fetch() handles it async.
+     * Notes are private so no WebSocket broadcast needed.
+     */
     @PostMapping("/{id}/notes/update")
-    public String updateDmNotes(@PathVariable UUID id, @ModelAttribute DmNotesDTO notesDTO, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
+    @ResponseBody
+    public ResponseEntity<Void> updateDmNotes(@PathVariable UUID id, @ModelAttribute DmNotesDTO notesDTO, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
         User loggedUser = userService.getUserById(authenticationDetails.getId());
-
         if (!campaignService.isDm(id, loggedUser.getHero())) {
-            return "redirect:/campaigns/" + id;
+            return ResponseEntity.status(403).build();
         }
-
         campaignService.updateDmNotes(id, notesDTO);
-        return "redirect:/campaigns/" + id;
+        return ResponseEntity.ok().build();
     }
 }
