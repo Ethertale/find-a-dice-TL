@@ -16,7 +16,10 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
+
+
 
 @Slf4j
 @Service
@@ -40,7 +43,7 @@ public class UserService implements UserDetailsService {
                 .email(registerDTO.getEmail())
                 .firstName(registerDTO.getFirstName())
                 .lastName(registerDTO.getLastName())
-                .imageUrl("https://i.ibb.co/WWDv4mYx/Logo-Transparent.png")
+                .imageUrl("https://api.dicebear.com/10.x/shapes/svg?seed=" + registerDTO.getUsername())
                 .role(UserRoles.USER)
                 .createdAt(LocalDateTime.now())
                 .build();

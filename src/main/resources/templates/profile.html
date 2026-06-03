@@ -232,6 +232,7 @@
             <h2 th:text="${user.username} + '\'s profile'"></h2>
             <div class="container d-flex flex-row">
                 <img class="me-3" style="width: 100px; height: 100px; aspect-ratio: 1/1" th:src="${user.imageUrl}" alt="">
+                <small>Image by <a style="color: #d3a862; text-decoration: underline;" href="https://dicebear.com">DiceBear</a></small>
                 <div class="container d-flex flex-column justify-content-start">
                     <h5 th:text="'Initials: ' + ${user.giveUserNames()}"></h5>
                     <h5 th:text="'Member since: ' + ${user.getCreatedAt().dayOfMonth} + ' ' + ${user.getCreatedAt().month} + ' ' + ${user.getCreatedAt().year}"></h5>
