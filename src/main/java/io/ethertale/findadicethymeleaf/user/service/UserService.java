@@ -43,7 +43,7 @@ public class UserService implements UserDetailsService {
                 .email(registerDTO.getEmail())
                 .firstName(registerDTO.getFirstName())
                 .lastName(registerDTO.getLastName())
-                .imageUrl("https://api.dicebear.com/10.x/shapes/svg?seed=" + registerDTO.getUsername())
+                .imageUrl("https://api.dicebear.com/10.x/shapes/svg?seed=1")
                 .role(UserRoles.USER)
                 .createdAt(LocalDateTime.now())
                 .build();
@@ -52,6 +52,7 @@ public class UserService implements UserDetailsService {
 
         User userByUsername = userRepo.getUserByUsername(user.getUsername());
         userByUsername.setHero(heroService.createFirstHero(userByUsername));
+        userByUsername.setImageUrl("https://api.dicebear.com/10.x/shapes/svg?seed=" + userByUsername.getId());
 
         userRepo.save(userByUsername);
 
