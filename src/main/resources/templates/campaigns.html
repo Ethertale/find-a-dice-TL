@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/navbar-footer.css">
+    <title>Find A Dice - Campaigns</title>
+    <style>
+        :root {
+            --panel-accent: #3c2b19;
+            --gold: #d9b261;
+            --gold-dark: #8f6a36;
+            --muted-text: #cfc8b8;
+            --light-text: #f7f3e7;
+            --card-radius: 10px;
+        }
+
+        html, body {
+            min-height: 100%;
+            margin: 0; padding: 0;
+            font-family: "Georgia", "Palatino Linotype", serif;
+            color: var(--muted-text);
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background:
+                    linear-gradient(rgba(6,10,8,0.55), rgba(3,6,5,0.65)),
+                    url("/imgs/new-background.jpeg")
+                    center center / cover no-repeat;
+            filter: blur(10px);
+            transform: scale(1.05);
+        }
+
+        .container {
+            max-width: 1150px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========== PAGE TITLE ========== */
+        .page-title {
+            font-family: "Palatino Linotype", "Book Antiqua", serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+            text-shadow: 0 2px 0 rgba(0,0,0,0.8), 0 4px 15px rgba(60,43,25,0.6);
+        }
+
+        .page-title::after {
+            content: "";
+            display: block;
+            width: 60%;
+            height: 2px;
+            margin: 0.5rem 0 1.5rem 0;
+            background: linear-gradient(90deg, var(--gold-dark), transparent);
+            opacity: 0.5;
+        }
+
+        /* ========== CREATE BUTTON ========== */
+        .btn-create {
+            background: linear-gradient(180deg, #5a4316, var(--gold));
+            color: #111;
+            border: 2px solid var(--gold-dark);
+            border-radius: 8px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+
+        .btn-create:hover {
+            background: linear-gradient(180deg, #6a5320, #e9c571);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.7), 0 0 12px rgba(217,178,97,0.2);
+            color: #111;
+        }
+
+        /* ========== CAMPAIGN CARD ========== */
+        .campaign-card {
+            background: linear-gradient(180deg, rgba(8,10,12,0.85), rgba(6,7,9,0.95));
+            border: 3px solid var(--panel-accent);
+            border-radius: var(--card-radius);
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.02);
+            text-decoration: none;
+            color: inherit;
+            display: block;
+            margin-bottom: 1.5rem;
+        }
+
+        .campaign-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--gold-dark);
+            box-shadow: 0 12px 28px rgba(0,0,0,0.8), 0 0 20px rgba(217,178,97,0.1);
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .campaign-card-img {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            filter: contrast(0.9) brightness(0.75) saturate(0.85);
+            border-bottom: 2px solid var(--panel-accent);
+        }
+
+        .campaign-card-body {
+            padding: 1rem 1.25rem;
+        }
+
+        .campaign-title {
+            font-family: "Palatino Linotype", "Book Antiqua", serif;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--gold);
+            letter-spacing: 0.6px;
+            margin-bottom: 0.4rem;
+            text-shadow: 0 1px 0 rgba(0,0,0,0.8);
+        }
+
+        .campaign-card:hover .campaign-title {
+            color: var(--light-text);
+        }
+
+        .campaign-meta {
+            font-size: 0.85rem;
+            color: var(--muted-text);
+            margin: 0.2rem 0;
+        }
+
+        .campaign-meta strong {
+            color: var(--gold-dark);
+        }
+
+        .campaign-description {
+            font-size: 0.9rem;
+            color: #c0b89e;
+            margin-top: 0.6rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* Player count badge */
+        .player-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #111;
+            background: linear-gradient(180deg, #5a4320, var(--gold));
+            border-radius: 20px;
+            padding: 0.15rem 0.65rem;
+            margin-top: 0.5rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+        }
+
+        /* ========== SCROLLBAR ========== */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #4a381f, #2b210c);
+            border-radius: 10px;
+            border: 2px solid rgba(0,0,0,0.45);
+        }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+
+        footer { margin-top: 2rem; }
+        nav { z-index: 5; }
+        nav .container { padding-top: 0; padding-bottom: 0; }
+    </style>
+</head>
+<body>
+<nav th:replace="~{fragments::navbar}"></nav>
+
+<div class="container">
+    <h1 class="page-title">Campaigns</h1>
+
+    <a href="/campaigns/create" class="btn-create">+ Create Campaign</a>
+
+    <div class="row">
+        <div th:each="campaign : ${campaigns}" class="col-12 col-md-6 col-lg-4">
+            <a class="campaign-card" th:href="@{'/campaigns/' + ${campaign.id}}">
+                <img class="campaign-card-img" th:src="${campaign.imageUrl}" alt="Campaign Cover">
+                <div class="campaign-card-body">
+                    <p class="campaign-title" th:text="${campaign.title}">Campaign Title</p>
+                    <p class="campaign-meta">
+                        <strong>DM:</strong>
+                        <span th:text="${campaign.dm.name}">DM Name</span>
+                    </p>
+                    <p class="campaign-meta">
+                        <strong>Players:</strong>
+                        <span th:text="${campaign.getActiveMemberCount()} + ' / ' + ${campaign.maxPlayers}">0 / 4</span>
+                    </p>
+                    <p class="campaign-description" th:text="${campaign.description}">Description...</p>
+                    <span class="player-badge"
+                          th:text="${campaign.activeMemberCount >= campaign.getMaxPlayers()} ? 'FULL' : 'OPEN'">OPEN</span>
+                </div>
+            </a>
+        </div>
+
+        <!-- Empty state -->
+        <div th:if="${campaigns.isEmpty()}" class="col-12 text-center py-5">
+            <p style="color: rgba(207,200,184,0.4); font-style: italic; font-size: 1.1rem;">
+                No campaigns are running yet. Be the first to start one.
+            </p>
+        </div>
+    </div>
+</div>
+
+<footer th:replace="~{fragments::footer}"></footer>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.min.js"
+        integrity="sha384-RuyvpeZCxMJCqVUGFI0Do1mQrods/hhxYlcVfGPOfQtPJh0JCw12tUAZ/Mv10S7D"
+        crossorigin="anonymous"></script>
+</body>
+</html>

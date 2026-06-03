@@ -1,0 +1,1560 @@
+<!doctype html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/navbar-footer.css">
+    <title th:text="'Find A Dice - ' + ${campaign.title}"></title>
+    <style>
+        :root {
+            --panel-accent: #3c2b19;
+            --gold: #d9b261;
+            --gold-dark: #8f6a36;
+            --muted-text: #cfc8b8;
+            --light-text: #f7f3e7;
+            --sidebar-w: 52px;
+            --panel-w: 380px;
+            --hud-h: 110px;
+            --hud-collapsed-h: 36px;
+            --nav-h: 60px;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: "Georgia", "Palatino Linotype", serif;
+            color: var(--muted-text);
+            overflow: hidden; /* no page scroll — everything is contained */
+            background: #0a0b08;
+        }
+
+        nav { z-index: 100; flex-shrink: 0; }
+
+        /* =========================================================
+           ROOT LAYOUT
+           Navbar → Campaign area (fills rest of viewport)
+        ========================================================= */
+        .campaign-root {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* The area below the navbar */
+        .campaign-body {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* =========================================================
+           MAIN AREA — map + sidebar buttons + floating panel
+        ========================================================= */
+        .campaign-main {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* =========================================================
+           MAP AREA
+        ========================================================= */
+        .map-area {
+            flex: 1;
+            position: relative;
+            background: #0d0d0a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .map-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: block;
+            border: 2px solid rgba(60, 43, 25, 0.4);
+            box-shadow: 0 0 40px rgba(0,0,0,0.8);
+        }
+
+        /* Placeholder shown when no map uploaded yet */
+        .map-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            color: rgba(207, 200, 184, 0.25);
+            user-select: none;
+        }
+
+        .map-placeholder svg {
+            width: 80px;
+            height: 80px;
+            opacity: 0.2;
+        }
+
+        .map-placeholder p {
+            font-size: 1rem;
+            font-style: italic;
+            letter-spacing: 1px;
+        }
+
+        /* DM map upload form — bottom-left of map area */
+        .map-upload-form {
+            position: absolute;
+            bottom: 1rem;
+            left: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            z-index: 10;
+        }
+
+        .map-upload-label {
+            background: linear-gradient(180deg, rgba(37,22,7,0.92), rgba(20,14,6,0.96));
+            border: 2px solid var(--panel-accent);
+            border-radius: 8px;
+            padding: 0.45rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 0.6px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            text-transform: uppercase;
+        }
+
+        .map-upload-label:hover {
+            border-color: var(--gold-dark);
+            color: var(--light-text);
+            background: linear-gradient(180deg, rgba(54,34,14,0.95), rgba(30,20,8,0.98));
+        }
+
+        #mapFileInput { display: none; }
+
+        #mapUploadStatus {
+            font-size: 0.78rem;
+            color: var(--gold-dark);
+            font-style: italic;
+        }
+
+        /* =========================================================
+           SIDEBAR BUTTONS — right edge
+        ========================================================= */
+        .sidebar-buttons {
+            width: var(--sidebar-w);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.75rem 0;
+            gap: 0.5rem;
+            background: linear-gradient(180deg, rgba(14,11,8,0.97), rgba(10,8,5,0.99));
+            border-left: 2px solid var(--panel-accent);
+            z-index: 20;
+            flex-shrink: 0;
+        }
+
+        .sidebar-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
+            border: 2px solid rgba(60,43,25,0.6);
+            background: linear-gradient(180deg, rgba(25,18,10,0.9), rgba(15,11,6,0.95));
+            color: var(--gold-dark);
+            font-size: 1.1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s ease;
+            flex-shrink: 0;
+        }
+
+        .sidebar-btn:hover {
+            border-color: var(--gold-dark);
+            color: var(--gold);
+            background: linear-gradient(180deg, rgba(40,28,14,0.95), rgba(25,18,8,0.98));
+            transform: scale(1.08);
+        }
+
+        .sidebar-btn.active {
+            border-color: var(--gold);
+            color: var(--gold);
+            background: linear-gradient(180deg, rgba(54,38,16,0.95), rgba(36,26,10,0.98));
+            box-shadow: 0 0 12px rgba(217,178,97,0.25);
+        }
+
+        /* =========================================================
+           FLOATING SIDE PANEL
+           Positioned absolutely over the map, slides in from the right.
+        ========================================================= */
+        .side-panel {
+            position: absolute;
+            top: 0;
+            right: var(--sidebar-w);
+            width: var(--panel-w);
+            height: 100%;
+            background: rgba(10, 9, 7, 0.88);
+            backdrop-filter: blur(12px);
+            border-left: 2px solid var(--panel-accent);
+            display: none;
+            flex-direction: column;
+            z-index: 15;
+            overflow: hidden;
+        }
+
+        .side-panel.open { display: flex; }
+
+        /* Panel header with title and close button */
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            background: linear-gradient(180deg, rgba(37,22,7,0.96), rgba(25,16,6,0.98));
+            border-bottom: 2px solid var(--panel-accent);
+            flex-shrink: 0;
+        }
+
+        .panel-title {
+            font-family: "Palatino Linotype", serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        .panel-close {
+            background: none;
+            border: none;
+            color: var(--gold-dark);
+            font-size: 1rem;
+            cursor: pointer;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            transition: color 0.2s;
+        }
+        .panel-close:hover { color: var(--gold); }
+
+        /* Panel content area — scrollable */
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+
+        .panel-content::-webkit-scrollbar { width: 5px; }
+        .panel-content::-webkit-scrollbar-thumb {
+            background: var(--gold-dark);
+            border-radius: 4px;
+        }
+        .panel-content::-webkit-scrollbar-track { background: transparent; }
+
+        /* =========================================================
+           CHAT PANEL
+        ========================================================= */
+        .chat-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            min-height: 0;
+        }
+
+        .chat-bubble {
+            background: linear-gradient(135deg, #e8dcc4, #dfc596);
+            border: 1px solid rgba(60,43,25,0.5);
+            border-radius: 10px;
+            padding: 0.5rem 0.75rem;
+            max-width: 85%;
+            word-wrap: break-word;
+        }
+
+        .chat-bubble p { margin: 0; color: #2c1f0e; font-size: 0.85rem; line-height: 1.4; }
+        .chat-bubble .bubble-time { font-size: 0.65rem; color: rgba(60,43,25,0.5); font-style: italic; margin-top: 0.2rem; }
+        .chat-bubble.mine { background: linear-gradient(135deg, #edd7a0, #c2a24e); align-self: flex-end; }
+        .chat-bubble.theirs { align-self: flex-start; }
+
+        .bubble-sender {
+            font-size: 0.7rem;
+            color: var(--gold-dark);
+            font-weight: 700;
+            margin-bottom: 0.15rem;
+        }
+
+        .chat-input-row {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: rgba(10,8,5,0.8);
+            border-top: 1px solid rgba(60,43,25,0.4);
+            flex-shrink: 0;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: linear-gradient(180deg, #e8dcc4, #d9cdb5);
+            border: 1px solid var(--panel-accent);
+            border-radius: 16px;
+            color: #2c2416;
+            padding: 0.5rem 0.85rem;
+            font-size: 0.85rem;
+            font-family: inherit;
+            outline: none;
+        }
+
+        .chat-input:focus { border-color: var(--gold-dark); }
+
+        .chat-send-btn {
+            background: linear-gradient(135deg, #5a4316, var(--gold));
+            color: #111;
+            border: none;
+            border-radius: 16px;
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .chat-send-btn:hover { background: linear-gradient(135deg, #6a5320, #e9c571); }
+
+        /* =========================================================
+           CHARACTER SHEET PANEL
+        ========================================================= */
+        .sheet-section-title {
+            font-family: "Palatino Linotype", serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--gold-dark);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin: 1rem 0 0.5rem 0;
+            padding-bottom: 0.25rem;
+            border-bottom: 1px solid rgba(60,43,25,0.4);
+        }
+
+        .sheet-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .sheet-grid.three-col { grid-template-columns: 1fr 1fr 1fr; }
+        .sheet-grid.one-col { grid-template-columns: 1fr; }
+
+        .sheet-field label {
+            display: block;
+            font-size: 0.7rem;
+            color: var(--gold-dark);
+            font-weight: 600;
+            margin-bottom: 0.2rem;
+            letter-spacing: 0.3px;
+        }
+
+        .sheet-field input,
+        .sheet-field textarea {
+            width: 100%;
+            background: rgba(14,12,10,0.7);
+            border: 1px solid rgba(60,43,25,0.5);
+            border-radius: 6px;
+            color: var(--light-text);
+            padding: 0.35rem 0.6rem;
+            font-size: 0.82rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .sheet-field input:focus,
+        .sheet-field textarea:focus { border-color: var(--gold-dark); }
+
+        .sheet-field textarea {
+            resize: vertical;
+            min-height: 70px;
+        }
+
+        .sheet-save-btn {
+            width: 100%;
+            background: linear-gradient(180deg, #5a4316, var(--gold));
+            color: #111;
+            border: 2px solid var(--gold-dark);
+            border-radius: 8px;
+            padding: 0.6rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: all 0.25s ease;
+        }
+
+        .sheet-save-btn:hover {
+            background: linear-gradient(180deg, #6a5320, #e9c571);
+            transform: translateY(-1px);
+        }
+
+        #sheetSaveStatus {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--gold);
+            font-style: italic;
+            margin-top: 0.4rem;
+            min-height: 1rem;
+        }
+
+        /* =========================================================
+           DM NOTES PANEL
+        ========================================================= */
+        .dm-notes-textarea {
+            width: 100%;
+            height: calc(100% - 80px);
+            min-height: 300px;
+            background: rgba(10,8,6,0.6);
+            border: 1px solid rgba(60,43,25,0.5);
+            border-radius: 8px;
+            color: var(--light-text);
+            padding: 0.75rem;
+            font-size: 0.88rem;
+            font-family: "Georgia", serif;
+            line-height: 1.6;
+            resize: none;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .dm-notes-textarea:focus { border-color: var(--gold-dark); }
+
+        #notesSaveStatus {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--gold);
+            font-style: italic;
+            margin-top: 0.4rem;
+            min-height: 1rem;
+        }
+
+        /* =========================================================
+           DICE PANEL
+        ========================================================= */
+        .dice-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            padding: 0.5rem 0;
+        }
+
+        .dice-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .dice-shape {
+            width: 72px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            user-select: none;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6));
+        }
+
+        .dice-shape:hover { transform: translateY(-4px) scale(1.1); }
+        .dice-shape:active { transform: translateY(-2px) scale(1.05); }
+
+        .dice-shape p {
+            margin: 0;
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.9);
+        }
+
+        .dice-label {
+            font-size: 0.75rem;
+            color: var(--gold);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        /* Dice shapes — same as diceRolls.html */
+        .d4  { clip-path: polygon(50% 0, 100% 100%, 0 100%); background: linear-gradient(135deg, #4ade80, #22c55e); }
+        .d4 p { transform: translateY(20%); }
+        .d6  { background: linear-gradient(135deg, #06b6d4, #0891b2); border-radius: 6px; }
+        .d8  { clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0 50%); background: linear-gradient(135deg, #a855f7, #9333ea); }
+        .d10 { clip-path: polygon(50% 0, 100% 40%, 100% 60%, 50% 99%, 0 60%, 0 40%); background: linear-gradient(135deg, #ec4899, #db2777); }
+        .d12 { clip-path: polygon(50% 0%, 83% 12%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 6% 78%, 0% 43%, 17% 12%); background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .d20 { clip-path: polygon(10% 30%, 50% 0, 90% 30%, 90% 70%, 50% 100%, 10% 70%); background: linear-gradient(135deg, #f97316, #ea580c); }
+        .dperc { clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%); background: linear-gradient(135deg, var(--gold), var(--gold-dark)); }
+
+        .rolling { animation: diceRoll 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94); }
+
+        @keyframes diceRoll {
+            0%   { transform: rotate(0deg) scale(1); }
+            30%  { transform: rotate(180deg) scale(0.88); }
+            60%  { transform: rotate(720deg) scale(1.1); }
+            85%  { transform: rotate(1050deg) scale(0.95); }
+            100% { transform: rotate(1080deg) scale(1); }
+        }
+
+        /* =========================================================
+           PENDING REQUESTS (DM panel section)
+        ========================================================= */
+        .pending-request-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid rgba(60,43,25,0.3);
+        }
+
+        .pending-avatar {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(60,43,25,0.6);
+            flex-shrink: 0;
+        }
+
+        .pending-name {
+            flex: 1;
+            font-size: 0.88rem;
+            color: var(--muted-text);
+            margin: 0;
+        }
+
+        .pending-actions { display: flex; gap: 0.4rem; }
+
+        .btn-approve, .btn-reject {
+            padding: 0.3rem 0.65rem;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .btn-approve {
+            background: linear-gradient(180deg, #2d6a2d, #1a401a);
+            color: #a8e6a8;
+            border: 1px solid #2d6a2d;
+        }
+        .btn-approve:hover { background: linear-gradient(180deg, #3a7a3a, #204020); color: #c8f0c8; }
+
+        .btn-reject {
+            background: linear-gradient(180deg, #6a1a1a, #401010);
+            color: #e8a8a8;
+            border: 1px solid #6a1a1a;
+        }
+        .btn-reject:hover { background: linear-gradient(180deg, #7a2020, #501515); color: #f0c8c8; }
+
+        /* =========================================================
+           HUD BAR — bottom dock
+        ========================================================= */
+        .hud-bar {
+            height: var(--hud-h);
+            background: linear-gradient(180deg, rgba(14,11,8,0.97), rgba(8,7,4,0.99));
+            border-top: 2px solid var(--panel-accent);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            transition: height 0.3s ease;
+            overflow: hidden;
+            z-index: 50;
+        }
+
+        .hud-bar.collapsed { height: var(--hud-collapsed-h); }
+
+        .hud-toggle-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0 1rem;
+            height: var(--hud-collapsed-h);
+            flex-shrink: 0;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .hud-toggle-row:hover { background: rgba(217,178,97,0.04); }
+
+        .hud-toggle-arrow {
+            font-size: 0.7rem;
+            color: var(--gold-dark);
+            transition: transform 0.3s ease;
+        }
+
+        .hud-bar.collapsed .hud-toggle-arrow { transform: rotate(180deg); }
+
+        .hud-toggle-label {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--gold-dark);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .hud-players {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 0 1.25rem 0.5rem 1.25rem;
+            overflow-x: auto;
+            overflow-y: hidden;
+        }
+
+        .hud-players::-webkit-scrollbar { height: 4px; }
+        .hud-players::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 4px; }
+        .hud-players::-webkit-scrollbar-track { background: transparent; }
+
+        /* Each player bubble in the HUD */
+        .hud-player {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            flex-shrink: 0;
+            background: rgba(20,15,8,0.6);
+            border: 1px solid rgba(60,43,25,0.5);
+            border-radius: 10px;
+            padding: 0.35rem 0.75rem 0.35rem 0.4rem;
+        }
+
+        .hud-avatar {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(60,43,25,0.7);
+            flex-shrink: 0;
+        }
+
+        .hud-info { display: flex; flex-direction: column; gap: 0.15rem; }
+
+        .hud-name {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .hud-stat {
+            font-size: 0.7rem;
+            color: var(--muted-text);
+            margin: 0;
+            white-space: nowrap;
+        }
+
+        .hud-stat span { color: var(--light-text); font-weight: 600; }
+
+        /* =========================================================
+           PENDING / VISITOR SCREENS
+        ========================================================= */
+        .status-screen {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 1.25rem;
+            padding: 2rem;
+            text-align: center;
+            background:
+                    linear-gradient(rgba(6,10,8,0.7), rgba(3,6,5,0.8)),
+                    url("/imgs/new-background.jpeg")
+                    center center / cover no-repeat;
+        }
+
+        .status-screen h2 {
+            font-family: "Palatino Linotype", serif;
+            font-size: 1.8rem;
+            color: var(--gold);
+            text-shadow: 0 2px 8px rgba(0,0,0,0.8);
+            margin: 0;
+        }
+
+        .status-screen p {
+            color: var(--muted-text);
+            font-size: 1rem;
+            max-width: 500px;
+            margin: 0;
+        }
+
+        .btn-join {
+            background: linear-gradient(180deg, #5a4316, var(--gold));
+            color: #111;
+            border: 2px solid var(--gold-dark);
+            border-radius: 10px;
+            padding: 0.75rem 2.5rem;
+            font-weight: 700;
+            font-size: 1rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-join:hover {
+            background: linear-gradient(180deg, #6a5320, #e9c571);
+            transform: translateY(-2px);
+            color: #111;
+        }
+
+        /* =========================================================
+           KICK CONFIRM MODAL
+        ========================================================= */
+        .kick-modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .kick-modal-backdrop.open { display: flex; }
+
+        .kick-modal {
+            background: linear-gradient(180deg, rgba(25,20,15,0.98), rgba(15,12,8,0.99));
+            border: 3px solid var(--panel-accent);
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .kick-modal h3 {
+            font-family: "Palatino Linotype", serif;
+            color: var(--gold);
+            margin-bottom: 0.75rem;
+        }
+
+        .kick-modal p { color: var(--muted-text); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+        .kick-modal-actions { display: flex; gap: 1rem; justify-content: center; }
+
+        .btn-modal-confirm {
+            background: linear-gradient(180deg, #6a1a1a, #401010);
+            color: #e8a8a8;
+            border: 2px solid #6a1a1a;
+            border-radius: 8px;
+            padding: 0.6rem 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-modal-confirm:hover { background: linear-gradient(180deg, #7a2020, #501515); }
+
+        .btn-modal-cancel {
+            background: linear-gradient(180deg, rgba(37,22,7,0.9), rgba(20,14,6,0.95));
+            color: var(--gold);
+            border: 2px solid var(--panel-accent);
+            border-radius: 8px;
+            padding: 0.6rem 1.5rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-modal-cancel:hover { border-color: var(--gold-dark); }
+    </style>
+</head>
+<body>
+
+<!-- =========================================================
+     PENDING PLAYER VIEW — waiting for DM approval
+========================================================= -->
+<div th:if="${!isDm and !isActiveMember and isPending}"
+     style="height: 100vh; display: flex; flex-direction: column;">
+    <nav th:replace="~{fragments::navbar}"></nav>
+    <div class="status-screen">
+        <h2 th:text="${campaign.title}">Campaign Title</h2>
+        <p>Your request to join this campaign is awaiting the DM's approval. Hang tight, adventurer.</p>
+    </div>
+</div>
+
+<!-- =========================================================
+     VISITOR VIEW — not a member, not pending
+========================================================= -->
+<div th:if="${!isDm and !isActiveMember and !isPending}"
+     style="height: 100vh; display: flex; flex-direction: column;">
+    <nav th:replace="~{fragments::navbar}"></nav>
+    <div class="status-screen">
+        <h2 th:text="${campaign.title}">Campaign Title</h2>
+        <p th:text="${campaign.description}">Description...</p>
+        <p style="font-size: 0.9rem;">
+            DM: <strong style="color: var(--gold)" th:text="${campaign.dm.name}"></strong>
+            &nbsp;·&nbsp;
+            Players: <strong style="color: var(--gold)"
+                             th:text="${campaign.getActiveMemberCount()} + ' / ' + ${campaign.maxPlayers}"></strong>
+        </p>
+        <form th:action="@{'/campaigns/' + ${campaign.id} + '/request-join'}" method="post">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+            <button type="submit" class="btn-join">Request to Join</button>
+        </form>
+    </div>
+</div>
+
+<!-- =========================================================
+     MAIN VIEW — DM or active member
+========================================================= -->
+<div th:if="${isDm or isActiveMember}" class="campaign-root">
+
+    <nav th:replace="~{fragments::navbar}"></nav>
+
+    <div class="campaign-body">
+        <div class="campaign-main">
+
+            <!-- ===== MAP AREA ===== -->
+            <div class="map-area">
+
+                <!-- Map image — shown when a map has been uploaded -->
+                <img th:if="${campaign.imagePath != null}"
+                     th:src="${campaign.imagePath}"
+                     id="campaignMap"
+                     class="map-img"
+                     alt="Campaign Map">
+
+                <!-- Placeholder — shown before DM uploads a map -->
+                <div th:unless="${campaign.imagePath != null}" class="map-placeholder" id="mapPlaceholder">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                        <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+                    </svg>
+                    <p>No map uploaded yet</p>
+                </div>
+
+                <!-- DM only: map upload controls -->
+                <div th:if="${isDm}" class="map-upload-form">
+                    <label for="mapFileInput" class="map-upload-label">⬆ Upload Map</label>
+                    <input type="file" id="mapFileInput" accept="image/*">
+                    <span id="mapUploadStatus"></span>
+                </div>
+
+            </div>
+
+            <!-- ===== SIDEBAR BUTTONS ===== -->
+            <div class="sidebar-buttons">
+
+                <!-- Chat — visible to everyone -->
+                <button class="sidebar-btn" id="btnChat" title="Chat" onclick="togglePanel('chat')">
+                    💬
+                </button>
+
+                <!-- Sheet (player) or Notes (DM) -->
+                <button class="sidebar-btn" id="btnSheet"
+                        th:title="${isDm} ? 'DM Notes' : 'Character Sheet'"
+                        onclick="togglePanel('sheet')">
+                    📜
+                </button>
+
+                <!-- Dice roller — visible to everyone -->
+                <button class="sidebar-btn" id="btnDice" title="Dice Roller" onclick="togglePanel('dice')">
+                    🎲
+                </button>
+
+                <!-- DM only: pending requests -->
+                <button th:if="${isDm and !pendingRequests.isEmpty()}"
+                        class="sidebar-btn"
+                        id="btnPending"
+                        title="Pending Requests"
+                        onclick="togglePanel('pending')"
+                        style="border-color: var(--gold); color: var(--gold);">
+                    ⚔
+                </button>
+
+            </div>
+
+            <!-- ===== FLOATING SIDE PANEL ===== -->
+            <div class="side-panel" id="sidePanel">
+
+                <div class="panel-header">
+                    <p class="panel-title" id="panelTitle">Panel</p>
+                    <button class="panel-close" onclick="closePanel()">✕</button>
+                </div>
+
+                <!-- CHAT CONTENT -->
+                <div id="panelChat" style="display:none; flex-direction:column; flex:1; overflow:hidden;">
+                    <div class="panel-content" id="chatMessages">
+
+                        <!-- Load existing messages on page open -->
+                        <div th:each="msg : ${messages}"
+                             th:class="${msg.sender.id == loggedUser.hero.id} ? 'chat-bubble mine' : 'chat-bubble theirs'">
+                            <p class="bubble-sender"
+                               th:unless="${msg.sender.id == loggedUser.hero.id}"
+                               th:text="${msg.sender.name}"></p>
+                            <p th:text="${msg.message}"></p>
+                            <p class="bubble-time" th:text="${msg.getFormattedTime()}"></p>
+                        </div>
+
+                    </div>
+                    <div class="chat-input-row">
+                        <input class="chat-input"
+                               id="chatInput"
+                               type="text"
+                               placeholder="Send a message..."
+                               autocomplete="off"
+                               maxlength="1500">
+                        <button class="chat-send-btn" onclick="sendChatMessage()">Send</button>
+                    </div>
+                </div>
+
+                <!-- CHARACTER SHEET CONTENT (players only) -->
+                <div th:if="${isActiveMember}" id="panelSheet" style="display:none;">
+                    <div class="panel-content">
+                        <form id="sheetForm">
+
+                            <p class="sheet-section-title">Identity</p>
+                            <div class="sheet-grid">
+                                <div class="sheet-field">
+                                    <label>Name</label>
+                                    <input type="text" name="name" th:value="${characterSheet?.name}">
+                                </div>
+                                <div class="sheet-field">
+                                    <label>Age</label>
+                                    <input type="text" name="age" th:value="${characterSheet?.age}">
+                                </div>
+                                <div class="sheet-field">
+                                    <label>Gender</label>
+                                    <input type="text" name="gender" th:value="${characterSheet?.gender}">
+                                </div>
+                                <div class="sheet-field">
+                                    <label>Race</label>
+                                    <input type="text" name="race" th:value="${characterSheet?.race}">
+                                </div>
+                                <div class="sheet-field">
+                                    <label>Class</label>
+                                    <input type="text" name="charClass" th:value="${characterSheet?.charClass}">
+                                </div>
+                                <div class="sheet-field">
+                                    <label>Level</label>
+                                    <input type="text" name="level" th:value="${characterSheet?.level}">
+                                </div>
+                                <div class="sheet-field">
+                                    <label>Background</label>
+                                    <input type="text" name="background" th:value="${characterSheet?.background}">
+                                </div>
+                                <div class="sheet-field">
+                                    <label>Alignment</label>
+                                    <input type="text" name="alignment" th:value="${characterSheet?.alignment}">
+                                </div>
+                            </div>
+                            <div class="sheet-grid one-col" style="margin-top:0.5rem;">
+                                <div class="sheet-field">
+                                    <label>Portrait URL</label>
+                                    <input type="text" name="imageUrl" th:value="${characterSheet?.imageUrl}">
+                                </div>
+                            </div>
+
+                            <p class="sheet-section-title">Health &amp; Resource</p>
+                            <div class="sheet-grid three-col">
+                                <div class="sheet-field">
+                                    <label>HP</label>
+                                    <input type="text" name="hp" id="sheetHp" th:value="${characterSheet?.healthPoints}">
+                                </div>
+                                <div class="sheet-field">
+                                    <label>Max HP</label>
+                                    <input type="text" name="maxHp" id="sheetMaxHp" th:value="${characterSheet?.maxHealthPoints}">
+                                </div>
+                                <div class="sheet-field">
+                                    <label>Resource Name</label>
+                                    <input type="text" name="resourceName" id="sheetResourceName" th:value="${characterSheet?.resourceName}">
+                                </div>
+                                <div class="sheet-field">
+                                    <label>Current</label>
+                                    <input type="text" name="currentResource" id="sheetCurrentRes" th:value="${characterSheet?.currResource}">
+                                </div>
+                                <div class="sheet-field">
+                                    <label>Max</label>
+                                    <input type="text" name="maxResource" id="sheetMaxRes" th:value="${characterSheet?.maxResource}">
+                                </div>
+                            </div>
+
+                            <p class="sheet-section-title">Ability Scores</p>
+                            <div class="sheet-grid three-col">
+                                <div class="sheet-field">
+                                    <label>STR</label>
+                                    <input type="text" name="strength" th:value="${characterSheet?.strength}">
+                                </div>
+                                <div class="sheet-field">
+                                    <label>DEX</label>
+                                    <input type="text" name="dexterity" th:value="${characterSheet?.dexterity}">
+                                </div>
+                                <div class="sheet-field">
+                                    <label>CON</label>
+                                    <input type="text" name="constitution" th:value="${characterSheet?.constitution}">
+                                </div>
+                                <div class="sheet-field">
+                                    <label>INT</label>
+                                    <input type="text" name="intelligence" th:value="${characterSheet?.intelligence}">
+                                </div>
+                                <div class="sheet-field">
+                                    <label>WIS</label>
+                                    <input type="text" name="wisdom" th:value="${characterSheet?.wisdom}">
+                                </div>
+                                <div class="sheet-field">
+                                    <label>CHA</label>
+                                    <input type="text" name="charisma" th:value="${characterSheet?.charisma}">
+                                </div>
+                            </div>
+
+                            <p class="sheet-section-title">Story &amp; Notes</p>
+                            <div class="sheet-grid one-col">
+                                <div class="sheet-field">
+                                    <label>Backstory</label>
+                                    <textarea name="backstory" th:text="${characterSheet?.backstory}"></textarea>
+                                </div>
+                                <div class="sheet-field">
+                                    <label>Inventory</label>
+                                    <textarea name="inventory" th:text="${characterSheet?.inventory}"></textarea>
+                                </div>
+                                <div class="sheet-field">
+                                    <label>Spells</label>
+                                    <textarea name="spells" th:text="${characterSheet?.spells}"></textarea>
+                                </div>
+                                <div class="sheet-field">
+                                    <label>Notes</label>
+                                    <textarea name="notes" th:text="${characterSheet?.notes}"></textarea>
+                                </div>
+                            </div>
+
+                        </form>
+
+                        <button class="sheet-save-btn" onclick="saveSheet()">Save Sheet</button>
+                        <p id="sheetSaveStatus"></p>
+
+                    </div>
+                </div>
+
+                <!-- DM NOTES CONTENT (DM only) -->
+                <div th:if="${isDm}" id="panelSheet" style="display:none; flex-direction:column; flex:1; overflow:hidden;">
+                    <div class="panel-content" style="display:flex; flex-direction:column; height:100%;">
+
+                        <!-- Pending requests section -->
+                        <div th:if="${!pendingRequests.isEmpty()}">
+                            <p class="sheet-section-title">Pending Requests</p>
+                            <div th:each="req : ${pendingRequests}" class="pending-request-row">
+                                <img class="pending-avatar" th:src="${req.hero.imageUrl}" alt="">
+                                <p class="pending-name" th:text="${req.hero.name}">Hero Name</p>
+                                <div class="pending-actions">
+                                    <form th:action="@{'/campaigns/' + ${campaign.id} + '/approve/' + ${req.id}}" method="post" style="display:inline;">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                        <button type="submit" class="btn-approve">✓ Approve</button>
+                                    </form>
+                                    <form th:action="@{'/campaigns/' + ${campaign.id} + '/reject/' + ${req.id}}" method="post" style="display:inline;">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                                        <button type="submit" class="btn-reject">✕ Reject</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Active members with kick controls -->
+                        <p class="sheet-section-title">Active Players</p>
+                        <div th:each="member : ${activeMembers}" class="pending-request-row">
+                            <img class="pending-avatar" th:src="${member.hero.imageUrl}" alt="">
+                            <p class="pending-name" th:text="${member.hero.name}">Hero Name</p>
+<!--                            TODO Fix "Only variable expressions returning numbers or booleans are allowed in this context, any other datatypes are not trusted in the context of this expression, including Strings or any other object that could be rendered as a text literal. A typical case is HTML attributes for event handlers (e.g. "onload"), in which textual data from variables should better be output to "data-*" attributes and then read from the event handler."-->
+<!--                            <button class="btn-reject" th:onclick="'confirmKick(\'' + ${member.id} + '\', \'' + ${member.hero.name} + '\')'">Kick</button>-->
+                            <button class="btn-reject">Kick</button>
+                        </div>
+
+                        <!-- DM notes textarea -->
+                        <p class="sheet-section-title" style="margin-top:1rem;">Notes</p>
+                        <textarea class="dm-notes-textarea"
+                                  id="dmNotesArea"
+                                  th:text="${dmNotes?.content}"
+                                  placeholder="Write anything here — NPCs, enemies, story notes, loot tables..."></textarea>
+                        <button class="sheet-save-btn" style="margin-top:0.5rem;" onclick="saveDmNotes()">Save Notes</button>
+                        <p id="notesSaveStatus"></p>
+
+                    </div>
+                </div>
+
+                <!-- DICE CONTENT -->
+                <div id="panelDice" style="display:none;">
+                    <div class="panel-content">
+                        <div class="dice-grid">
+                            <div class="dice-item">
+                                <div class="dice-shape d4" id="pd4" onclick="rollDice('pd4','pd4n',4)">
+                                    <p id="pd4n">4</p>
+                                </div>
+                                <span class="dice-label">D4</span>
+                            </div>
+                            <div class="dice-item">
+                                <div class="dice-shape d6" id="pd6" onclick="rollDice('pd6','pd6n',6)">
+                                    <p id="pd6n">6</p>
+                                </div>
+                                <span class="dice-label">D6</span>
+                            </div>
+                            <div class="dice-item">
+                                <div class="dice-shape d8" id="pd8" onclick="rollDice('pd8','pd8n',8)">
+                                    <p id="pd8n">8</p>
+                                </div>
+                                <span class="dice-label">D8</span>
+                            </div>
+                            <div class="dice-item">
+                                <div class="dice-shape d10" id="pd10" onclick="rollDice('pd10','pd10n',10)">
+                                    <p id="pd10n">10</p>
+                                </div>
+                                <span class="dice-label">D10</span>
+                            </div>
+                            <div class="dice-item">
+                                <div class="dice-shape d12" id="pd12" onclick="rollDice('pd12','pd12n',12)">
+                                    <p id="pd12n">12</p>
+                                </div>
+                                <span class="dice-label">D12</span>
+                            </div>
+                            <div class="dice-item">
+                                <div class="dice-shape d20" id="pd20" onclick="rollDice('pd20','pd20n',20)">
+                                    <p id="pd20n">20</p>
+                                </div>
+                                <span class="dice-label">D20</span>
+                            </div>
+                            <div class="dice-item">
+                                <div class="dice-shape dperc" id="pdperc" onclick="rollDice('pdperc','pdpercn',100,true)">
+                                    <p id="pdpercn">%</p>
+                                </div>
+                                <span class="dice-label">D%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- end side-panel -->
+
+        </div>
+        <!-- end campaign-main -->
+
+        <!-- ===== HUD BAR ===== -->
+        <div class="hud-bar" id="hudBar">
+            <div class="hud-toggle-row" onclick="toggleHud()">
+                <span class="hud-toggle-arrow">▼</span>
+                <span class="hud-toggle-label">Players</span>
+            </div>
+            <div class="hud-players" id="hudPlayers">
+
+                <div th:each="member : ${activeMembers}"
+                     class="hud-player"
+                     th:id="'hud-' + ${member.hero.id}">
+                    <img class="hud-avatar"
+                         th:src="${member.hero.imageUrl}"
+                         th:alt="${member.hero.name}">
+                    <div class="hud-info">
+                        <p class="hud-name" th:text="${member.hero.name}">Hero Name</p>
+                        <p class="hud-stat">
+                            HP: <span th:text="${member.characterSheet?.healthPoints != null ? member.characterSheet.healthPoints : '?'}">?</span>
+                            / <span th:text="${member.characterSheet?.maxHealthPoints != null ? member.characterSheet.maxHealthPoints : '?'}">?</span>
+                        </p>
+                        <p class="hud-stat"
+                           th:if="${member.characterSheet?.resourceName != null}">
+                            <span th:text="${member.characterSheet.resourceName}">Resource</span>:
+                            <span th:text="${member.characterSheet.currResource}">?</span>
+                            / <span th:text="${member.characterSheet.maxResource}">?</span>
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+    <!-- end campaign-body -->
+
+</div>
+<!-- end main view -->
+
+<!-- =========================================================
+     KICK CONFIRM MODAL
+========================================================= -->
+<div class="kick-modal-backdrop" id="kickModal">
+    <div class="kick-modal">
+        <h3>Kick Player?</h3>
+        <p id="kickModalText">Are you sure you want to kick this player?</p>
+        <div class="kick-modal-actions">
+            <form id="kickForm" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+                <div style="display:flex; gap:1rem;">
+                    <button type="submit" class="btn-modal-confirm">Kick</button>
+                    <button type="button" class="btn-modal-cancel" onclick="closeKickModal()">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
+        integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.min.js"
+        integrity="sha384-RuyvpeZCxMJCqVUGFI0Do1mQrods/hhxYlcVfGPOfQtPJh0JCw12tUAZ/Mv10S7D"
+        crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
+<script th:inline="javascript">
+    // ---------------------------------------------------------------
+    // Thymeleaf injects these so JS has everything it needs
+    // ---------------------------------------------------------------
+    const CAMPAIGN_ID    = /*[[${campaign.id}]]*/ '';
+    const LOGGED_HERO_ID = /*[[${loggedUser.hero.id}]]*/ '';
+    const IS_DM          = /*[[${isDm}]]*/ false;
+    const CSRF_TOKEN     = /*[[${_csrf.token}]]*/ '';
+    const CSRF_HEADER    = /*[[${_csrf.headerName}]]*/ 'X-CSRF-TOKEN';
+    const MEMBERSHIP_ID  = /*[[${membership?.id}]]*/ '';
+
+    // ---------------------------------------------------------------
+    // PANEL TOGGLE LOGIC
+    // closeAll() → open requested panel, or close if already open
+    // ---------------------------------------------------------------
+    const PANELS = {
+        chat:    { btn: 'btnChat',    content: 'panelChat',    title: 'Chat' },
+        sheet:   { btn: 'btnSheet',   content: 'panelSheet',   title: IS_DM ? 'DM Notes & Players' : 'Character Sheet' },
+        dice:    { btn: 'btnDice',    content: 'panelDice',    title: 'Dice Roller' },
+        pending: { btn: 'btnPending', content: 'panelPending', title: 'Pending Requests' },
+    };
+
+    let currentPanel = null;
+
+    function togglePanel(name) {
+        if (currentPanel === name) {
+            closePanel();
+            return;
+        }
+        closePanel();
+        openPanel(name);
+    }
+
+    function openPanel(name) {
+        const cfg = PANELS[name];
+        if (!cfg) return;
+
+        const sidePanel = document.getElementById('sidePanel');
+        const content   = document.getElementById(cfg.content);
+        const btn       = document.getElementById(cfg.btn);
+
+        if (!content) return;
+
+        sidePanel.classList.add('open');
+        content.style.display = 'flex';
+        if (btn) btn.classList.add('active');
+        document.getElementById('panelTitle').textContent = cfg.title;
+
+        currentPanel = name;
+
+        // Scroll chat to bottom when opening
+        if (name === 'chat') {
+            const msgs = document.getElementById('chatMessages');
+            if (msgs) msgs.scrollTop = msgs.scrollHeight;
+        }
+    }
+
+    function closePanel() {
+        if (!currentPanel) return;
+        const cfg = PANELS[currentPanel];
+        const content = document.getElementById(cfg?.content);
+        const btn = document.getElementById(cfg?.btn);
+
+        document.getElementById('sidePanel').classList.remove('open');
+        if (content) content.style.display = 'none';
+        if (btn) btn.classList.remove('active');
+
+        currentPanel = null;
+    }
+
+    // ---------------------------------------------------------------
+    // HUD COLLAPSE
+    // ---------------------------------------------------------------
+    function toggleHud() {
+        document.getElementById('hudBar').classList.toggle('collapsed');
+    }
+
+    // ---------------------------------------------------------------
+    // WEBSOCKET SETUP
+    // ---------------------------------------------------------------
+    const socket      = new SockJS('/ws');
+    const stomp       = Stomp.over(socket);
+    stomp.debug       = null; // silence STOMP logs
+
+    stomp.connect({}, function () {
+
+        // --- Chat ---
+        stomp.subscribe('/topic/campaign/' + CAMPAIGN_ID + '/chat', function (frame) {
+            const msg = JSON.parse(frame.body);
+            appendChatBubble(msg);
+            const msgs = document.getElementById('chatMessages');
+            if (msgs) msgs.scrollTop = msgs.scrollHeight;
+        });
+
+        // --- HUD updates ---
+        stomp.subscribe('/topic/campaign/' + CAMPAIGN_ID + '/hud', function (frame) {
+            const data = JSON.parse(frame.body);
+            updateHudPlayer(data);
+        });
+
+        // --- Map swaps ---
+        stomp.subscribe('/topic/campaign/' + CAMPAIGN_ID + '/map', function (frame) {
+            const data = JSON.parse(frame.body);
+            swapMap(data.mapUrl);
+        });
+
+    }, function (err) {
+        console.error('WebSocket error:', err);
+    });
+
+    // ---------------------------------------------------------------
+    // CHAT
+    // ---------------------------------------------------------------
+    function sendChatMessage() {
+        const input = document.getElementById('chatInput');
+        const text  = input?.value?.trim();
+        if (!text || !stomp.connected) return;
+
+        stomp.send(
+            '/app/campaign/' + CAMPAIGN_ID + '/chat',
+            {},
+            JSON.stringify({ message: text })
+        );
+        input.value = '';
+    }
+
+    // Allow Enter key to send
+    document.addEventListener('DOMContentLoaded', function () {
+        const input = document.getElementById('chatInput');
+        if (input) {
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') sendChatMessage();
+            });
+        }
+    });
+
+    function appendChatBubble(msg) {
+        const isMe    = msg.senderHeroId === String(LOGGED_HERO_ID);
+        const wrapper = document.createElement('div');
+        wrapper.className = isMe ? 'chat-bubble mine' : 'chat-bubble theirs';
+
+        if (!isMe) {
+            const sender = document.createElement('p');
+            sender.className = 'bubble-sender';
+            sender.textContent = msg.senderHeroName;
+            wrapper.appendChild(sender);
+        }
+
+        const text = document.createElement('p');
+        text.textContent = msg.message;
+        wrapper.appendChild(text);
+
+        const time = document.createElement('p');
+        time.className = 'bubble-time';
+        time.textContent = msg.sentAt;
+        wrapper.appendChild(time);
+
+        document.getElementById('chatMessages').appendChild(wrapper);
+    }
+
+    // ---------------------------------------------------------------
+    // CHARACTER SHEET — async save + HUD broadcast
+    // ---------------------------------------------------------------
+    async function saveSheet() {
+        const form   = document.getElementById('sheetForm');
+        const status = document.getElementById('sheetSaveStatus');
+        if (!form) return;
+
+        const data = new FormData(form);
+        status.textContent = 'Saving...';
+
+        try {
+            const res = await fetch(
+                '/campaigns/' + CAMPAIGN_ID + '/sheet/' + MEMBERSHIP_ID + '/update',
+                {
+                    method: 'POST',
+                    headers: { [CSRF_HEADER]: CSRF_TOKEN },
+                    body: data
+                }
+            );
+
+            if (res.ok) {
+                status.textContent = '✓ Saved';
+                setTimeout(() => { status.textContent = ''; }, 2500);
+            } else {
+                status.textContent = '✗ Failed to save';
+            }
+        } catch (e) {
+            status.textContent = '✗ Network error';
+        }
+    }
+
+    // ---------------------------------------------------------------
+    // DM NOTES — async save
+    // ---------------------------------------------------------------
+    async function saveDmNotes() {
+        const textarea = document.getElementById('dmNotesArea');
+        const status   = document.getElementById('notesSaveStatus');
+        if (!textarea) return;
+
+        const data = new FormData();
+        data.append('content', textarea.value);
+        status.textContent = 'Saving...';
+
+        try {
+            const res = await fetch(
+                '/campaigns/' + CAMPAIGN_ID + '/notes/update',
+                {
+                    method: 'POST',
+                    headers: { [CSRF_HEADER]: CSRF_TOKEN },
+                    body: data
+                }
+            );
+
+            if (res.ok) {
+                status.textContent = '✓ Saved';
+                setTimeout(() => { status.textContent = ''; }, 2500);
+            } else {
+                status.textContent = '✗ Failed to save';
+            }
+        } catch (e) {
+            status.textContent = '✗ Network error';
+        }
+    }
+
+    // ---------------------------------------------------------------
+    // MAP UPLOAD — async, broadcasts via WebSocket after success
+    // ---------------------------------------------------------------
+    document.addEventListener('DOMContentLoaded', function () {
+        const fileInput = document.getElementById('mapFileInput');
+        if (!fileInput) return;
+
+        fileInput.addEventListener('change', async function () {
+            if (!fileInput.files.length) return;
+            const status = document.getElementById('mapUploadStatus');
+            status.textContent = 'Uploading...';
+
+            const data = new FormData();
+            data.append('mapFile', fileInput.files[0]);
+
+            try {
+                const res = await fetch(
+                    '/campaigns/' + CAMPAIGN_ID + '/upload-map',
+                    {
+                        method: 'POST',
+                        headers: { [CSRF_HEADER]: CSRF_TOKEN },
+                        body: data
+                    }
+                );
+
+                if (res.ok) {
+                    status.textContent = '✓ Map updated';
+                    setTimeout(() => { status.textContent = ''; }, 2500);
+                    // The server broadcasts the new path via WebSocket —
+                    // swapMap() is called automatically for all clients.
+                } else {
+                    status.textContent = '✗ Upload failed';
+                }
+            } catch (e) {
+                status.textContent = '✗ Network error';
+            }
+
+            // Reset so the same file can be re-selected if needed
+            fileInput.value = '';
+        });
+    });
+
+    // Replaces the map image src (or shows it if a placeholder was showing)
+    function swapMap(newPath) {
+        let img = document.getElementById('campaignMap');
+        const placeholder = document.getElementById('mapPlaceholder');
+
+        if (!img) {
+            // First upload — create the img element
+            img = document.createElement('img');
+            img.id = 'campaignMap';
+            img.className = 'map-img';
+            img.alt = 'Campaign Map';
+            document.querySelector('.map-area').appendChild(img);
+        }
+
+        img.src = newPath;
+        if (placeholder) placeholder.style.display = 'none';
+    }
+
+    // ---------------------------------------------------------------
+    // HUD UPDATE — called when WebSocket receives a hud message
+    // ---------------------------------------------------------------
+    function updateHudPlayer(data) {
+        const bubble = document.getElementById('hud-' + data.heroId);
+        if (!bubble) return;
+
+        const stats = bubble.querySelectorAll('.hud-stat');
+        // stats[0] = HP line, stats[1] = resource line
+        if (stats[0]) {
+            stats[0].innerHTML = 'HP: <span>' + (data.hp || '?') + '</span> / <span>' + (data.maxHp || '?') + '</span>';
+        }
+        if (stats[1] && data.resourceName) {
+            stats[1].innerHTML = '<span>' + data.resourceName + '</span>: <span>' + (data.currentResource || '?') + '</span> / <span>' + (data.maxResource || '?') + '</span>';
+        }
+    }
+
+    // ---------------------------------------------------------------
+    // DICE ROLLER
+    // ---------------------------------------------------------------
+    function rollDice(diceId, numberId, max, isPercent = false) {
+        const dice   = document.getElementById(diceId);
+        const numEl  = document.getElementById(numberId);
+        if (!dice || !numEl) return;
+
+        dice.classList.add('rolling');
+        setTimeout(() => {
+            dice.classList.remove('rolling');
+        }, 900);
+
+        setTimeout(() => {
+            const result = Math.floor(Math.random() * max) + 1;
+            numEl.textContent = isPercent ? result + '%' : result;
+        }, 600);
+    }
+
+    // ---------------------------------------------------------------
+    // KICK CONFIRM MODAL
+    // ---------------------------------------------------------------
+    function confirmKick(membershipId, heroName) {
+        document.getElementById('kickModalText').textContent =
+            'Are you sure you want to kick ' + heroName + '? Their character sheet will be preserved.';
+        document.getElementById('kickForm').action =
+            '/campaigns/' + CAMPAIGN_ID + '/kick/' + membershipId;
+        document.getElementById('kickModal').classList.add('open');
+    }
+
+    function closeKickModal() {
+        document.getElementById('kickModal').classList.remove('open');
+    }
+</script>
+
+</body>
+</html>

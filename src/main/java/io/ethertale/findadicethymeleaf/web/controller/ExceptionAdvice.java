@@ -60,5 +60,45 @@ public class ExceptionAdvice {
         redirectAttributes.addFlashAttribute("chatRoomExistsRedirect", "Chat room already exists!");
         return "redirect:/chatRooms";
     }
+    @ExceptionHandler(CampaignDmNotesDoNotExist.class)
+    public String handleCampaignDmNotesDoNotExist(RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("campaignDmNotesDoNotExist", "Campaign DM notes do not exist!");
+        return "redirect:/campaigns";
+    }
+    @ExceptionHandler(CampaignDoesNotExist.class)
+    public String handleCampaignDoesNotExist(RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("campaignDoesNotExist", "Campaign does not exist!");
+        return "redirect:/campaigns";
+    }
+    @ExceptionHandler(CampaignMembershipDoesNotExist.class)
+    public String handleCampaignMembershipDoesNotExist(RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("campaignMembershipDoesNotExist", "Campaign Membership does not exist!");
+        return "redirect:/campaigns";
+    }
+    @ExceptionHandler(CampaignSheetDoesNotExist.class)
+    public String handleCampaignSheetDoesNotExist(RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("campaignSheetDoesNotExist", "Campaign sheet does not exist!");
+        return "redirect:/campaigns";
+    }
+    @ExceptionHandler(CampaignCreateDescriptionNotWithinBounds.class)
+    public String handleCampaignCreateDescriptionNotWithinBounds(RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("campaignCreateDescriptionNotWithinBounds", "Campaign description either too long or too short!");
+        return "redirect:/campaigns/campaignCreate";
+    }
+    @ExceptionHandler(CampaignCreateInvalidImageUrl.class)
+    public String handleCampaignCreateInvalidImageUrl(RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("campaignCreateInvalidImageUrl", "Invalid image URL!");
+        return "redirect:/campaigns/campaignCreate";
+    }
+    @ExceptionHandler(CampaignCreateInvalidMaxPlayers.class)
+    public String handleCampaignCreateInvalidMaxPlayers(RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("campaignCreateInvalidMaxPlayers", "Invalid max players!");
+        return "redirect:/campaigns/campaignCreate";
+    }
+    @ExceptionHandler(CampaignCreateTitleNotWithinBounds.class)
+    public String handleCampaignCreateTitleNotWithinBounds(RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("campaignCreateTitleNotWithinBounds", "Campaign Title either too long or too short!");
+        return "redirect:/campaigns/campaignCreate";
+    }
 
 }
