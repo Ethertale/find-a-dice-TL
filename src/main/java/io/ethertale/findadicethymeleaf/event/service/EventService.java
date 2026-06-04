@@ -5,17 +5,16 @@ import io.ethertale.findadicethymeleaf.event.repo.EventRepo;
 import io.ethertale.findadicethymeleaf.hero.model.Hero;
 import io.ethertale.findadicethymeleaf.hero.repo.HeroRepo;
 import io.ethertale.findadicethymeleaf.web.dto.EventCreateDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Service
+@Slf4j
 public class EventService {
 
     private final EventRepo eventRepo;
@@ -27,6 +26,7 @@ public class EventService {
         this.heroRepo = heroRepo;
     }
 
+    @Transactional
     public void createEvent(EventCreateDTO eventCreateDTO, Hero hero) {
 
         Event event = Event.builder()
@@ -49,6 +49,7 @@ public class EventService {
         }
 
         eventRepo.save(event);
+        log.info("User with ID {} created EVENT.\nEvent Title -> {}\nEvent Image URL -> {}\nEvent Description -> {}", hero.getId(), eventCreateDTO.getTitle(), eventCreateDTO.getImage(), eventCreateDTO.getDescription());
     }
 
     public List<Event> getAllEventsSortedByCreationDesc() {
@@ -119,5 +120,13 @@ public class EventService {
         }
 
         eventRepo.save(event);
+    }
+
+    @Transactional
+    public void deleteEvent(UUID eventId, UUID loggedUserid) {
+        Optional<Event> eventById = eventRepo.getEventById(eventId);
+
+        eventRepo.deleteById(eventId);
+        log.info("User with ID {} deleted EVENT with ID {}.\nEvent Title -> {}\nEvent Image URL ->{}\nEvent Description ->{}", loggedUserid, eventId, eventById.get().getTitle(), eventById.get().getImage(), eventById.get().getDescription());
     }
 }

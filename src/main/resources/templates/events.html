@@ -476,6 +476,16 @@
 <nav th:replace="~{fragments::navbar}"></nav>
 
 <div class="container">
+    <a href="/events/create-event"><button class="event-btn">+ Create Event</button></a>
+</div>
+
+<div th:if="${events.isEmpty()}" class="col-12 text-center py-5">
+    <p style="color: rgba(207,200,184,0.4); font-style: italic; font-size: 1.1rem;">
+        No events to attend. Be the first to form one.
+    </p>
+</div>
+
+<div class="container">
     <div class="row">
         <!-- Each event is rendered as an ornate announcement card -->
         <div class="col-12 col-md-6 col-lg-4" th:each="event: ${events}">

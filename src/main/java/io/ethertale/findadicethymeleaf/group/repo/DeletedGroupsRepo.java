@@ -9,8 +9,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public interface GroupRepo extends JpaRepository<Group, UUID> {
-    List<Group> findGroupByNameContainingIgnoreCase(String query);
-
-    Optional<Group> getGroupById(UUID groupId);
+public interface DeletedGroupsRepo extends JpaRepository<Group, UUID> {
+//    List<Group> getDeletedGroups();
+//    Optional<Group> getGroupById(UUID id);
 }

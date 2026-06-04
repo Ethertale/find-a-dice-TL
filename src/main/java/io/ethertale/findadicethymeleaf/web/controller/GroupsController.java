@@ -96,4 +96,12 @@ public class GroupsController {
         groupService.deletePost(loggedUser.getId(), postId, groupId);
         return "redirect:/groups/" + groupId;
     }
+
+    @PostMapping("/{id}/delete-group")
+    public String deleteGroup(@PathVariable("id") UUID groupId, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
+        User loggedUser = userService.getUserById(authenticationDetails.getId());
+
+        groupService.deleteGroup(groupId, loggedUser.getId());
+        return "redirect:/groups";
+    }
 }

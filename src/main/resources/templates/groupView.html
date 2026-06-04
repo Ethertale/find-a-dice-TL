@@ -336,6 +336,9 @@
             <form th:unless="${!loggedUser.hero.groups.contains(group) or loggedUser.hero == group.createdBy}" th:method="POST" th:action="@{'/groups/' + ${group.id} + '/leave-group-' + ${loggedUser.hero.id}}">
                 <button class="btn btn-primary" type="submit">Leave Group</button>
             </form>
+            <form th:if="${loggedUser.hero.id == group.createdBy.id}" th:method="POST" th:action="@{/{id}/delete-group(id=${group.id})}">
+                <button class="btn btn-primary" type="submit">Delete Group</button>
+            </form>
             <p class="m-0 p-2 pe-3" th:text="'Members: ' + ${group.heroes.size()}"></p>
         </div>
         <div class="container">

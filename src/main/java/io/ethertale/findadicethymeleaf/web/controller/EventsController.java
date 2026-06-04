@@ -72,4 +72,11 @@ public class EventsController {
         eventService.toggleGoing(eventId, loggedUser.getHero());
         return "redirect:/events/" + eventId;
     }
+
+    @PostMapping("/{id}/delete-event")
+    public String deleteEvent(@PathVariable("id") UUID eventId, @AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
+        User loggedUser = userService.getUserById(authenticationDetails.getId());
+        eventService.deleteEvent(eventId, loggedUser.getId());
+        return "redirect:/events";
+    }
 }

@@ -4,6 +4,8 @@ import io.ethertale.findadicethymeleaf.exceptions.GroupDoesNotExistException;
 import io.ethertale.findadicethymeleaf.exceptions.GroupHeroAlreadyInGroupException;
 import io.ethertale.findadicethymeleaf.exceptions.GroupPostTooLongOrTooShort;
 import io.ethertale.findadicethymeleaf.group.model.Group;
+import io.ethertale.findadicethymeleaf.group.repo.DeletedGroupPostsRepo;
+import io.ethertale.findadicethymeleaf.group.repo.DeletedGroupsRepo;
 import io.ethertale.findadicethymeleaf.group.repo.GroupRepo;
 import io.ethertale.findadicethymeleaf.hero.model.Hero;
 import io.ethertale.findadicethymeleaf.hero.repo.HeroRepo;
@@ -30,11 +32,16 @@ public class GroupService {
     private final HeroRepo heroRepo;
     private final GroupPostRepo groupPostRepo;
 
+    private final DeletedGroupsRepo deletedGroupsRepo;
+    private final DeletedGroupPostsRepo deletedGroupPostsRepo;
+
     @Autowired
-    public GroupService(GroupRepo groupRepo, HeroRepo heroRepo, GroupPostRepo groupPostRepo) {
+    public GroupService(GroupRepo groupRepo, HeroRepo heroRepo, GroupPostRepo groupPostRepo, DeletedGroupsRepo deletedGroupsRepo, DeletedGroupPostsRepo deletedGroupPostsRepo) {
         this.groupRepo = groupRepo;
         this.heroRepo = heroRepo;
         this.groupPostRepo = groupPostRepo;
+        this.deletedGroupsRepo = deletedGroupsRepo;
+        this.deletedGroupPostsRepo = deletedGroupPostsRepo;
     }
 
     public List<Group> getAllGroupsSortedByCreationDesc() {
@@ -125,8 +132,18 @@ public class GroupService {
     @Transactional
     public void deletePost(UUID loggedUserId, UUID postId, UUID groupId) {
         Optional<GroupPost> groupPostById = groupPostRepo.getGroupPostById(postId);
+        deletedGroupPostsRepo.save(groupPostById.get());
 
         groupPostRepo.deleteById(postId);
         log.info("User with ID {} deleted a post from group with ID {}.\nPost Title -> {}\nPost Content -> {}", loggedUserId, groupId, groupPostById.get().getTitle(), groupPostById.get().getDescription());
+    }
+
+    @Transactional
+    public void deleteGroup(UUID groupId, UUID id) {
+        Optional<Group> groupById = groupRepo.getGroupById(groupId);
+        deletedGroupsRepo.save(groupById.get());
+
+        groupRepo.deleteById(id);
+        log.info("User with ID {} deleted a group with ID {}.", id, groupId);
     }
 }
