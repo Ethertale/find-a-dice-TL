@@ -306,6 +306,7 @@
 
         #postPortrait {
             transition: 0.2s ease-in-out;
+            object-fit: cover;
         }
 
         #postPortrait:hover {
@@ -373,7 +374,14 @@
                         <div class="container d-flex flex-column">
                                 <h6 th:if="${post.hero.id == group.createdBy.id}" class="m-0 fw-bold"><img width="24" height="24" src="https://img.icons8.com/emoji/48/crown-emoji.png" alt="crown-emoji"/><span th:text="${post.hero.name}"></span></h6>
                                 <h6 th:unless="${post.hero.id == group.createdBy.id}" class="m-0 fw-bold" th:text="${post.hero.name}"></h6>
-                            <small class="classLevelText" th:text="${post.hero.level} + ' ' + ${post.hero.race} + ' ' + ${post.hero.charClass}" th:attr="data-char-class=${post.hero.charClass}"></small>
+                            <div class="container d-flex flex-row justify-content-between">
+                                <small class="classLevelText" th:text="'Level ' + ${post.hero.level} + ' ' + ${post.hero.race} + ' ' + ${post.hero.charClass}" th:attr="data-char-class=${post.hero.charClass}"></small>
+                                <form th:method="POST" th:if="${post.hero.id == loggedUser.hero.id}" th:action="@{{id}/delete-post-{postId}(id=${group.id}, postId=${post.id})}">
+                                    <button type="submit" class="btn btn-primary"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                        <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
+                                    </svg></button>
+                                </form>
+                            </div>
                             <small class="pb-2" style="font-size: 0.6rem" th:text="${post.getTimestamp()}"></small>
                         </div>
                         <h4 th:text="${post.title}"></h4>

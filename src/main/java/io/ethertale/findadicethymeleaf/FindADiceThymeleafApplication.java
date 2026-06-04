@@ -71,7 +71,7 @@ public class FindADiceThymeleafApplication implements CommandLineRunner {
             user1.setLastName("Doe");
             user1.setDescription("Admin");
             user1.setRole(UserRoles.ADMIN);
-            user1.setImageUrl("https://cdn.cloudflare.steamstatic.com/steamcommunity/public/images/avatars/77/777eb0797f3eb82da4255acb97932600ebbcb879_full.jpg");
+            user1.setImageUrl("https://api.dicebear.com/10.x/shapes/svg?seed=admin");
             user1.setCreatedAt(LocalDateTime.of(2025, 6, 21, 18, 0, 0, 123456789));
 
             user1.setHero(hero1);

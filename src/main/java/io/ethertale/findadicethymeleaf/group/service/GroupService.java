@@ -16,12 +16,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -47,6 +45,7 @@ public class GroupService {
         return groupRepo.findById(id).orElse(null);
     }
 
+    @Transactional
     public void addHeroToGroup(UUID loggedUserHeroId, UUID groupId) {
         Group group = groupRepo.findById(groupId).orElse(null);
         Hero hero = heroRepo.findById(loggedUserHeroId).orElse(null);
@@ -66,6 +65,7 @@ public class GroupService {
 
     }
 
+    @Transactional
     public void removeHeroFromGroup(UUID loggedUserHeroId, UUID groupId) {
         Group group = groupRepo.findById(groupId).orElse(null);
         Hero hero = heroRepo.findById(loggedUserHeroId).orElse(null);
@@ -82,6 +82,7 @@ public class GroupService {
         }
     }
 
+    @Transactional
     public void createGroup(GroupCreateDTO groupDTO, Hero hero) {
         Group group = Group.builder()
                 .name(groupDTO.getName())
@@ -96,6 +97,7 @@ public class GroupService {
         groupRepo.save(group);
     }
 
+    @Transactional
     public void createPost(GroupPostDTO postDTO, UUID groupId, Hero hero) {
         if  (postDTO.getDescription().isBlank() || postDTO.getDescription().length() > 1000 || postDTO.getTitle().isBlank() || postDTO.getTitle().length() > 100 || postDTO.getTitle().length() <= 2) {
             throw new GroupPostTooLongOrTooShort();
@@ -118,5 +120,13 @@ public class GroupService {
 
     public List<Group> searchGroups(String query) {
         return groupRepo.findGroupByNameContainingIgnoreCase(query);
+    }
+
+    @Transactional
+    public void deletePost(UUID loggedUserId, UUID postId, UUID groupId) {
+        Optional<GroupPost> groupPostById = groupPostRepo.getGroupPostById(postId);
+
+        groupPostRepo.deleteById(postId);
+        log.info("User with ID {} deleted a post from group with ID {}.\nPost Title -> {}\nPost Content -> {}", loggedUserId, groupId, groupPostById.get().getTitle(), groupPostById.get().getDescription());
     }
 }

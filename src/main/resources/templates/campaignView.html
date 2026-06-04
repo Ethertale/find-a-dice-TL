@@ -908,6 +908,7 @@
                             <p class="bubble-sender"
                                th:unless="${msg.sender.id == loggedUser.hero.id}"
                                th:text="${msg.sender.name}"></p>
+                            <p style="font-weight: bold;" th:if="${msg.sender == campaign.dm}">Dungeon Master</p>
                             <p th:text="${msg.message}"></p>
                             <p class="bubble-time" th:text="${msg.getFormattedTime()}"></p>
                         </div>

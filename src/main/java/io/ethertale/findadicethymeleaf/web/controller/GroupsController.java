@@ -88,4 +88,12 @@ public class GroupsController {
         groupService.removeHeroFromGroup(loggedUserHeroId, groupId);
         return "redirect:/groups/" + groupId;
     }
+
+    @PostMapping("/{id}/delete-post-{postId}")
+    public String deletePost(@PathVariable("id") UUID groupId, @PathVariable("postId") UUID postId, @AuthenticationPrincipal AuthenticationDetails authenticationDetails) {
+        User loggedUser = userService.getUserById(authenticationDetails.getId());
+
+        groupService.deletePost(loggedUser.getId(), postId, groupId);
+        return "redirect:/groups/" + groupId;
+    }
 }
