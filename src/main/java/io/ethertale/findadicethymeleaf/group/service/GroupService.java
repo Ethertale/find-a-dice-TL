@@ -1,5 +1,8 @@
 package io.ethertale.findadicethymeleaf.group.service;
 
+import io.ethertale.findadicethymeleaf.deletedReport.model.DeletedReport;
+import io.ethertale.findadicethymeleaf.deletedReport.model.DeletedReportType;
+import io.ethertale.findadicethymeleaf.deletedReport.repo.DeletedReportRepo;
 import io.ethertale.findadicethymeleaf.exceptions.GroupDoesNotExistException;
 import io.ethertale.findadicethymeleaf.exceptions.GroupHeroAlreadyInGroupException;
 import io.ethertale.findadicethymeleaf.exceptions.GroupPostTooLongOrTooShort;
@@ -31,17 +34,14 @@ public class GroupService {
     private final GroupRepo groupRepo;
     private final HeroRepo heroRepo;
     private final GroupPostRepo groupPostRepo;
-
-    private final DeletedGroupsRepo deletedGroupsRepo;
-    private final DeletedGroupPostsRepo deletedGroupPostsRepo;
+    private final DeletedReportRepo deletedReportRepo;
 
     @Autowired
-    public GroupService(GroupRepo groupRepo, HeroRepo heroRepo, GroupPostRepo groupPostRepo, DeletedGroupsRepo deletedGroupsRepo, DeletedGroupPostsRepo deletedGroupPostsRepo) {
+    public GroupService(GroupRepo groupRepo, HeroRepo heroRepo, GroupPostRepo groupPostRepo, DeletedReportRepo deletedReportRepo) {
         this.groupRepo = groupRepo;
         this.heroRepo = heroRepo;
         this.groupPostRepo = groupPostRepo;
-        this.deletedGroupsRepo = deletedGroupsRepo;
-        this.deletedGroupPostsRepo = deletedGroupPostsRepo;
+        this.deletedReportRepo = deletedReportRepo;
     }
 
     public List<Group> getAllGroupsSortedByCreationDesc() {
@@ -132,7 +132,15 @@ public class GroupService {
     @Transactional
     public void deletePost(UUID loggedUserId, UUID postId, UUID groupId) {
         Optional<GroupPost> groupPostById = groupPostRepo.getGroupPostById(postId);
-        deletedGroupPostsRepo.save(groupPostById.get());
+        DeletedReport newReport = DeletedReport.builder()
+                .type(DeletedReportType.GROUP_POST)
+                .objectId(groupPostById.get().getId())
+                .title(groupPostById.get().getTitle())
+                .content(groupPostById.get().getDescription())
+                .deletedByUserId(groupPostById.get().getHero().getUser().getId())
+                .deletedOn(LocalDateTime.now())
+                .build();
+        deletedReportRepo.save(newReport);
 
         groupPostRepo.deleteById(postId);
         log.info("User with ID {} deleted a post from group with ID {}.\nPost Title -> {}\nPost Content -> {}", loggedUserId, groupId, groupPostById.get().getTitle(), groupPostById.get().getDescription());
@@ -141,9 +149,21 @@ public class GroupService {
     @Transactional
     public void deleteGroup(UUID groupId, UUID id) {
         Optional<Group> groupById = groupRepo.getGroupById(groupId);
-        deletedGroupsRepo.save(groupById.get());
+        DeletedReport newReport = DeletedReport.builder()
+                .type(DeletedReportType.GROUP)
+                .objectId(groupById.get().getId())
+                .title(groupById.get().getName())
+                .content(groupById.get().getDescription())
+                .deletedByUserId(groupById.get().getCreatedBy().getUser().getId())
+                .deletedOn(LocalDateTime.now())
+                .build();
+        deletedReportRepo.save(newReport);
 
-        groupRepo.deleteById(id);
+        for (Hero hero : groupById.get().getHeroes()){
+            hero.getGroups().remove(groupById.get());
+        }
+
+        groupRepo.deleteById(groupId);
         log.info("User with ID {} deleted a group with ID {}.", id, groupId);
     }
 }

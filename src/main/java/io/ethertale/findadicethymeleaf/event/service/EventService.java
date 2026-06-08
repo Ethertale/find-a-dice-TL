@@ -1,5 +1,8 @@
 package io.ethertale.findadicethymeleaf.event.service;
 
+import io.ethertale.findadicethymeleaf.deletedReport.model.DeletedReport;
+import io.ethertale.findadicethymeleaf.deletedReport.model.DeletedReportType;
+import io.ethertale.findadicethymeleaf.deletedReport.repo.DeletedReportRepo;
 import io.ethertale.findadicethymeleaf.event.model.Event;
 import io.ethertale.findadicethymeleaf.event.repo.EventRepo;
 import io.ethertale.findadicethymeleaf.hero.model.Hero;
@@ -20,10 +23,13 @@ public class EventService {
     private final EventRepo eventRepo;
     private final HeroRepo heroRepo;
 
+    private final DeletedReportRepo deletedReportRepo;
+
     @Autowired
-    public EventService(EventRepo eventRepo, HeroRepo heroRepo) {
+    public EventService(EventRepo eventRepo, HeroRepo heroRepo, DeletedReportRepo deletedReportRepo) {
         this.eventRepo = eventRepo;
         this.heroRepo = heroRepo;
+        this.deletedReportRepo = deletedReportRepo;
     }
 
     @Transactional
@@ -125,6 +131,15 @@ public class EventService {
     @Transactional
     public void deleteEvent(UUID eventId, UUID loggedUserid) {
         Optional<Event> eventById = eventRepo.getEventById(eventId);
+        DeletedReport newReport = DeletedReport.builder()
+                .type(DeletedReportType.EVENT)
+                .objectId(eventById.get().getId())
+                .title(eventById.get().getTitle())
+                .content(eventById.get().getDescription())
+                .deletedByUserId(eventById.get().getCreatedByEvent().getUser().getId())
+                .deletedOn(LocalDateTime.now())
+                .build();
+        deletedReportRepo.save(newReport);
 
         eventRepo.deleteById(eventId);
         log.info("User with ID {} deleted EVENT with ID {}.\nEvent Title -> {}\nEvent Image URL ->{}\nEvent Description ->{}", loggedUserid, eventId, eventById.get().getTitle(), eventById.get().getImage(), eventById.get().getDescription());
