@@ -1,8 +1,14 @@
 package io.ethertale.findadicethymeleaf.web.controller;
 
+import io.ethertale.findadicethymeleaf.deletedReport.model.DeletedReportType;
+import io.ethertale.findadicethymeleaf.deletedReport.repo.DeletedReportRepo;
+import io.ethertale.findadicethymeleaf.deletedReport.service.DeletedReportService;
+import io.ethertale.findadicethymeleaf.event.service.EventService;
+import io.ethertale.findadicethymeleaf.group.service.GroupService;
 import io.ethertale.findadicethymeleaf.hero.service.HeroService;
 import io.ethertale.findadicethymeleaf.security.AuthenticationDetails;
 import io.ethertale.findadicethymeleaf.user.model.User;
+import io.ethertale.findadicethymeleaf.user.model.UserRoles;
 import io.ethertale.findadicethymeleaf.user.service.UserService;
 import io.ethertale.findadicethymeleaf.web.dto.LoginDTO;
 import io.ethertale.findadicethymeleaf.web.dto.RegisterDTO;
@@ -24,10 +30,13 @@ public class MainController {
     private final UserService userService;
     private final HeroService heroService;
 
+    private final DeletedReportService deletedReportService;
+
     @Autowired
-    public MainController(UserService userService, HeroService heroService) {
+    public MainController(UserService userService, HeroService heroService, DeletedReportService deletedReportService) {
         this.userService = userService;
         this.heroService = heroService;
+        this.deletedReportService = deletedReportService;
     }
 
     @GetMapping("/")
@@ -88,4 +97,18 @@ public class MainController {
 
     @GetMapping("/dice-roll")
     public ModelAndView diceRollPage(){return new ModelAndView("diceRolls");}
+
+    @GetMapping("/admin-panel")
+    public ModelAndView adminPanelPage(@AuthenticationPrincipal AuthenticationDetails authenticationDetails){
+        User loggedUser = userService.getUserById(authenticationDetails.getId());
+
+        ModelAndView mav = new ModelAndView("adminPanel");
+        mav.addObject("deletedGroupsReports", deletedReportService.getAllDeletedReportsFromType(DeletedReportType.GROUP));
+        mav.addObject("deletedGroupPostsReports", deletedReportService.getAllDeletedReportsFromType(DeletedReportType.GROUP_POST));
+        mav.addObject("deletedEventsReports", deletedReportService.getAllDeletedReportsFromType(DeletedReportType.EVENT));
+        mav.addObject("deletedCampaignChatMessagesReports", deletedReportService.getAllDeletedReportsFromType(DeletedReportType.CAMPAIGN_CHAT_MESSAGE));
+        mav.addObject("deletedChatroomMessagesReports", deletedReportService.getAllDeletedReportsFromType(DeletedReportType.CHAT_MESSAGE));
+
+        return mav;
+    }
 }
