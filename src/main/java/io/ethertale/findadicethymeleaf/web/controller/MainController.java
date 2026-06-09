@@ -19,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDateTime;
@@ -70,9 +71,14 @@ public class MainController {
     }
 
     @GetMapping("/login")
-    public ModelAndView login(){
+    public ModelAndView login(@RequestParam(value = "error", required = false) String errorParam){
         ModelAndView mav = new ModelAndView("login");
         mav.addObject("loginDTO", new LoginDTO());
+
+        if (errorParam != null) {
+            mav.addObject("errorMessage", "Incorrect username or password!");
+
+        }
         return mav;
     }
 

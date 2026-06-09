@@ -1,5 +1,6 @@
 package io.ethertale.findadicethymeleaf.user.service;
 
+import io.ethertale.findadicethymeleaf.exceptions.RegisterEmailNotValid;
 import io.ethertale.findadicethymeleaf.hero.service.HeroService;
 import io.ethertale.findadicethymeleaf.security.AuthenticationDetails;
 import io.ethertale.findadicethymeleaf.user.model.User;
@@ -19,7 +20,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
-
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 @Slf4j
@@ -39,16 +41,24 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public void registerUser(RegisterDTO registerDTO) {
+        Pattern emailPattern = Pattern.compile("^[A-Za-z0-9._%+-]+@(gmail\\.com|yahoo\\.com|outlook\\.com|hotmail\\.com|live\\.com|icloud\\.com|proton\\.me|protonmail\\.com|aol\\.com|msn\\.com|gmx\\.com|mail\\.com)$");
+        Matcher matcher = emailPattern.matcher(registerDTO.getEmail());
+
         User user = User.builder()
                 .username(registerDTO.getUsername())
                 .password(passwordEncoder.encode(registerDTO.getPassword()))
-                .email(registerDTO.getEmail())
                 .firstName(registerDTO.getFirstName())
                 .lastName(registerDTO.getLastName())
                 .imageUrl("https://api.dicebear.com/10.x/shapes/svg?seed=1")
                 .role(UserRoles.USER)
                 .createdAt(LocalDateTime.now())
                 .build();
+
+        if (!matcher.find()) {
+            throw new RegisterEmailNotValid();
+        }else {
+            user.setEmail(matcher.group());
+        }
 
         userRepo.save(user);
 
