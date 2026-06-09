@@ -49,7 +49,7 @@ public class EventService {
 
         String imageTrack = eventCreateDTO.getImage();
         if (!imageTrack.substring(0, 7).equals("https://")) {
-            event.setImage("https://i.ibb.co/WWDv4mYx/Logo-Transparent.png");
+            event.setImage("https://i.ibb.co/C33tdsz7/find-a-dice.jpg");
         } else {
             event.setImage(imageTrack);
         }

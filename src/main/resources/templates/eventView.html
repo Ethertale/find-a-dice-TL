@@ -390,7 +390,7 @@
                         <div class="event-metadata">
                             <p>
                                 <strong>Organized by:</strong>
-                                <span th:text="${event.createdByEvent.name}">Creator Name</span>
+                                <a style="text-decoration: none; color: #d3a862; font-weight: bold" th:href="'/profile/' + ${event.createdByEvent.user.id}"><span th:text="${event.createdByEvent.name}">Creator Name</span></a>
                             </p>
                             <p>
                                 <strong>Location:</strong>
