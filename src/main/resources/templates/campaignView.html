@@ -926,7 +926,7 @@
                 </div>
 
                 <!-- CHARACTER SHEET CONTENT (players only) -->
-                <div th:if="${isActiveMember}" id="panelSheet" style="display:none;">
+                <div th:if="${isActiveMember}" id="panelSheet" style="display:none; overflow-y: auto">
                     <div class="panel-content">
                         <form id="sheetForm">
 
@@ -1053,7 +1053,7 @@
                 </div>
 
                 <!-- DM NOTES CONTENT (DM only) -->
-                <div th:if="${isDm}" id="panelSheet" style="display:none; flex-direction:column; flex:1; overflow:hidden;">
+                <div th:if="${isDm}" id="panelSheet" style="display:none; flex-direction:column; flex:1; overflow-y: auto;">
                     <div class="panel-content" style="display:flex; flex-direction:column; height:100%;">
 
                         <!-- Pending requests section -->
