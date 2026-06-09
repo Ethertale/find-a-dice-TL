@@ -21,7 +21,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers("/static/favicon.ico", "/imgs/**", "/css/**", "/fonts/**", "/js/**").permitAll()
                         .requestMatchers("/login", "/register", "/", "/documentation").permitAll()
-                        .requestMatchers("favicon.ico").permitAll()
+                        .requestMatchers("/favicon.ico").permitAll()
                         .requestMatchers("/ws/**").permitAll()
                         .requestMatchers("/admin-panel").hasRole("ADMIN")
                         .anyRequest().authenticated()
