@@ -48,10 +48,10 @@ public class EventService {
                 .build();
 
         String imageTrack = eventCreateDTO.getImage();
-        if (!imageTrack.substring(0, 7).equals("https://")) {
-            event.setImage("https://i.ibb.co/C33tdsz7/find-a-dice.jpg");
-        } else {
+        if (!imageTrack.substring(0, 8).equals("https://")) {
             event.setImage(imageTrack);
+        } else {
+            event.setImage("https://i.ibb.co/C33tdsz7/find-a-dice.jpg");
         }
 
         eventRepo.save(event);
