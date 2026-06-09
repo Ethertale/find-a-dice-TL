@@ -7,19 +7,1769 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
-    <title>Find A Dice - Create your first hero</title>
+    <link rel="stylesheet" type="text/css" href="/css/navbar-footer.css">
+    <title>Find A Dice - Your First D&D 5e Hero</title>
+    <style>
+        /* =========================================================
+           CSS VARIABLES
+        ========================================================= */
+        :root {
+            --panel-accent: #3c2b19;
+            --gold: #d9b261;
+            --gold-dark: #8f6a36;
+            --muted-text: #cfc8b8;
+            --light-text: #f7f3e7;
+            --panel-bg: rgba(8,10,12,0.82);
+            --card-bg: rgba(12,14,16,0.88);
+            --aside-bg: rgba(20,15,8,0.88);
+            --card-radius: 10px;
+            --toc-w: 260px;
+        }
+
+        /* =========================================================
+           BASE
+        ========================================================= */
+        html, body {
+            margin: 0;
+            padding: 0;
+            font-family: "Georgia", "Palatino Linotype", serif;
+            color: var(--muted-text);
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background:
+                    linear-gradient(rgba(4,7,5,0.72), rgba(2,4,3,0.80)),
+                    url("/imgs/new-background.jpeg")
+                    center center / cover no-repeat;
+            filter: blur(10px);
+            transform: scale(1.05);
+        }
+
+        nav { z-index: 100; }
+
+        /* =========================================================
+           LAYOUT — sticky TOC sidebar + main content
+        ========================================================= */
+        .guide-wrapper {
+            display: flex;
+            align-items: flex-start;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 2rem 1rem 4rem 1rem;
+            gap: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* =========================================================
+           TABLE OF CONTENTS SIDEBAR
+        ========================================================= */
+        .guide-toc {
+            width: var(--toc-w);
+            flex-shrink: 0;
+            position: sticky;
+            top: 80px;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+            background: linear-gradient(180deg, rgba(14,11,7,0.94), rgba(8,7,4,0.97));
+            border: 2px solid var(--panel-accent);
+            border-radius: var(--card-radius);
+            padding: 1.25rem 1rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.7);
+        }
+
+        .guide-toc::-webkit-scrollbar { width: 5px; }
+        .guide-toc::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 4px; }
+        .guide-toc::-webkit-scrollbar-track { background: transparent; }
+
+        .toc-title {
+            font-family: "Palatino Linotype", serif;
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: var(--gold-dark);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin: 0 0 0.75rem 0;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid rgba(60,43,25,0.5);
+        }
+
+        .guide-toc ol {
+            padding-left: 1rem;
+            margin: 0;
+            list-style: none;
+            counter-reset: toc;
+        }
+
+        .guide-toc ol li {
+            counter-increment: toc;
+            margin-bottom: 0.35rem;
+        }
+
+        .guide-toc ol li::before {
+            content: counter(toc) ". ";
+            color: var(--gold-dark);
+            font-size: 0.72rem;
+            font-weight: 700;
+        }
+
+        .guide-toc a {
+            color: var(--muted-text);
+            text-decoration: none;
+            font-size: 0.78rem;
+            line-height: 1.4;
+            transition: color 0.2s;
+        }
+
+        .guide-toc a:hover { color: var(--gold); }
+
+        /* =========================================================
+           MAIN CONTENT
+        ========================================================= */
+        .guide-main {
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* =========================================================
+           HERO HEADER
+        ========================================================= */
+        .guide-hero {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 3rem 2rem;
+            background: linear-gradient(180deg, rgba(8,10,12,0.85), rgba(6,7,9,0.92));
+            border: 3px solid var(--panel-accent);
+            border-radius: var(--card-radius);
+            box-shadow: 0 8px 28px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.02);
+            position: relative;
+        }
+
+        .guide-hero::before {
+            content: "";
+            position: absolute;
+            inset: 10px;
+            border: 1px solid rgba(217,178,97,0.12);
+            border-radius: 8px;
+            pointer-events: none;
+        }
+
+        .guide-hero h1 {
+            font-family: "Palatino Linotype", "Book Antiqua", serif;
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 0 rgba(0,0,0,0.8), 0 4px 20px rgba(60,43,25,0.5);
+        }
+
+        .guide-hero .subtitle {
+            font-size: 1.05rem;
+            color: var(--muted-text);
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+
+        .guide-hero p {
+            color: #d4ccba;
+            font-size: 0.95rem;
+            line-height: 1.7;
+            max-width: 720px;
+            margin: 0 auto 0.75rem auto;
+        }
+
+        /* Decorative divider */
+        .divider-ornament {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.5rem auto;
+            max-width: 400px;
+        }
+        .divider-ornament::before, .divider-ornament::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--gold-dark), transparent);
+            opacity: 0.5;
+        }
+        .divider-ornament span {
+            color: var(--gold-dark);
+            font-size: 1rem;
+            opacity: 0.7;
+        }
+
+        /* =========================================================
+           SECTION PANELS
+        ========================================================= */
+        .guide-section {
+            background: var(--panel-bg);
+            border: 3px solid var(--panel-accent);
+            border-radius: var(--card-radius);
+            padding: 2rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.02);
+        }
+
+        .guide-section h2 {
+            font-family: "Palatino Linotype", "Book Antiqua", serif;
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 1.2px;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 0 rgba(0,0,0,0.8), 0 2px 10px rgba(60,43,25,0.3);
+        }
+
+        .guide-section > h2::after {
+            content: "";
+            display: block;
+            width: 100%;
+            height: 1px;
+            margin: 0.6rem 0 1.25rem 0;
+            background: linear-gradient(90deg, var(--gold-dark), transparent);
+            opacity: 0.4;
+        }
+
+        .guide-section h3 {
+            font-family: "Palatino Linotype", serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 0.6px;
+            margin: 1.75rem 0 0.75rem 0;
+            text-shadow: 0 1px 0 rgba(0,0,0,0.7);
+        }
+
+        .guide-section p, .guide-section li, .guide-section dd {
+            color: #d4ccba;
+            font-size: 0.93rem;
+            line-height: 1.75;
+        }
+
+        .guide-section ul, .guide-section ol {
+            padding-left: 1.4rem;
+        }
+
+        .guide-section li { margin-bottom: 0.3rem; }
+
+        .guide-section strong { color: var(--light-text); }
+        .guide-section em { color: #b8b09e; }
+
+        /* =========================================================
+           ARTICLE CARDS (races, classes, backgrounds, alignments)
+        ========================================================= */
+        .entry-card {
+            background: var(--card-bg);
+            border: 2px solid rgba(60,43,25,0.5);
+            border-radius: 8px;
+            padding: 1.25rem 1.4rem;
+            margin-bottom: 1.25rem;
+            transition: border-color 0.25s ease, box-shadow 0.25s ease;
+            position: relative;
+        }
+
+        .entry-card::before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--gold-dark), transparent);
+            border-radius: 8px 0 0 8px;
+            opacity: 0.5;
+            transition: opacity 0.25s;
+        }
+
+        .entry-card:hover {
+            border-color: var(--gold-dark);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5), 0 0 12px rgba(217,178,97,0.08);
+        }
+
+        .entry-card:hover::before { opacity: 1; }
+
+        .entry-card h4 {
+            font-family: "Palatino Linotype", serif;
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin: 0 0 0.6rem 0;
+            text-shadow: 0 1px 0 rgba(0,0,0,0.7);
+        }
+
+        .entry-card h5 {
+            font-family: "Palatino Linotype", serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--gold-dark);
+            letter-spacing: 0.5px;
+            margin: 0.75rem 0 0.4rem 0;
+            text-transform: uppercase;
+        }
+
+        .entry-card p, .entry-card li, .entry-card dd {
+            color: #cac2b0;
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        .entry-card ul, .entry-card ol { padding-left: 1.3rem; }
+        .entry-card li { margin-bottom: 0.2rem; }
+        .entry-card strong { color: var(--light-text); }
+        .entry-card em { color: #a89880; }
+
+        /* "Best for / Playstyle" tag line */
+        .entry-tag {
+            display: inline-block;
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #111;
+            background: linear-gradient(180deg, #5a4320, var(--gold));
+            border-radius: 20px;
+            padding: 0.15rem 0.65rem;
+            margin-top: 0.5rem;
+            margin-right: 0.4rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+        }
+
+        /* =========================================================
+           ASIDE BOXES
+        ========================================================= */
+        .guide-aside {
+            background: var(--aside-bg);
+            border: 2px solid rgba(217,178,97,0.2);
+            border-left: 4px solid var(--gold-dark);
+            border-radius: 8px;
+            padding: 1.25rem 1.4rem;
+            margin: 1.5rem 0;
+        }
+
+        .guide-aside h4 {
+            font-family: "Palatino Linotype", serif;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin: 0 0 0.6rem 0;
+        }
+
+        .guide-aside p, .guide-aside li { color: #c0b8a6; font-size: 0.88rem; line-height: 1.7; }
+        .guide-aside ul { padding-left: 1.3rem; margin: 0.5rem 0 0 0; }
+        .guide-aside li { margin-bottom: 0.3rem; }
+        .guide-aside strong { color: var(--light-text); }
+        .guide-aside em { color: #9a9080; }
+
+        /* =========================================================
+           TABLES
+        ========================================================= */
+        .guide-table-wrapper {
+            overflow-x: auto;
+            margin: 1.25rem 0;
+            border-radius: 8px;
+            border: 2px solid rgba(60,43,25,0.5);
+        }
+
+        .guide-table-wrapper::-webkit-scrollbar { height: 5px; }
+        .guide-table-wrapper::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 4px; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+        }
+
+        caption {
+            font-family: "Palatino Linotype", serif;
+            font-size: 0.8rem;
+            color: var(--gold-dark);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 0.5rem;
+            caption-side: top;
+        }
+
+        thead tr {
+            background: linear-gradient(180deg, rgba(37,22,7,0.96), rgba(25,16,6,0.98));
+        }
+
+        thead th {
+            padding: 0.65rem 1rem;
+            color: var(--gold);
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-align: left;
+            white-space: nowrap;
+            border-bottom: 2px solid rgba(60,43,25,0.6);
+        }
+
+        tbody tr {
+            border-bottom: 1px solid rgba(60,43,25,0.25);
+            transition: background 0.15s;
+        }
+
+        tbody tr:hover { background: rgba(217,178,97,0.04); }
+        tbody tr:last-child { border-bottom: none; }
+
+        tbody td {
+            padding: 0.55rem 1rem;
+            color: #cac2b0;
+        }
+
+        /* =========================================================
+           DEFINITION LISTS (ability scores, glossary)
+        ========================================================= */
+        dl { margin: 0.75rem 0; }
+
+        dt {
+            color: var(--gold);
+            font-size: 0.95rem;
+            margin-top: 1rem;
+        }
+
+        dd {
+            color: #cac2b0;
+            font-size: 0.9rem;
+            line-height: 1.7;
+            margin-left: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        /* =========================================================
+           GUIDE FOOTER
+        ========================================================= */
+        .guide-footer-panel {
+            background: linear-gradient(180deg, rgba(8,10,12,0.85), rgba(6,7,9,0.92));
+            border: 3px solid var(--panel-accent);
+            border-radius: var(--card-radius);
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .guide-footer-panel h2 {
+            font-family: "Palatino Linotype", serif;
+            font-size: 1.5rem;
+            color: var(--gold);
+            margin-bottom: 1rem;
+        }
+
+        .guide-footer-panel p {
+            color: #cac2b0;
+            font-size: 0.93rem;
+            line-height: 1.75;
+            max-width: 700px;
+            margin: 0 auto 0.75rem auto;
+        }
+
+        .guide-footer-panel em {
+            color: #888070;
+            font-size: 0.8rem;
+        }
+
+        /* =========================================================
+           BACK TO TOP BUTTON
+        ========================================================= */
+        #backToTop {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 42px;
+            height: 42px;
+            background: linear-gradient(180deg, #5a4316, var(--gold));
+            color: #111;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.7);
+            z-index: 50;
+            transition: all 0.25s ease;
+        }
+
+        #backToTop:hover { transform: translateY(-3px); background: linear-gradient(180deg, #6a5320, #e9c571); }
+        #backToTop.visible { display: flex; }
+
+        /* =========================================================
+           RESPONSIVE
+        ========================================================= */
+        @media (max-width: 992px) {
+            .guide-wrapper { flex-direction: column; }
+            .guide-toc {
+                width: 100%;
+                position: static;
+                max-height: none;
+            }
+            .guide-hero h1 { font-size: 1.8rem; }
+        }
+
+        @media (max-width: 576px) {
+            .guide-section { padding: 1.25rem; }
+            .guide-hero { padding: 1.75rem 1rem; }
+            .guide-hero h1 { font-size: 1.5rem; letter-spacing: 1px; }
+        }
+
+        /* =========================================================
+           SCROLLBAR
+        ========================================================= */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #4a381f, #2b210c);
+            border-radius: 10px;
+            border: 2px solid rgba(0,0,0,0.45);
+        }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
+    </style>
 </head>
 <body>
+
 <nav th:replace="~{fragments::navbar}"></nav>
 
+<div class="guide-wrapper">
 
+    <!-- =====================================================
+         TABLE OF CONTENTS SIDEBAR
+    ====================================================== -->
+    <aside class="guide-toc">
+        <p class="toc-title">⚔ Contents</p>
+        <ol>
+            <li><a href="#what-is-character-creation">What Is Character Creation?</a></li>
+            <li><a href="#races">Choose Your Race</a></li>
+            <li><a href="#classes">Choose Your Class</a></li>
+            <li><a href="#ability-scores">Determine Ability Scores</a></li>
+            <li><a href="#background">Choose a Background</a></li>
+            <li><a href="#alignment">Choose an Alignment</a></li>
+            <li><a href="#personality">Define Your Personality</a></li>
+            <li><a href="#equipment">Starting Equipment</a></li>
+            <li><a href="#hit-points">Hit Points &amp; Defenses</a></li>
+            <li><a href="#skills-proficiencies">Skills &amp; Proficiencies</a></li>
+            <li><a href="#spells">Spells</a></li>
+            <li><a href="#finishing-touches">Finishing Touches</a></li>
+            <li><a href="#tips">Tips for New Players</a></li>
+            <li><a href="#glossary">Quick Glossary</a></li>
+        </ol>
+    </aside>
+
+    <!-- =====================================================
+         MAIN GUIDE CONTENT
+    ====================================================== -->
+    <main class="guide-main">
+
+        <!-- HERO HEADER -->
+        <header class="guide-hero">
+            <h1>Your First D&amp;D 5e Hero</h1>
+            <p class="subtitle">A Beginner's Complete Guide to Character Creation</p>
+            <div class="divider-ornament"><span>⚔</span></div>
+            <p>
+                Welcome, adventurer! Whether you've just heard about Dungeons &amp; Dragons from a friend,
+                stumbled upon it online, or watched your favourite streamer roll dice and tell epic stories —
+                you're in the right place. This guide will walk you through every step of creating your
+                very first hero for <strong>Dungeons &amp; Dragons 5th Edition (D&amp;D 5e)</strong>,
+                the most popular tabletop role-playing game in the world.
+            </p>
+            <p>
+                Creating a character is one of the most exciting parts of D&amp;D. You're not just filling
+                in numbers on a sheet — you're bringing a person to life. A history, a personality, a set
+                of skills, and a destiny waiting to unfold at the table. Take your time, enjoy the process,
+                and remember: <strong>there are no wrong choices. Only stories waiting to be told.</strong>
+            </p>
+        </header>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section id="what-is-character-creation" class="guide-section">
+            <h2>What Is Character Creation?</h2>
+            <p>
+                Before you can play D&amp;D, you need a character — your avatar in the world of fantasy.
+                This character is defined by a <strong>Character Sheet</strong>, a document (paper or digital)
+                that tracks everything about who your hero is: their name, their race, their class, their
+                strengths, weaknesses, history, and gear.
+            </p>
+            <p>
+                Think of it like creating a character in a video game RPG — except you have complete creative
+                freedom. No pre-set options, no locked choices. Your imagination is the only limit.
+            </p>
+            <p>
+                The rules for character creation in D&amp;D 5e are found in the
+                <strong>Player's Handbook (PHB)</strong>, which is the core rulebook for players. This guide
+                covers the foundational options from the Player's Handbook. Expansions like
+                <em>Xanathar's Guide to Everything</em>, <em>Tasha's Cauldron of Everything</em>,
+                <em>Mordenkainen's Tome of Foes</em>, and many others add even more races, classes,
+                subclasses, spells, and options.
+            </p>
+
+            <h3>The Steps of Character Creation</h3>
+            <ol>
+                <li>Choose a <strong>Race</strong> — your character's species</li>
+                <li>Choose a <strong>Class</strong> — your character's profession or calling</li>
+                <li>Determine your <strong>Ability Scores</strong> — your raw physical and mental attributes</li>
+                <li>Choose a <strong>Background</strong> — your character's history before adventuring</li>
+                <li>Choose an <strong>Alignment</strong> — your character's moral compass</li>
+                <li>Define your <strong>Personality</strong> — who they are beyond the numbers</li>
+                <li>Select your <strong>Starting Equipment</strong></li>
+                <li>Calculate <strong>Hit Points and Defenses</strong></li>
+                <li>Record <strong>Skills and Proficiencies</strong></li>
+                <li>Choose <strong>Spells</strong> (if your class uses magic)</li>
+                <li>Add the <strong>Finishing Touches</strong> — name, appearance, backstory</li>
+            </ol>
+            <p>Let's go through each step together.</p>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section id="races" class="guide-section">
+            <h2>Step 1 — Choose Your Race</h2>
+            <p>
+                In D&amp;D, <strong>race</strong> refers to your character's species — the type of creature
+                they are. Your race determines innate traits: ability score bonuses, special abilities,
+                languages, size, movement speed, and sometimes resistances or senses like darkvision.
+            </p>
+            <p>
+                Race is not your character's entire identity, but it is a meaningful part of their biology
+                and often their culture. Your character is an individual — you are free to play against
+                their race's typical norms as much as you like.
+            </p>
+
+            <h3>Races from the Player's Handbook</h3>
+
+            <div class="entry-card">
+                <h4>⛏ Dwarf</h4>
+                <p>
+                    Hardy, steadfast, and deeply proud, dwarves are a stout folk known for their incredible
+                    resilience and mastery of stone and metalwork. They tend to live in great underground
+                    mountain kingdoms, and they hold tradition, honour, and clan above all else.
+                </p>
+                <ul>
+                    <li><strong>Ability Score Increase:</strong> +2 Constitution</li>
+                    <li><strong>Size:</strong> Medium (4–5 feet tall) &nbsp;·&nbsp; <strong>Speed:</strong> 25 feet (not reduced by heavy armour)</li>
+                    <li><strong>Darkvision:</strong> 60 feet</li>
+                    <li><strong>Dwarven Resilience:</strong> Advantage vs. poison; resistance to poison damage</li>
+                    <li><strong>Stonecunning:</strong> Expertise in stonework History checks</li>
+                    <li><strong>Weapon Training:</strong> Battleaxe, handaxe, throwing hammer, warhammer</li>
+                    <li><strong>Languages:</strong> Common, Dwarvish</li>
+                </ul>
+                <h5>Subraces</h5>
+                <ul>
+                    <li><strong>Hill Dwarf:</strong> +1 Wisdom, +1 max HP per level (Dwarven Toughness)</li>
+                    <li><strong>Mountain Dwarf:</strong> +2 Strength, proficiency with light and medium armour</li>
+                </ul>
+                <span class="entry-tag">Great for: Fighters, Clerics, Paladins</span>
+            </div>
+
+            <div class="entry-card">
+                <h4>🌿 Elf</h4>
+                <p>
+                    Graceful, perceptive, and long-lived, elves are a magical people of otherworldly grace.
+                    They dwell in ancient forests or timeless cities of breathtaking beauty. Their keen senses
+                    make them natural scouts and archers, and their Fey heritage grants them magical resistance.
+                </p>
+                <ul>
+                    <li><strong>Ability Score Increase:</strong> +2 Dexterity</li>
+                    <li><strong>Age:</strong> Mature at ~100 years, live to ~750 years</li>
+                    <li><strong>Size:</strong> Medium (5–6 feet) &nbsp;·&nbsp; <strong>Speed:</strong> 30 feet</li>
+                    <li><strong>Darkvision:</strong> 60 feet &nbsp;·&nbsp; <strong>Keen Senses:</strong> Proficiency in Perception</li>
+                    <li><strong>Fey Ancestry:</strong> Advantage vs. charm; immune to magical sleep</li>
+                    <li><strong>Trance:</strong> Elves meditate 4 hours instead of sleeping 8</li>
+                    <li><strong>Languages:</strong> Common, Elvish</li>
+                </ul>
+                <h5>Subraces</h5>
+                <ul>
+                    <li><strong>High Elf:</strong> +1 Intelligence, one wizard cantrip, one extra language, longsword/shortsword/bow proficiency</li>
+                    <li><strong>Wood Elf:</strong> +1 Wisdom, speed 35 ft, Mask of the Wild (hide in natural terrain)</li>
+                    <li><strong>Dark Elf (Drow):</strong> +1 Charisma, Superior Darkvision 120 ft, innate spellcasting, sunlight sensitivity</li>
+                </ul>
+                <span class="entry-tag">Great for: Rangers, Wizards, Rogues</span>
+            </div>
+
+            <div class="entry-card">
+                <h4>🍀 Halfling</h4>
+                <p>
+                    Small in stature but mighty in spirit, halflings are cheerful, resourceful wanderers
+                    known for their incredible luck. Their natural bravery and resilience often surprises
+                    those who underestimate them.
+                </p>
+                <ul>
+                    <li><strong>Ability Score Increase:</strong> +2 Dexterity</li>
+                    <li><strong>Size:</strong> Small (~3 feet) &nbsp;·&nbsp; <strong>Speed:</strong> 25 feet</li>
+                    <li><strong>Lucky:</strong> When you roll a 1 on any d20, reroll and use the new result</li>
+                    <li><strong>Brave:</strong> Advantage on saving throws vs. frightened</li>
+                    <li><strong>Halfling Nimbleness:</strong> Can move through space of any creature one size larger</li>
+                    <li><strong>Languages:</strong> Common, Halfling</li>
+                </ul>
+                <h5>Subraces</h5>
+                <ul>
+                    <li><strong>Lightfoot:</strong> +1 Charisma, Naturally Stealthy (hide behind larger creatures)</li>
+                    <li><strong>Stout:</strong> +1 Constitution, advantage and resistance to poison</li>
+                </ul>
+                <span class="entry-tag">Great for: Rogues, Bards, Rangers</span>
+            </div>
+
+            <div class="entry-card">
+                <h4>👑 Human</h4>
+                <p>
+                    The most adaptable and ambitious of all races, humans are the youngest and most numerous.
+                    Their diversity in appearance, culture, and ambition is unmatched. Not defined by any
+                    singular trait — they are defined by their drive.
+                </p>
+                <ul>
+                    <li><strong>Ability Score Increase:</strong> +1 to ALL six ability scores</li>
+                    <li><strong>Size:</strong> Medium &nbsp;·&nbsp; <strong>Speed:</strong> 30 feet</li>
+                    <li><strong>Extra Language:</strong> One additional language of your choice</li>
+                </ul>
+                <p>
+                    <strong>Variant Human (optional rule):</strong> Instead of +1 to all stats, gain +1 to two
+                    ability scores of your choice, one skill proficiency, and one <strong>Feat</strong> — a
+                    powerful bonus ability. Extremely popular among experienced players.
+                </p>
+                <span class="entry-tag">Great for: Any class — humans excel everywhere</span>
+            </div>
+
+            <div class="entry-card">
+                <h4>🐉 Dragonborn</h4>
+                <p>
+                    Born of dragons, dragonborn walk proudly through a world that greets them with fear and
+                    admiration. They value clan, skill, and excellence above all else, and their draconic
+                    ancestry grants them elemental power.
+                </p>
+                <ul>
+                    <li><strong>Ability Score Increase:</strong> +2 Strength, +1 Charisma</li>
+                    <li><strong>Size:</strong> Medium (6–7 feet, powerfully built) &nbsp;·&nbsp; <strong>Speed:</strong> 30 feet</li>
+                    <li><strong>Draconic Ancestry:</strong> Choose a dragon type (Red=Fire, Blue=Lightning, White=Cold, Black=Acid, Gold=Fire, Silver=Cold, etc.)</li>
+                    <li><strong>Breath Weapon:</strong> Exhale destructive energy in a line or cone (scales with level, once per short rest)</li>
+                    <li><strong>Damage Resistance:</strong> Resistance to your ancestry's damage type</li>
+                    <li><strong>Languages:</strong> Common, Draconic</li>
+                </ul>
+                <span class="entry-tag">Great for: Paladins, Sorcerers, Fighters</span>
+            </div>
+
+            <div class="entry-card">
+                <h4>🔬 Gnome</h4>
+                <p>
+                    Gnomes are small, curious, and endlessly energetic beings who see the world as full of
+                    mysteries to be solved. Cheerful, inventive, and deeply interested in illusion, tinkering,
+                    engineering, or nature, they possess an innate magical resistance.
+                </p>
+                <ul>
+                    <li><strong>Ability Score Increase:</strong> +2 Intelligence</li>
+                    <li><strong>Size:</strong> Small (3–4 feet) &nbsp;·&nbsp; <strong>Speed:</strong> 25 feet</li>
+                    <li><strong>Darkvision:</strong> 60 feet</li>
+                    <li><strong>Gnome Cunning:</strong> Advantage on INT, WIS, and CHA saving throws against magic</li>
+                    <li><strong>Languages:</strong> Common, Gnomish</li>
+                </ul>
+                <h5>Subraces</h5>
+                <ul>
+                    <li><strong>Forest Gnome:</strong> +1 Dexterity, Minor Illusion cantrip, speak with small animals</li>
+                    <li><strong>Rock Gnome:</strong> +1 Constitution, Artificer's Lore, Tinker (create tiny clockwork devices)</li>
+                </ul>
+                <span class="entry-tag">Great for: Wizards, Artificers, Bards</span>
+            </div>
+
+            <div class="entry-card">
+                <h4>✨ Half-Elf</h4>
+                <p>
+                    Half-elves walk between two worlds, belonging fully to neither. With human ambition and
+                    elven grace, they are extraordinarily versatile and socially adept — natural leaders,
+                    diplomats, and adventurers.
+                </p>
+                <ul>
+                    <li><strong>Ability Score Increase:</strong> +2 Charisma, +1 to two other ability scores of your choice</li>
+                    <li><strong>Size:</strong> Medium (5–6 feet) &nbsp;·&nbsp; <strong>Speed:</strong> 30 feet</li>
+                    <li><strong>Darkvision:</strong> 60 feet &nbsp;·&nbsp; <strong>Fey Ancestry:</strong> Advantage vs. charm; immune to sleep</li>
+                    <li><strong>Skill Versatility:</strong> Proficiency in two skills of your choice</li>
+                    <li><strong>Languages:</strong> Common, Elvish, and one language of your choice</li>
+                </ul>
+                <span class="entry-tag">Great for: Bards, Warlocks, Paladins</span>
+            </div>
+
+            <div class="entry-card">
+                <h4>💪 Half-Orc</h4>
+                <p>
+                    Half-orcs carry the strength of orcs combined with human adaptability. Often misunderstood
+                    and underestimated, they are driven heroes who prove themselves through action. Their
+                    relentless endurance makes them nearly impossible to put down.
+                </p>
+                <ul>
+                    <li><strong>Ability Score Increase:</strong> +2 Strength, +1 Constitution</li>
+                    <li><strong>Size:</strong> Medium (muscular, 5–7 feet) &nbsp;·&nbsp; <strong>Speed:</strong> 30 feet</li>
+                    <li><strong>Darkvision:</strong> 60 feet &nbsp;·&nbsp; <strong>Menacing:</strong> Proficiency in Intimidation</li>
+                    <li><strong>Relentless Endurance:</strong> Once per long rest, when reduced to 0 HP, drop to 1 HP instead</li>
+                    <li><strong>Savage Attacks:</strong> On a critical hit with a melee weapon, roll one damage die an extra time</li>
+                    <li><strong>Languages:</strong> Common, Orc</li>
+                </ul>
+                <span class="entry-tag">Great for: Fighters, Barbarians, Rangers</span>
+            </div>
+
+            <div class="entry-card">
+                <h4>😈 Tiefling</h4>
+                <p>
+                    Tieflings carry the blood of devils — descendants of humans who made ancient pacts with
+                    infernal powers. With horns, tails, and unsettling eyes, they are often distrusted. Many
+                    grapple with whether their heritage defines them, or whether they define themselves.
+                </p>
+                <ul>
+                    <li><strong>Ability Score Increase:</strong> +2 Charisma, +1 Intelligence</li>
+                    <li><strong>Size:</strong> Medium &nbsp;·&nbsp; <strong>Speed:</strong> 30 feet</li>
+                    <li><strong>Darkvision:</strong> 60 feet &nbsp;·&nbsp; <strong>Hellish Resistance:</strong> Resistance to fire damage</li>
+                    <li><strong>Infernal Legacy:</strong> Know <em>Thaumaturgy</em>; at 3rd level gain <em>Hellish Rebuke</em> (1/day); at 5th level gain <em>Darkness</em> (1/day)</li>
+                    <li><strong>Languages:</strong> Common, Infernal</li>
+                </ul>
+                <span class="entry-tag">Great for: Warlocks, Sorcerers, Bards</span>
+            </div>
+
+            <div class="guide-aside">
+                <h4>⚗ Many More Races Await!</h4>
+                <p>The Player's Handbook is just the beginning. Official expansions add dozens more races, including:</p>
+                <ul>
+                    <li><strong>Aasimar</strong> — celestial-blooded beings touched by divine light</li>
+                    <li><strong>Genasi</strong> — children of elemental spirits (Air, Earth, Fire, Water)</li>
+                    <li><strong>Tabaxi</strong> — cat-like humanoids driven by curiosity</li>
+                    <li><strong>Kenku</strong> — flightless raven-like beings who speak only in mimicry</li>
+                    <li><strong>Firbolg</strong> — gentle giant-kin tied to nature and the fey</li>
+                    <li><strong>Goliath</strong> — towering mountain folk of incredible toughness</li>
+                    <li><strong>Warforged</strong> — living constructs built for war (<em>Eberron</em>)</li>
+                    <li><strong>Changeling</strong> — shapeshifters with no fixed face</li>
+                    <li>...and many, many more. Talk to your DM about what races are available.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section id="classes" class="guide-section">
+            <h2>Step 2 — Choose Your Class</h2>
+            <p>
+                Your <strong>class</strong> is arguably the most defining mechanical choice you make.
+                It determines your role in the party, the actions you take in combat, and whether you cast
+                spells. Think of your class as your character's calling. Each class comes with
+                <strong>class features</strong> you gain as you level up, and at certain levels you choose
+                a <strong>subclass</strong> that further customises your playstyle.
+            </p>
+
+            <h3>Classes from the Player's Handbook</h3>
+
+            <div class="entry-card">
+                <h4>⚡ Barbarian</h4>
+                <p>Primal warriors who fight with unbridled ferocity. They channel a terrifying fury called <strong>Rage</strong> — making them faster, stronger, and nearly impossible to kill. The tankiest class in the game.</p>
+                <ul>
+                    <li><strong>Hit Die:</strong> d12 (highest in the game) &nbsp;·&nbsp; <strong>Primary:</strong> Strength</li>
+                    <li><strong>Rage:</strong> Bonus damage, advantage on STR checks/saves, resistance to physical damage</li>
+                    <li><strong>Unarmored Defense:</strong> AC = 10 + DEX + CON modifier</li>
+                    <li><strong>Reckless Attack:</strong> Attack with advantage — but grant enemies advantage on you</li>
+                    <li><strong>Magic:</strong> None (some subclasses add limited magic)</li>
+                </ul>
+                <span class="entry-tag">Playstyle: Run in. Hit hard. Refuse to die.</span>
+                <span class="entry-tag">Subclasses: Berserker, Totem Warrior, Storm Herald</span>
+            </div>
+
+            <div class="entry-card">
+                <h4>🎵 Bard</h4>
+                <p>Magical performers — artists and storytellers who weave magic into their craft. Bardic Inspiration, powerful spells, and extraordinary skill versatility make them one of the most flexible classes in the game.</p>
+                <ul>
+                    <li><strong>Hit Die:</strong> d8 &nbsp;·&nbsp; <strong>Primary:</strong> Charisma &nbsp;·&nbsp; <strong>Full Spellcaster</strong></li>
+                    <li><strong>Bardic Inspiration:</strong> Grant a d6–d12 to an ally they add to any roll</li>
+                    <li><strong>Jack of All Trades:</strong> Add half proficiency to unproficient skill checks</li>
+                    <li><strong>Expertise:</strong> Double proficiency bonus for two chosen skills</li>
+                    <li><strong>Magical Secrets:</strong> Learn spells from any class's list</li>
+                </ul>
+                <span class="entry-tag">Playstyle: Flexible support, social expert, control caster.</span>
+                <span class="entry-tag">Subclasses: College of Lore, College of Valor, College of Glamour</span>
+            </div>
+
+            <div class="entry-card">
+                <h4>✝ Cleric</h4>
+                <p>Divine conduits who draw power from their deity. They heal wounds, smite evil, and call down divine wrath. Among the most powerful and versatile spellcasters in the game, combining martial capability with full spellcasting.</p>
+                <ul>
+                    <li><strong>Hit Die:</strong> d8 &nbsp;·&nbsp; <strong>Primary:</strong> Wisdom &nbsp;·&nbsp; <strong>Full Spellcaster</strong></li>
+                    <li><strong>Channel Divinity:</strong> Turn Undead and domain-specific divine powers</li>
+                    <li><strong>Divine Domain:</strong> Your subclass — determines bonus spells, armour, and abilities</li>
+                </ul>
+                <span class="entry-tag">Domains: Life (healer), Light (blaster), War (warrior), Trickery, Tempest</span>
+            </div>
+
+            <div class="entry-card">
+                <h4>🌿 Druid</h4>
+                <p>Guardians of the natural world, able to transform into beasts and command the fury of nature itself. Shapeshifters and spellcasters with unique versatility in both exploration and combat.</p>
+                <ul>
+                    <li><strong>Hit Die:</strong> d8 &nbsp;·&nbsp; <strong>Primary:</strong> Wisdom &nbsp;·&nbsp; <strong>Full Spellcaster</strong></li>
+                    <li><strong>Wild Shape:</strong> Transform into beasts (more powerful at higher levels)</li>
+                    <li><strong>Armour:</strong> Non-metal only (Druids refuse to wear metal)</li>
+                </ul>
+                <span class="entry-tag">Circles: Moon (shapeshifter), Land (enhanced spellcasting), Spores, Stars</span>
+            </div>
+
+            <div class="entry-card">
+                <h4>⚔ Fighter</h4>
+                <p>Masters of combat — trained warriors who have studied every weapon and fighting style. Simple, dependable, and devastatingly effective. The best choice for new players who want to learn the game without complex mechanics.</p>
+                <ul>
+                    <li><strong>Hit Die:</strong> d10 &nbsp;·&nbsp; <strong>Primary:</strong> Strength or Dexterity</li>
+                    <li><strong>Fighting Style:</strong> Passive bonus (Archery, Defense, Dueling, Great Weapon Fighting, etc.)</li>
+                    <li><strong>Second Wind:</strong> Heal yourself once per short rest as a bonus action</li>
+                    <li><strong>Action Surge:</strong> Take an extra action once per short rest</li>
+                    <li><strong>Extra Attack:</strong> Up to 4 attacks per turn at level 20</li>
+                </ul>
+                <span class="entry-tag">Archetypes: Champion, Battle Master, Eldritch Knight</span>
+            </div>
+
+            <div class="entry-card">
+                <h4>👊 Monk</h4>
+                <p>Masters of body and mind who harness inner energy called <strong>ki</strong>. They move faster than anyone, deflect arrows, stun enemies, and eventually cannot be killed by most weapons. The class is all about flow and overwhelming speed.</p>
+                <ul>
+                    <li><strong>Hit Die:</strong> d8 &nbsp;·&nbsp; <strong>Primary:</strong> Dexterity, Wisdom</li>
+                    <li><strong>Unarmored Defense:</strong> AC = 10 + DEX + WIS modifier</li>
+                    <li><strong>Ki Points:</strong> Fuel special abilities (Flurry of Blows, Patient Defense, Step of the Wind)</li>
+                    <li><strong>Stunning Strike:</strong> Spend ki to potentially stun a creature</li>
+                    <li><strong>Unarmored Movement:</strong> Speed increases significantly every few levels</li>
+                </ul>
+                <span class="entry-tag">Traditions: Open Hand, Shadow, Four Elements, Drunken Master</span>
+            </div>
+
+            <div class="entry-card">
+                <h4>⚜ Paladin</h4>
+                <p>Sacred warriors bound by a sacred oath. One of the most powerful classes in the game — combining heavy armour, strong melee combat, healing, powerful protective auras, and divine spellcasting. The holy knight — or dark lord — of D&amp;D.</p>
+                <ul>
+                    <li><strong>Hit Die:</strong> d10 &nbsp;·&nbsp; <strong>Primary:</strong> Strength, Charisma &nbsp;·&nbsp; <strong>Half Spellcaster</strong></li>
+                    <li><strong>Divine Smite:</strong> Spend a spell slot to deal massive bonus radiant (or necrotic) damage after a hit</li>
+                    <li><strong>Lay on Hands:</strong> Pool of healing points — restore HP or cure disease/poison</li>
+                    <li><strong>Aura of Protection:</strong> Add Charisma modifier to all saving throws for nearby allies</li>
+                </ul>
+                <span class="entry-tag">Oaths: Devotion, Ancients, Vengeance, Oathbreaker (dark path)</span>
+            </div>
+
+            <div class="entry-card">
+                <h4>🏹 Ranger</h4>
+                <p>Warriors of the wilderness — hunters, trackers, and survivalists who move unseen through the wild. They have a deep bond with nature and a favoured enemy they have studied and can hunt with ease.</p>
+                <ul>
+                    <li><strong>Hit Die:</strong> d10 &nbsp;·&nbsp; <strong>Primary:</strong> Dexterity, Wisdom &nbsp;·&nbsp; <strong>Half Spellcaster</strong></li>
+                    <li><strong>Favored Enemy:</strong> Bonus to tracking, knowledge, and interaction with a chosen creature type</li>
+                    <li><strong>Natural Explorer:</strong> Bonuses in chosen terrain types</li>
+                    <li><strong>Extra Attack:</strong> Attack twice from Level 5</li>
+                </ul>
+                <span class="entry-tag">Conclaves: Hunter, Beast Master, Gloom Stalker, Horizon Walker</span>
+            </div>
+
+            <div class="entry-card">
+                <h4>🗡 Rogue</h4>
+                <p>Cunning tricksters — masters of stealth, deception, and striking precisely where it hurts most. Their Sneak Attack deals devastating burst damage, and their array of skills makes them the most versatile non-magical class.</p>
+                <ul>
+                    <li><strong>Hit Die:</strong> d8 &nbsp;·&nbsp; <strong>Primary:</strong> Dexterity</li>
+                    <li><strong>Sneak Attack:</strong> Massive bonus dice damage when you have advantage or an ally is adjacent to the target</li>
+                    <li><strong>Cunning Action:</strong> Bonus action to Dash, Disengage, or Hide</li>
+                    <li><strong>Expertise:</strong> Double proficiency in two skills (chosen twice as you level up)</li>
+                    <li><strong>Evasion:</strong> Take no damage on successful Dexterity saves (normally half)</li>
+                    <li><strong>Reliable Talent:</strong> Treat any d20 of 9 or lower as a 10 for proficient skills</li>
+                </ul>
+                <span class="entry-tag">Archetypes: Thief, Assassin, Arcane Trickster, Swashbuckler</span>
+            </div>
+
+            <div class="entry-card">
+                <h4>🔥 Sorcerer</h4>
+                <p>Magic stamped into their blood — born with innate power they didn't ask for and must learn to control. Their greatest advantage is <strong>Metamagic</strong>, which lets them modify spells in extraordinary ways.</p>
+                <ul>
+                    <li><strong>Hit Die:</strong> d6 &nbsp;·&nbsp; <strong>Primary:</strong> Charisma &nbsp;·&nbsp; <strong>Full Spellcaster</strong></li>
+                    <li><strong>Sorcery Points:</strong> Flexible resource to create spell slots or fuel Metamagic</li>
+                    <li><strong>Metamagic:</strong> Twinned Spell (target two creatures), Quickened Spell (cast as bonus action), Subtle Spell (no gestures/words required), and more</li>
+                </ul>
+                <span class="entry-tag">Origins: Draconic Bloodline, Wild Magic, Divine Soul, Storm Sorcery</span>
+            </div>
+
+            <div class="entry-card">
+                <h4>👁 Warlock</h4>
+                <p>Made a pact with a powerful being — a demon lord, archfey, ancient dragon, or entity from beyond the stars. They have a unique spellcasting system: fewer but more powerful spell slots that recharge on a <strong>short rest</strong>.</p>
+                <ul>
+                    <li><strong>Hit Die:</strong> d8 &nbsp;·&nbsp; <strong>Primary:</strong> Charisma</li>
+                    <li><strong>Eldritch Blast:</strong> The Warlock's signature cantrip — powerful ranged force damage</li>
+                    <li><strong>Eldritch Invocations:</strong> Passive magical boons that enhance your abilities</li>
+                    <li><strong>Pact Boon (Level 3):</strong> Pact of the Chain (familiar), Blade (weapon), or Tome (spellbook)</li>
+                    <li><strong>Spell Slots:</strong> Few but cast at highest level available; recover on short rest</li>
+                </ul>
+                <span class="entry-tag">Patrons: The Fiend, The Archfey, The Great Old One, The Hexblade, The Celestial</span>
+            </div>
+
+            <div class="entry-card">
+                <h4>📚 Wizard</h4>
+                <p>Scholars of the arcane who have devoted their lives to studying magic. They have the largest spell list in the game and can prepare different spells every day. A high-level Wizard is arguably the most powerful entity in the game.</p>
+                <ul>
+                    <li><strong>Hit Die:</strong> d6 (most fragile class) &nbsp;·&nbsp; <strong>Primary:</strong> Intelligence &nbsp;·&nbsp; <strong>Full Spellcaster</strong></li>
+                    <li><strong>Spellbook:</strong> Contains your known spells; copy spells from scrolls and other spellbooks</li>
+                    <li><strong>Arcane Recovery:</strong> Recover spell slots during a short rest once per day</li>
+                </ul>
+                <span class="entry-tag">Schools: Evocation, Abjuration, Illusion, Necromancy, Conjuration, Chronurgy</span>
+            </div>
+
+            <div class="guide-aside">
+                <h4>⚗ Expansions, Additional Classes, and Homebrews</h4>
+                <p>The twelve classes above are just the foundation. Official expansions add more, including:</p>
+                <ul>
+                    <li><strong>Artificer</strong> — the magical inventor and gadgeteer (<em>Tasha's Cauldron of Everything / Eberron</em>)</li>
+                    <li>Dozens of additional <strong>subclasses</strong> for every base class across numerous sourcebooks</li>
+                </ul>
+                <p>
+                    Beyond official content, the D&amp;D community creates an enormous amount of
+                    <strong>Homebrew</strong> content — fan-made classes, subclasses, races, and spells
+                    shared freely on sites like <strong>D&amp;D Beyond</strong>, Reddit, and GM Binder.
+                    As a new player, starting with a Player's Handbook class is strongly recommended.
+                </p>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section id="ability-scores" class="guide-section">
+            <h2>Step 3 — Determine Ability Scores</h2>
+            <p>
+                Every character in D&amp;D is defined by <strong>six Ability Scores</strong>. These are
+                the raw numerical measure of your hero's physical and mental capabilities. Everything from
+                swinging a sword to casting a spell to bluffing a city guard is governed by these six numbers.
+            </p>
+
+            <h3>The Six Ability Scores</h3>
+            <dl>
+                <dt>⚔ Strength (STR)</dt>
+                <dd>Physical power. Used for melee attacks with most weapons, lifting and breaking things, jumping, and athletic feats. A score of 8 is scrawny; 20 is a legendary warrior who can hurl boulders.</dd>
+                <dt>🏃 Dexterity (DEX)</dt>
+                <dd>Agility, reflexes, and balance. Used for ranged attacks, finesse melee weapons, stealth, acrobatics, sleight of hand, and determines your Armor Class if you wear light or no armour.</dd>
+                <dt>❤ Constitution (CON)</dt>
+                <dd>Endurance and health. Contributes directly to your Hit Points and your ability to maintain concentration on spells. Every class benefits from a solid Constitution.</dd>
+                <dt>📚 Intelligence (INT)</dt>
+                <dd>Reasoning and memory. Used for Arcana, History, Investigation, Nature, and Religion. The spellcasting ability for Wizards and Arcane Trickster Rogues.</dd>
+                <dt>👁 Wisdom (WIS)</dt>
+                <dd>Perception and intuition. Used for Perception, Insight, Medicine, Animal Handling, and Survival. The spellcasting ability for Clerics, Druids, and Rangers. Often the most universally useful mental stat.</dd>
+                <dt>💬 Charisma (CHA)</dt>
+                <dd>Force of personality, persuasion, and presence. Used for Deception, Intimidation, Performance, and Persuasion. The spellcasting ability for Bards, Paladins, Sorcerers, and Warlocks.</dd>
+            </dl>
+
+            <h3>Ability Modifiers</h3>
+            <p>
+                Your ability score (usually 3–20) generates a <strong>modifier</strong> — the number you
+                actually add to dice rolls. Formula: <strong>(Score − 10) ÷ 2, rounded down</strong>.
+            </p>
+            <div class="guide-table-wrapper">
+                <table>
+                    <caption>Ability Score to Modifier Conversion</caption>
+                    <thead><tr><th>Score</th><th>Modifier</th><th>What It Means</th></tr></thead>
+                    <tbody>
+                    <tr><td>1</td><td>−5</td><td>Severely impaired</td></tr>
+                    <tr><td>4–5</td><td>−3</td><td>Far below average</td></tr>
+                    <tr><td>6–7</td><td>−2</td><td>Below average</td></tr>
+                    <tr><td>8–9</td><td>−1</td><td>Slightly below average</td></tr>
+                    <tr><td>10–11</td><td>+0</td><td>Average human</td></tr>
+                    <tr><td>12–13</td><td>+1</td><td>Slightly above average</td></tr>
+                    <tr><td>14–15</td><td>+2</td><td>Above average</td></tr>
+                    <tr><td>16–17</td><td>+3</td><td>Exceptional</td></tr>
+                    <tr><td>18–19</td><td>+4</td><td>Outstanding</td></tr>
+                    <tr><td>20</td><td>+5</td><td>Peak of natural ability</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Methods for Generating Ability Scores</h3>
+
+            <div class="entry-card">
+                <h4>Method 1: Standard Array (Recommended for Beginners)</h4>
+                <p>Take these six scores and assign one to each ability score in any order you choose:</p>
+                <p style="text-align:center; font-size:1.3rem; color:var(--gold); font-family:'Palatino Linotype',serif; letter-spacing:4px; margin:1rem 0;">
+                    15 &nbsp;·&nbsp; 14 &nbsp;·&nbsp; 13 &nbsp;·&nbsp; 12 &nbsp;·&nbsp; 10 &nbsp;·&nbsp; 8
+                </p>
+                <p>The simplest, most balanced method. Assign your highest scores to what your class needs most, then apply racial bonuses on top.</p>
+            </div>
+
+            <div class="entry-card">
+                <h4>Method 2: Point Buy</h4>
+                <p>Every ability score starts at 8. You have <strong>27 points</strong> to spend to increase them. No score can exceed 15 before racial modifiers. Gives you total control and creates very balanced characters.</p>
+                <div class="guide-table-wrapper">
+                    <table>
+                        <caption>Point Buy Cost</caption>
+                        <thead><tr><th>Score</th><th>Cost</th><th>Score</th><th>Cost</th></tr></thead>
+                        <tbody>
+                        <tr><td>8</td><td>0</td><td>12</td><td>4</td></tr>
+                        <tr><td>9</td><td>1</td><td>13</td><td>5</td></tr>
+                        <tr><td>10</td><td>2</td><td>14</td><td>7</td></tr>
+                        <tr><td>11</td><td>3</td><td>15</td><td>9</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="entry-card">
+                <h4>Method 3: Rolling Dice (Most Exciting — Most Unpredictable)</h4>
+                <p>
+                    Roll <strong>4d6</strong>, drop the lowest die, and add the remaining three. Do this six times
+                    and assign each total to an ability score. This can produce spectacular heroes — or
+                    hilariously bad ones. The most traditional method.
+                </p>
+                <p><em>Example:</em> You roll 4, 6, 2, 5 — drop the 2 — total is 15. Roll six sets like this.</p>
+            </div>
+
+            <h3>Proficiency Bonus</h3>
+            <p>
+                Your <strong>Proficiency Bonus</strong> starts at <strong>+2</strong> at Level 1 and
+                increases as you level up. You add it to attack rolls, saving throws, and skill checks
+                you're proficient in.
+            </p>
+            <div class="guide-table-wrapper">
+                <table>
+                    <caption>Proficiency Bonus by Level</caption>
+                    <thead><tr><th>Levels</th><th>Proficiency Bonus</th></tr></thead>
+                    <tbody>
+                    <tr><td>1–4</td><td>+2</td></tr>
+                    <tr><td>5–8</td><td>+3</td></tr>
+                    <tr><td>9–12</td><td>+4</td></tr>
+                    <tr><td>13–16</td><td>+5</td></tr>
+                    <tr><td>17–20</td><td>+6</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section id="background" class="guide-section">
+            <h2>Step 4 — Choose a Background</h2>
+            <p>
+                Your <strong>background</strong> represents who your character was <em>before</em> they
+                became an adventurer. It provides two skill proficiencies, tool or language proficiencies,
+                starting equipment, a unique <strong>background feature</strong>, and suggested personality
+                traits, ideals, bonds, and flaws.
+            </p>
+
+            <h3>Backgrounds from the Player's Handbook</h3>
+
+            <div class="entry-card">
+                <h4>🕊 Acolyte</h4>
+                <p>You grew up in the service of a temple, a god, or a religious order.</p>
+                <ul>
+                    <li><strong>Skills:</strong> Insight, Religion &nbsp;·&nbsp; <strong>Languages:</strong> Two of your choice</li>
+                    <li><strong>Feature — Shelter of the Faithful:</strong> Free healing and care at temples of your faith. Priests of your religion help with mundane needs and information.</li>
+                </ul>
+                <em>Devout healer, disillusioned ex-priest, zealous divine warrior.</em>
+            </div>
+
+            <div class="entry-card">
+                <h4>🃏 Charlatan</h4>
+                <p>You've always had a talent for bending the truth and walking away before anyone notices.</p>
+                <ul>
+                    <li><strong>Skills:</strong> Deception, Sleight of Hand &nbsp;·&nbsp; <strong>Tools:</strong> Disguise kit, forgery kit</li>
+                    <li><strong>Feature — False Identity:</strong> A complete second identity with documentation and disguises. You can forge documents when you have access to the originals.</li>
+                </ul>
+                <em>Con artist, fake noble, spy who forgot their true name.</em>
+            </div>
+
+            <div class="entry-card">
+                <h4>🔪 Criminal / Spy</h4>
+                <p>You have a history of breaking the law. You know the dark corners of civilisation and the people who live in them.</p>
+                <ul>
+                    <li><strong>Skills:</strong> Deception, Stealth &nbsp;·&nbsp; <strong>Tools:</strong> Gaming set, thieves' tools</li>
+                    <li><strong>Feature — Criminal Contact:</strong> A reliable contact in the criminal underground who can relay messages across cities or continents.</li>
+                </ul>
+                <em>Pickpocket gone straight (or not), retired assassin, underworld spy.</em>
+            </div>
+
+            <div class="entry-card">
+                <h4>🎭 Entertainer</h4>
+                <p>You thrive in front of a crowd — actor, musician, dancer, comedian, or storyteller.</p>
+                <ul>
+                    <li><strong>Skills:</strong> Acrobatics, Performance &nbsp;·&nbsp; <strong>Tools:</strong> Disguise kit, musical instrument</li>
+                    <li><strong>Feature — By Popular Demand:</strong> Always find a place to perform for free lodging, food, and local admiration.</li>
+                </ul>
+                <em>Boastful bard, humble street performer, actor haunted by a famous role.</em>
+            </div>
+
+            <div class="entry-card">
+                <h4>🌾 Folk Hero</h4>
+                <p>You came from humble origins but did something that made the common folk remember you.</p>
+                <ul>
+                    <li><strong>Skills:</strong> Animal Handling, Survival &nbsp;·&nbsp; <strong>Tools:</strong> Artisan's tools, vehicles (land)</li>
+                    <li><strong>Feature — Rustic Hospitality:</strong> Common people will shelter you, share food, and refuse to betray you to your hunters.</li>
+                </ul>
+                <em>Reluctant hero who wants to go home, farmer who discovered a gift for battle.</em>
+            </div>
+
+            <div class="entry-card">
+                <h4>⚒ Guild Artisan</h4>
+                <p>A skilled craftsperson and member of a trade guild — glassblower, weaponsmith, gem cutter, and more.</p>
+                <ul>
+                    <li><strong>Skills:</strong> Insight, Persuasion &nbsp;·&nbsp; <strong>Tools:</strong> Artisan's tools &nbsp;·&nbsp; <strong>Languages:</strong> One of your choice</li>
+                    <li><strong>Feature — Guild Membership:</strong> Fellow guild members provide lodging, food, and assistance. The guild may provide legal aid in exchange for dues and obligations.</li>
+                </ul>
+                <em>Perfectionist craftsperson, traveling merchant, artisan whose masterpiece was stolen.</em>
+            </div>
+
+            <div class="entry-card">
+                <h4>🌲 Hermit</h4>
+                <p>You lived in isolation — monk, pilgrim, wilderness survivor, or simply someone who retreated from the world.</p>
+                <ul>
+                    <li><strong>Skills:</strong> Medicine, Religion &nbsp;·&nbsp; <strong>Tools:</strong> Herbalism kit &nbsp;·&nbsp; <strong>Languages:</strong> One of your choice</li>
+                    <li><strong>Feature — Discovery:</strong> Your solitude revealed a unique secret — a cosmic truth, forgotten history, or powerful revelation. Work with your DM to define it.</li>
+                </ul>
+                <em>Wise recluse returning to the world, mystic whose visions led them back to society.</em>
+            </div>
+
+            <div class="entry-card">
+                <h4>👑 Noble</h4>
+                <p>Born or adopted into wealth and privilege. You know courtly etiquette, political intrigue, and powerful connections — and equally powerful enemies.</p>
+                <ul>
+                    <li><strong>Skills:</strong> History, Persuasion &nbsp;·&nbsp; <strong>Tools:</strong> Gaming set &nbsp;·&nbsp; <strong>Languages:</strong> One of your choice</li>
+                    <li><strong>Feature — Position of Privilege:</strong> People assume the best of you. Access to local nobles, welcome in high society, common folk accommodate you.</li>
+                </ul>
+                <em>Arrogant noble learning humility, a lord fighting for their people, disinherited heir.</em>
+            </div>
+
+            <div class="entry-card">
+                <h4>🏔 Outlander</h4>
+                <p>You grew up in the wild places of the world. Civilisation is foreign to you; the wilderness is your home.</p>
+                <ul>
+                    <li><strong>Skills:</strong> Athletics, Survival &nbsp;·&nbsp; <strong>Tools:</strong> Musical instrument &nbsp;·&nbsp; <strong>Languages:</strong> One of your choice</li>
+                    <li><strong>Feature — Wanderer:</strong> Excellent memory for maps and geography. Can find food and fresh water for yourself and up to five others each day.</li>
+                </ul>
+                <em>Barbarian scout entering civilisation, nomadic hunter, wild child raised by animals.</em>
+            </div>
+
+            <div class="entry-card">
+                <h4>📖 Sage</h4>
+                <p>You spent years learning the lore of the multiverse in a great library, under a wizard, or at a university.</p>
+                <ul>
+                    <li><strong>Skills:</strong> Arcana, History &nbsp;·&nbsp; <strong>Languages:</strong> Two of your choice</li>
+                    <li><strong>Feature — Researcher:</strong> When you don't know something, you always know where to find out — and who would know the answer.</li>
+                </ul>
+                <em>Distracted professor pulled into adventure, knowledge seeker chasing forbidden truth.</em>
+            </div>
+
+            <div class="entry-card">
+                <h4>⚓ Sailor</h4>
+                <p>You sailed ships across the seas — merchant sailor, naval officer, pirate, or explorer.</p>
+                <ul>
+                    <li><strong>Skills:</strong> Athletics, Perception &nbsp;·&nbsp; <strong>Tools:</strong> Navigator's tools, vehicles (water)</li>
+                    <li><strong>Feature — Ship's Passage:</strong> Secure free passage on sailing vessels for yourself and companions.</li>
+                </ul>
+                <em>Grizzled sea captain, reformed pirate, shipwreck survivor with ocean-born trauma.</em>
+            </div>
+
+            <div class="entry-card">
+                <h4>🛡 Soldier</h4>
+                <p>You served in an army — militia, mercenary company, knight's retinue, or national military. The discipline of military life is etched into your every habit.</p>
+                <ul>
+                    <li><strong>Skills:</strong> Athletics, Intimidation &nbsp;·&nbsp; <strong>Tools:</strong> Gaming set, vehicles (land)</li>
+                    <li><strong>Feature — Military Rank:</strong> Soldiers loyal to your former organisation recognise your authority. You can exert influence over soldiers and requisition equipment.</li>
+                </ul>
+                <em>Veteran haunted by the battlefield, soldier of a fallen kingdom, last-job mercenary.</em>
+            </div>
+
+            <div class="entry-card">
+                <h4>🏚 Urchin</h4>
+                <p>You grew up on the streets — abandoned, orphaned, or simply left to fend for yourself. You know the hidden alleys, rooftops, and sewers that the powerful ignore.</p>
+                <ul>
+                    <li><strong>Skills:</strong> Sleight of Hand, Stealth &nbsp;·&nbsp; <strong>Tools:</strong> Disguise kit, thieves' tools</li>
+                    <li><strong>Feature — City Secrets:</strong> Know the secret paths of cities — you and companions move at twice normal speed when travelling through urban areas.</li>
+                </ul>
+                <em>Street rat who loves their found family, child of crime seeking redemption.</em>
+            </div>
+
+            <div class="guide-aside">
+                <h4>⚗ A World of Backgrounds Awaits</h4>
+                <p>Expansion books add dozens more backgrounds, including:</p>
+                <ul>
+                    <li><strong>Haunted One</strong> — survivor of supernatural horror (<em>Curse of Strahd</em>)</li>
+                    <li><strong>Far Traveler</strong> — stranger from a distant land (<em>Sword Coast Adventurer's Guide</em>)</li>
+                    <li><strong>Archaeologist</strong> — explorer of ancient ruins (<em>Tomb of Annihilation</em>)</li>
+                    <li><strong>Investigator</strong> — seasoned detective (<em>Van Richten's Guide</em>)</li>
+                    <li>And many, many more.</li>
+                </ul>
+                <p>You can also <strong>create a completely custom background</strong> with your DM — choose two skills, two tools or languages, write your own feature, and craft a history that perfectly fits your vision.</p>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section id="alignment" class="guide-section">
+            <h2>Step 5 — Choose an Alignment</h2>
+            <p>
+                <strong>Alignment</strong> is a shorthand for your character's moral and ethical worldview.
+                It's a tool to help you role-play your character's decision-making, not a rigid cage.
+                Measured on two axes: <strong>Law vs. Chaos</strong> (order vs. freedom) and
+                <strong>Good vs. Evil</strong> (altruism vs. selfishness).
+            </p>
+
+            <h3>The Nine Alignments</h3>
+
+            <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-bottom:1rem;">
+                <div class="entry-card" style="border-color:rgba(100,180,100,0.4);">
+                    <h4 style="color:#7ec87e;">Lawful Good</h4>
+                    <p>The classic hero. Believes in justice and order — follows a code and acts with compassion within it. The world is best when structure and kindness work together.</p>
+                    <em>"My oath is my life. I will not break it, even to save myself."</em>
+                    <p style="margin-top:0.5rem; font-size:0.78rem; color:var(--gold-dark);">Aragorn, Superman, Paladin of Devotion</p>
+                </div>
+                <div class="entry-card" style="border-color:rgba(100,180,100,0.4);">
+                    <h4 style="color:#7ec87e;">Neutral Good</h4>
+                    <p>The compassionate pragmatist. Wants to do good and help others. Follows the law when it serves justice — breaks it when it doesn't. Good is the compass; law and chaos are just tools.</p>
+                    <em>"Rules matter, but people matter more."</em>
+                    <p style="margin-top:0.5rem; font-size:0.78rem; color:var(--gold-dark);">Gandalf, Frodo Baggins</p>
+                </div>
+                <div class="entry-card" style="border-color:rgba(100,180,100,0.4);">
+                    <h4 style="color:#7ec87e;">Chaotic Good</h4>
+                    <p>The free-spirited hero. Driven by goodness but rejects authority and rules they see as unjust. Follows their heart, not a rulebook. The rebel hero who changes the world.</p>
+                    <em>"I don't care what the law says — I'll do what's right."</em>
+                    <p style="margin-top:0.5rem; font-size:0.78rem; color:var(--gold-dark);">Robin Hood, Han Solo, Zorro</p>
+                </div>
+                <div class="entry-card" style="border-color:rgba(180,180,100,0.4);">
+                    <h4 style="color:#d4d47e;">Lawful Neutral</h4>
+                    <p>The principled professional. Lives by a code and follows it regardless of outcome. Order, structure, and discipline are what they prize. They do their job. No more, no less.</p>
+                    <em>"A contract is a contract. The law is the law."</em>
+                    <p style="margin-top:0.5rem; font-size:0.78rem; color:var(--gold-dark);">Judge Dredd, Javert</p>
+                </div>
+                <div class="entry-card" style="border-color:rgba(180,180,100,0.4);">
+                    <h4 style="color:#d4d47e;">True Neutral</h4>
+                    <p>The balanced wanderer. Either believes in balance between all forces, or simply makes decisions based on practicality and self-interest. Many druids hold this alignment.</p>
+                    <em>"I'll do what the situation calls for."</em>
+                    <p style="margin-top:0.5rem; font-size:0.78rem; color:var(--gold-dark);">Tom Bombadil, survivalists, naturalists</p>
+                </div>
+                <div class="entry-card" style="border-color:rgba(180,180,100,0.4);">
+                    <h4 style="color:#d4d47e;">Chaotic Neutral</h4>
+                    <p>The wild card. Prizes personal freedom and spontaneity above all. Unpredictable and self-interested — but not evil. Follows whims and thrills, resists all authority.</p>
+                    <em>"Rules are for people who lack imagination."</em>
+                    <p style="margin-top:0.5rem; font-size:0.78rem; color:var(--gold-dark);">Jack Sparrow, Deadpool</p>
+                </div>
+                <div class="entry-card" style="border-color:rgba(180,80,80,0.4);">
+                    <h4 style="color:#c87e7e;">Lawful Evil</h4>
+                    <p>The villain with a code. Has power and structure — but uses them for selfish ends. Follows rules because it benefits them. Often the most terrifying villains: predictable and effective.</p>
+                    <em>"I always honour my contracts. It would be bad for business otherwise."</em>
+                    <p style="margin-top:0.5rem; font-size:0.78rem; color:var(--gold-dark);">Tywin Lannister, Darth Vader</p>
+                </div>
+                <div class="entry-card" style="border-color:rgba(180,80,80,0.4);">
+                    <h4 style="color:#c87e7e;">Neutral Evil</h4>
+                    <p>Pure self-interest. Does whatever they can get away with for personal gain. No code, no loyalty, no ideology — just cold calculation. Follows or breaks rules entirely based on usefulness.</p>
+                    <em>"I'll betray whoever pays me more. Nothing personal."</em>
+                    <p style="margin-top:0.5rem; font-size:0.78rem; color:var(--gold-dark);">Backstabbing viziers, opportunist mercenaries</p>
+                </div>
+                <div class="entry-card" style="border-color:rgba(180,80,80,0.4);">
+                    <h4 style="color:#c87e7e;">Chaotic Evil</h4>
+                    <p>The embodiment of destruction. Driven by violence, greed, or pure malice with no regard for law or the lives of others. Destroys for the sake of it. The most dangerous and unpredictable.</p>
+                    <em>"Burn it all."</em>
+                    <p style="margin-top:0.5rem; font-size:0.78rem; color:var(--gold-dark);">Demon lords, nihilistic cultists</p>
+                </div>
+            </div>
+
+            <div class="guide-aside">
+                <h4>💡 Alignment Tips for New Players</h4>
+                <ul>
+                    <li>Use alignment as a <strong>general guide</strong>, not a prison that dictates every action.</li>
+                    <li>Most player characters work best somewhere in the <strong>Good or Neutral</strong> range so the party can cooperate.</li>
+                    <li>Alignment <strong>can shift</strong> based on the choices you make throughout the campaign.</li>
+                    <li>Chaotic Neutral and Chaotic Evil are very difficult to play in a party without disrupting everyone else's fun. Discuss with your DM first.</li>
+                    <li>When in doubt: pick what feels true to the character you imagine, and let your actions define you at the table.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section id="personality" class="guide-section">
+            <h2>Step 6 — Define Your Personality</h2>
+            <p>
+                Numbers and mechanics tell you what your character <em>can</em> do. Personality traits
+                tell the table who your character <em>is</em>. This step brings your hero to life beyond
+                the stat block. Each background provides suggested options, but you are always encouraged
+                to invent your own.
+            </p>
+
+            <div class="entry-card">
+                <h4>Personality Traits (choose two)</h4>
+                <p>Specific behaviours, habits, or quirks that define your character's manner. Should be observable and concrete.</p>
+                <ul>
+                    <li><em>"I quote ancient proverbs in any situation, relevant or not."</em></li>
+                    <li><em>"I laugh at danger — loudly, inappropriately, and at the worst possible moment."</em></li>
+                    <li><em>"I am always polite and well-mannered, even to people I'm about to fight."</em></li>
+                    <li><em>"I can't resist a puzzle, door, or locked chest."</em></li>
+                </ul>
+            </div>
+
+            <div class="entry-card">
+                <h4>Ideal (choose one)</h4>
+                <p>The core belief or principle that drives your character above all else — the thing they would not compromise on even under pressure.</p>
+                <ul>
+                    <li><em>Freedom:</em> "No one has the right to tell another living being how to live."</li>
+                    <li><em>Justice:</em> "The law exists to protect, not punish."</li>
+                    <li><em>Knowledge:</em> "Every mystery deserves to be solved. Every question, answered."</li>
+                    <li><em>Redemption:</em> "Everyone deserves a second chance — even me."</li>
+                </ul>
+            </div>
+
+            <div class="entry-card">
+                <h4>Bond (choose one)</h4>
+                <p>Something or someone your character cares deeply about. The tie that anchors them to the world. Bonds give your DM a hook to involve you personally in the story.</p>
+                <ul>
+                    <li><em>"My village was destroyed. I will find who did it and make them answer."</em></li>
+                    <li><em>"My mentor sacrificed everything for me. I will not dishonour that gift."</em></li>
+                    <li><em>"The people of my town are counting on me. I will not return home until I've found a solution."</em></li>
+                </ul>
+            </div>
+
+            <div class="entry-card">
+                <h4>Flaw (choose one)</h4>
+                <p>A weakness, vice, fear, or dark secret that can cause your character trouble. Great characters are not perfect — flaws create drama, tension, and opportunity for growth.</p>
+                <ul>
+                    <li><em>"I have an insatiable greed for gold. I can always be bribed."</em></li>
+                    <li><em>"I cannot back down from a challenge to my honour, even a suicidal one."</em></li>
+                    <li><em>"I lie compulsively, even when the truth would serve me better."</em></li>
+                    <li><em>"I am terrified of water. Even crossing a stream makes me anxious."</em></li>
+                </ul>
+            </div>
+
+            <div class="guide-aside">
+                <h4>💡 The Best Characters Have Contradictions</h4>
+                <p>
+                    The most interesting characters are not simply good at everything and kind all the time.
+                    Consider giving your character an ideal that conflicts with their flaw. For example:
+                    a character whose ideal is <em>justice</em> but whose flaw is <em>cowardice</em>.
+                    How do they reconcile that? What happens when the situation demands bravery?
+                    <strong>That</strong> is where great role-playing is born.
+                </p>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section id="equipment" class="guide-section">
+            <h2>Step 7 — Choose Starting Equipment</h2>
+            <p>
+                Your starting equipment comes from your <strong>class</strong> and your <strong>background</strong>.
+                You typically choose between two equipment packages, or take a set amount of gold and
+                purchase your own gear.
+            </p>
+
+            <h3>Weapons</h3>
+            <p>Divided into <strong>Simple</strong> (most classes) and <strong>Martial</strong> (requires proficiency). Weapon properties include: Finesse (STR or DEX), Versatile (one or two hands), Thrown, Two-Handed, Light (dual-wield), Heavy, and Reach.</p>
+
+            <h3>Armour</h3>
+            <div class="guide-table-wrapper">
+                <table>
+                    <thead><tr><th>Category</th><th>Examples</th><th>AC Formula</th></tr></thead>
+                    <tbody>
+                    <tr><td>Light Armour</td><td>Leather (AC 11), Studded Leather (AC 12)</td><td>Armour + full DEX modifier</td></tr>
+                    <tr><td>Medium Armour</td><td>Chain Shirt (AC 13), Scale Mail (AC 14), Half Plate (AC 15)</td><td>Armour + DEX modifier (max +2)</td></tr>
+                    <tr><td>Heavy Armour</td><td>Chain Mail (AC 16), Splint (AC 17), Full Plate (AC 18)</td><td>Fixed number — DEX irrelevant</td></tr>
+                    <tr><td>Shield</td><td>Any shield</td><td>+2 AC (requires one hand)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Essential Adventuring Gear</h3>
+            <ul>
+                <li><strong>Backpack</strong> — carries your belongings</li>
+                <li><strong>Torches / Lantern and Oil</strong> — light sources for dark dungeons</li>
+                <li><strong>Rope (50 ft, hempen or silk)</strong> — incredibly useful in countless situations</li>
+                <li><strong>Rations (days)</strong> — food and water on the road</li>
+                <li><strong>Healer's Kit</strong> — stabilise dying allies without a spell</li>
+                <li><strong>Thieves' Tools</strong> — pick locks and disable traps (Rogues)</li>
+                <li><strong>Arcane Focus / Holy Symbol / Druidic Focus</strong> — spellcasting implements</li>
+                <li><strong>Potions of Healing</strong> — restore 2d4+2 hit points when consumed</li>
+            </ul>
+
+            <h3>Starting Gold Alternative</h3>
+            <div class="guide-table-wrapper">
+                <table>
+                    <caption>Starting Gold by Class</caption>
+                    <thead><tr><th>Class</th><th>Starting Gold</th><th>Class</th><th>Starting Gold</th></tr></thead>
+                    <tbody>
+                    <tr><td>Barbarian</td><td>2d4 × 10 gp</td><td>Paladin</td><td>5d4 × 10 gp</td></tr>
+                    <tr><td>Bard</td><td>5d4 × 10 gp</td><td>Ranger</td><td>5d4 × 10 gp</td></tr>
+                    <tr><td>Cleric</td><td>5d4 × 10 gp</td><td>Rogue</td><td>4d4 × 10 gp</td></tr>
+                    <tr><td>Druid</td><td>2d4 × 10 gp</td><td>Sorcerer</td><td>3d4 × 10 gp</td></tr>
+                    <tr><td>Fighter</td><td>5d4 × 10 gp</td><td>Warlock</td><td>4d4 × 10 gp</td></tr>
+                    <tr><td>Monk</td><td>5d4 gp</td><td>Wizard</td><td>4d4 × 10 gp</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section id="hit-points" class="guide-section">
+            <h2>Step 8 — Hit Points &amp; Defenses</h2>
+
+            <h3>Hit Points (HP)</h3>
+            <p>
+                Hit Points represent your character's life force. When you reach 0 HP, you fall
+                <strong>unconscious</strong> and must make <strong>Death Saving Throws</strong> each turn.
+                Three successes: you stabilise. Three failures: you die.
+            </p>
+            <p>At <strong>Level 1</strong>, your maximum HP = <strong>Maximum Hit Die value + Constitution modifier</strong></p>
+            <p><em>Example: A Level 1 Fighter (d10) with Constitution 16 (+3) starts with 13 HP.</em></p>
+
+            <div class="guide-table-wrapper">
+                <table>
+                    <caption>Hit Dice by Class</caption>
+                    <thead><tr><th>Hit Die</th><th>Classes</th><th>Average per level (after 1st)</th></tr></thead>
+                    <tbody>
+                    <tr><td>d6</td><td>Sorcerer, Wizard</td><td>4</td></tr>
+                    <tr><td>d8</td><td>Bard, Cleric, Druid, Monk, Rogue, Warlock</td><td>5</td></tr>
+                    <tr><td>d10</td><td>Fighter, Paladin, Ranger</td><td>6</td></tr>
+                    <tr><td>d12</td><td>Barbarian</td><td>7</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Armour Class (AC)</h3>
+            <p>The number enemies must meet or beat on their attack roll to hit you.</p>
+            <ul>
+                <li><strong>Wearing Armour:</strong> Use the armour's base AC + modifiers</li>
+                <li><strong>Unarmoured Defense (Barbarian):</strong> 10 + DEX + CON</li>
+                <li><strong>Unarmoured Defense (Monk):</strong> 10 + DEX + WIS</li>
+                <li><strong>Mage Armor (spell):</strong> 13 + DEX modifier</li>
+            </ul>
+
+            <h3>Saving Throws &amp; Initiative</h3>
+            <p><strong>Saving Throw = d20 + ability modifier (+ proficiency bonus if proficient)</strong></p>
+            <p>Your class gives you proficiency in two of the six saving throws. The DM or monster sets the <strong>DC</strong> (Difficulty Class) you must meet or beat.</p>
+            <p><strong>Initiative = d20 + Dexterity modifier.</strong> Highest goes first in combat.</p>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section id="skills-proficiencies" class="guide-section">
+            <h2>Step 9 — Skills &amp; Proficiencies</h2>
+            <p>
+                <strong>Skill Check = d20 + ability modifier (+ proficiency bonus if proficient)</strong>
+            </p>
+            <p>Being <strong>proficient</strong> adds your Proficiency Bonus (+2 to +6). Having <strong>Expertise</strong> doubles it.</p>
+
+            <div class="guide-table-wrapper">
+                <table>
+                    <caption>The Eighteen Skills</caption>
+                    <thead><tr><th>Skill</th><th>Ability</th><th>What It Covers</th></tr></thead>
+                    <tbody>
+                    <tr><td>Acrobatics</td><td>DEX</td><td>Balancing, tumbling, escaping grapples</td></tr>
+                    <tr><td>Animal Handling</td><td>WIS</td><td>Calming or training animals, controlling mounts</td></tr>
+                    <tr><td>Arcana</td><td>INT</td><td>Knowledge of magic, spells, magical creatures, planes</td></tr>
+                    <tr><td>Athletics</td><td>STR</td><td>Climbing, jumping, swimming, shoving</td></tr>
+                    <tr><td>Deception</td><td>CHA</td><td>Lying convincingly, maintaining disguises, misleading</td></tr>
+                    <tr><td>History</td><td>INT</td><td>Knowledge of events, people, wars, legends</td></tr>
+                    <tr><td>Insight</td><td>WIS</td><td>Reading people, detecting lies, sensing intentions</td></tr>
+                    <tr><td>Intimidation</td><td>CHA</td><td>Coercing with implied or actual threats</td></tr>
+                    <tr><td>Investigation</td><td>INT</td><td>Searching for clues, deducing how things work</td></tr>
+                    <tr><td>Medicine</td><td>WIS</td><td>Diagnosing illness, stabilising wounded allies</td></tr>
+                    <tr><td>Nature</td><td>INT</td><td>Knowledge of plants, animals, terrain, weather</td></tr>
+                    <tr><td>Perception</td><td>WIS</td><td>Noticing hidden things, hearing sounds, spotting traps</td></tr>
+                    <tr><td>Performance</td><td>CHA</td><td>Entertaining an audience through art, music, or acting</td></tr>
+                    <tr><td>Persuasion</td><td>CHA</td><td>Convincing others through goodwill and honest appeal</td></tr>
+                    <tr><td>Religion</td><td>INT</td><td>Knowledge of gods, holy rites, divine magic, cults</td></tr>
+                    <tr><td>Sleight of Hand</td><td>DEX</td><td>Pickpocketing, planting objects, card tricks</td></tr>
+                    <tr><td>Stealth</td><td>DEX</td><td>Moving silently, hiding, avoiding detection</td></tr>
+                    <tr><td>Survival</td><td>WIS</td><td>Tracking, navigating wilderness, hunting, enduring elements</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p><strong>Passive Perception</strong> = 10 + your Perception modifier (including proficiency if proficient). Your DM references this constantly — write it on your sheet.</p>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section id="spells" class="guide-section">
+            <h2>Step 10 — Spells (If Applicable)</h2>
+            <p>
+                If your class is a spellcaster, you now choose your spells. Spellcasting classes include:
+                Bard, Cleric, Druid, Paladin, Ranger, Sorcerer, Warlock, and Wizard.
+            </p>
+
+            <h3>Cantrips</h3>
+            <p>Spells you can cast <strong>unlimited times</strong> with no spell slot. Most spellcasters begin with 2–4.</p>
+            <p>Popular cantrips: <em>Eldritch Blast, Fire Bolt, Sacred Flame, Vicious Mockery, Toll the Dead, Minor Illusion, Mage Hand, Prestidigitation, Shillelagh</em></p>
+
+            <h3>Spell Slots &amp; Spell Save DC</h3>
+            <p>Most spells require a <strong>spell slot</strong> — a unit of magical energy that recharges on a <strong>long rest</strong> (Warlocks: short rest). At Level 1, most spellcasters have two 1st-level spell slots.</p>
+            <ul>
+                <li><strong>Spell Attack Bonus</strong> = Proficiency Bonus + Spellcasting Ability Modifier</li>
+                <li><strong>Spell Save DC</strong> = 8 + Proficiency Bonus + Spellcasting Ability Modifier</li>
+            </ul>
+
+            <h3>Known vs. Prepared Spells</h3>
+            <ul>
+                <li><strong>Known spells</strong> (Bard, Sorcerer, Ranger, Warlock): Fixed list, change only on level-up</li>
+                <li><strong>Prepared spells</strong> (Cleric, Druid, Paladin, Wizard): Choose from your full list each day. Can swap prepared spells on each long rest — immense flexibility</li>
+            </ul>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section id="finishing-touches" class="guide-section">
+            <h2>Step 11 — Finishing Touches</h2>
+            <p>The numbers are done. Now you make your character a <em>person</em>.</p>
+
+            <h3>Name</h3>
+            <p>Your race section provides naming conventions, but you can freely invent names or draw inspiration from any mythology, culture, or language you find compelling. A dwarf might be Bruenor or Hilda; an elf Arannis or Sylvara; a tiefling Damakos or Lerissa.</p>
+
+            <h3>Physical Appearance</h3>
+            <p>Consider: Age, height and build, eye and hair colour, scars or tattoos, voice, how they dress. These details don't affect mechanics but add texture to who your character is.</p>
+
+            <h3>Backstory</h3>
+            <p>Write a short paragraph about your character's life before the adventure. Key questions:</p>
+            <ul>
+                <li>Where were you born? What was your family like?</li>
+                <li>What significant event shaped who you are today?</li>
+                <li>Why did you leave your former life to become an adventurer?</li>
+                <li>Is there something you're running from, or running toward?</li>
+                <li>Do you have any enemies? Any powerful friends?</li>
+            </ul>
+
+            <div class="guide-aside">
+                <h4>💡 You Don't Need a Novel</h4>
+                <p>
+                    Even a few sentences that answer "where are you from and why are you here?" is enough
+                    to start. Backstories grow naturally through play — many players discover who their
+                    character truly is <em>at the table</em>, not before it.
+                </p>
+            </div>
+
+            <h3>Languages</h3>
+            <p>
+                You start with Common plus any languages from your race and background.
+                Common languages: Common, Dwarvish, Elvish, Giant, Gnomish, Goblin, Halfling, Orc.
+                Exotic languages: Abyssal, Celestial, Draconic, Deep Speech, Infernal, Primordial, Sylvan, Undercommon.
+            </p>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section id="tips" class="guide-section">
+            <h2>Tips for New Players</h2>
+
+            <h3>On Choosing Your First Character</h3>
+            <ul>
+                <li><strong>Pick something that excites you.</strong> The best character is the one you can't wait to play, not the most optimised one.</li>
+                <li><strong>Simple is good to start.</strong> Fighter and Rogue have fewer moving parts than Wizard or Druid. You can master complexity later.</li>
+                <li><strong>Talk to your DM</strong> about what races and classes fit the world, the tone of the campaign, and whether certain choices will make your life more interesting.</li>
+                <li><strong>Ask your fellow players</strong> what they're playing. A party of all Rogues will struggle without healing. Coordination makes for better games.</li>
+            </ul>
+
+            <h3>On Role-Playing</h3>
+            <ul>
+                <li><strong>You don't have to "do voices."</strong> Role-playing is decision-making as your character, not performance.</li>
+                <li><strong>Ask yourself: "What would my character do?"</strong> Not what's optimal — what this <em>person</em> would do.</li>
+                <li><strong>React to the world.</strong> Fear, joy, grief, confusion — these make the game come alive.</li>
+            </ul>
+
+            <h3>On Combat</h3>
+            <ul>
+                <li><strong>On your turn: move, take an action, take a bonus action (if you have one).</strong> That's the basic rhythm.</li>
+                <li><strong>Common actions:</strong> Attack, Cast a Spell, Dash, Disengage, Dodge, Help, Hide, Ready, Search, Use an Object.</li>
+                <li><strong>Don't panic when you don't know a rule.</strong> Make a decision, look it up later. The game flows better that way.</li>
+                <li><strong>Death is not the end.</strong> At 0 HP you make Death Saving Throws. Allies can stabilise you. Resurrection spells exist.</li>
+            </ul>
+
+            <h3>Useful Tools for New Players</h3>
+            <ul>
+                <li><strong>D&amp;D Beyond (dndbeyond.com)</strong> — Digital character sheets, built-in dice roller, spell and rule references</li>
+                <li><strong>Roll20 / Foundry VTT</strong> — Virtual tabletops for playing online</li>
+                <li><strong>The Dungeon Dudes / Web DM / Matt Colville</strong> — Excellent YouTube channels for beginners</li>
+                <li><strong>r/DnD, r/DnDBeginnerDM</strong> — Welcoming Reddit communities for any question, no matter how basic</li>
+            </ul>
+        </section>
+
+        <!-- ═══════════════════════════════════════════════════════ -->
+        <section id="glossary" class="guide-section">
+            <h2>Quick Glossary</h2>
+            <dl>
+                <dt>d4, d6, d8, d10, d12, d20, d100</dt>
+                <dd>Dice with that many sides. "Roll a d20" means roll a 20-sided die. "3d6" means roll three six-sided dice and add them.</dd>
+                <dt>Ability Score</dt>
+                <dd>One of the six core stats: STR, DEX, CON, INT, WIS, CHA. Typically 1–20 for player characters.</dd>
+                <dt>Modifier</dt>
+                <dd>The bonus (or penalty) from an ability score. Added to dice rolls. Formula: (Score − 10) ÷ 2.</dd>
+                <dt>Proficiency Bonus</dt>
+                <dd>A bonus added to rolls you're trained in. Starts at +2, rises with level.</dd>
+                <dt>Advantage / Disadvantage</dt>
+                <dd>Roll two d20s. Advantage: take higher. Disadvantage: take lower.</dd>
+                <dt>Hit Points (HP)</dt>
+                <dd>Your life total. Reach 0 and you fall unconscious.</dd>
+                <dt>Armour Class (AC)</dt>
+                <dd>The number enemies must meet or beat to hit you.</dd>
+                <dt>Spell Slot</dt>
+                <dd>The resource expended to cast non-cantrip spells. Recovers on long rest.</dd>
+                <dt>Cantrip</dt>
+                <dd>A spell that can be cast unlimited times without using a slot.</dd>
+                <dt>DC (Difficulty Class)</dt>
+                <dd>The target number you must meet or beat on a die roll for success.</dd>
+                <dt>Short Rest</dt>
+                <dd>One hour of downtime. Recover HP by spending Hit Dice.</dd>
+                <dt>Long Rest</dt>
+                <dd>8 hours of sleep. Fully restores HP and spell slots.</dd>
+                <dt>Action / Bonus Action / Reaction</dt>
+                <dd>Your main activity per turn / faster secondary activity / once-per-round response to something happening (opportunity attacks, etc.).</dd>
+                <dt>Concentration</dt>
+                <dd>Some spells require concentration to maintain — you can only hold one at a time. Taking damage may break it.</dd>
+                <dt>DM (Dungeon Master)</dt>
+                <dd>The person who runs the game — describes the world, plays every NPC, adjudicates rules. Also called GM.</dd>
+                <dt>Advantage / Disadvantage</dt>
+                <dd>Roll two d20s and take the higher (advantage) or lower (disadvantage) result.</dd>
+                <dt>Session Zero</dt>
+                <dd>An introductory session where players and DM discuss expectations, safety tools, tone, and character backgrounds before the campaign begins.</dd>
+                <dt>Homebrew</dt>
+                <dd>Fan-created content not from official publications. Requires DM approval.</dd>
+            </dl>
+        </section>
+
+        <!-- GUIDE FOOTER -->
+        <div class="guide-footer-panel">
+            <div class="divider-ornament"><span>⚔</span></div>
+            <h2>Your Adventure Begins Now</h2>
+            <p>
+                You have a hero. You have a name, a history, a set of skills, and a blank page waiting
+                to be filled with the choices you make at the table. No guide can fully prepare you for
+                D&amp;D — and that's the beauty of it. Every session surprises you. Every table is
+                different. Every hero you create will surprise even you.
+            </p>
+            <p><strong>Welcome to Dungeons &amp; Dragons. May your dice roll true.</strong></p>
+            <div class="divider-ornament" style="margin-top:1.5rem;"><span>⚔</span></div>
+            <p>
+                <em>
+                    This guide covers content from the D&amp;D 5th Edition Player's Handbook (2014)
+                    by Wizards of the Coast. Dungeons &amp; Dragons, D&amp;D, and all related marks
+                    are trademarks of Wizards of the Coast LLC. This guide is a fan reference created
+                    for educational and community use.
+                </em>
+            </p>
+        </div>
+
+    </main>
+</div>
+<!-- end guide-wrapper -->
+
+<!-- Back to top -->
+<button id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">▲</button>
 
 <footer th:replace="~{fragments::footer}"></footer>
+
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
         crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.min.js"
         integrity="sha384-RuyvpeZCxMJCqVUGFI0Do1mQrods/hhxYlcVfGPOfQtPJh0JCw12tUAZ/Mv10S7D"
         crossorigin="anonymous"></script>
+<script>
+    // Show/hide back-to-top button
+    window.addEventListener('scroll', function () {
+        const btn = document.getElementById('backToTop');
+        if (window.scrollY > 400) {
+            btn.classList.add('visible');
+        } else {
+            btn.classList.remove('visible');
+        }
+    });
+
+    // Highlight active TOC link based on scroll position
+    const sections = document.querySelectorAll('.guide-section, .guide-hero');
+    const tocLinks = document.querySelectorAll('.guide-toc a');
+
+    window.addEventListener('scroll', function () {
+        let current = '';
+        sections.forEach(section => {
+            if (window.scrollY >= section.offsetTop - 120) {
+                current = section.id;
+            }
+        });
+        tocLinks.forEach(link => {
+            link.style.color = link.getAttribute('href') === '#' + current
+                ? 'var(--gold)'
+                : '';
+        });
+    });
+</script>
 </body>
 </html>
