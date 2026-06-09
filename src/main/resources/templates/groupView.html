@@ -354,11 +354,11 @@
             <form th:method="POST" th:action="@{{id}/create-post(id=${group.id})}" th:object="${postDTO}" class="m-1" style="width: 80%">
                     <div>
                         <label for="postTitle" class="form-label"></label>
-                        <input type="text" th:field="*{title}" class="form-control" id="postTitle" placeholder="Post Title"></input>
+                        <input required type="text" th:field="*{title}" class="form-control" id="postTitle" placeholder="Post Title"></input>
                     </div>
                     <div>
                         <label for="postInput" class="form-label"></label>
-                        <input type="text" th:field="*{description}" class="form-control" id="postInput" placeholder="Write something here...">
+                        <input required type="text" th:field="*{description}" class="form-control" id="postInput" placeholder="Write something here...">
                         <small id="charCounter">0/1000</small>
                     </div>
                     <button id="submitPostButton" disabled type="submit" class="btn btn-primary">Post</button>

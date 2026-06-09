@@ -502,6 +502,7 @@
                                        type="text"
                                        class="form-control"
                                        id="name"
+                                       required
                                        placeholder="Hero's name">
                             </div>
                         </div>
@@ -513,6 +514,7 @@
                                        type="text"
                                        class="form-control"
                                        id="age"
+                                       required
                                        placeholder="Age">
                             </div>
                         </div>
@@ -523,6 +525,7 @@
                                 <select class="form-control"
                                         th:field="*{gender}"
                                         name="gender"
+                                        required
                                         id="gender">
                                     <option th:each="gender: ${genders}"
                                             th:value="${gender.name()}"
@@ -538,6 +541,7 @@
                                 <select class="form-control"
                                         th:field="*{race}"
                                         name="race"
+                                        required
                                         id="race">
                                     <option th:each="race: ${races}"
                                             th:value="${race.name()}"
@@ -552,6 +556,7 @@
                                 <select class="form-control"
                                         th:field="*{charClass}"
                                         name="class"
+                                        required
                                         id="class">
                                     <option th:each="class: ${charClasses}"
                                             th:value="${class.name()}"
@@ -567,6 +572,7 @@
                                        type="number"
                                        class="form-control"
                                        id="level"
+                                       required
                                        placeholder="Character level">
                             </div>
                         </div>
@@ -578,6 +584,7 @@
                                 <select class="form-control"
                                         th:field="*{alignment}"
                                         name="alignment"
+                                        required
                                         id="alignment">
                                     <option th:each="alignment: ${alignments}"
                                             th:value="${alignment.name()}"
@@ -592,6 +599,7 @@
                                 <select class="form-control"
                                         th:field="*{background}"
                                         name="background"
+                                        required
                                         id="background">
                                     <option th:each="background: ${backgrounds}"
                                             th:value="${background.name()}"
@@ -614,6 +622,7 @@
                                        max="20"
                                        class="form-control"
                                        id="strength"
+                                       required
                                        placeholder="STR">
                             </div>
                         </div>
@@ -627,6 +636,7 @@
                                        max="20"
                                        class="form-control"
                                        id="dexterity"
+                                       required
                                        placeholder="DEX">
                             </div>
                         </div>
@@ -640,6 +650,7 @@
                                        max="20"
                                        class="form-control"
                                        id="constitution"
+                                       required
                                        placeholder="CON">
                             </div>
                         </div>
@@ -653,6 +664,7 @@
                                        max="20"
                                        class="form-control"
                                        id="intelligence"
+                                       required
                                        placeholder="INT">
                             </div>
                         </div>
@@ -666,6 +678,7 @@
                                        max="20"
                                        class="form-control"
                                        id="wisdom"
+                                       required
                                        placeholder="WIS">
                             </div>
                         </div>
@@ -679,6 +692,7 @@
                                        max="20"
                                        class="form-control"
                                        id="charisma"
+                                       required
                                        placeholder="CHA">
                             </div>
                         </div>
@@ -691,6 +705,7 @@
                                        type="text"
                                        class="form-control"
                                        id="description"
+                                       required
                                        placeholder="Describe your character's appearance and personality">
                             </div>
                         </div>
@@ -702,6 +717,7 @@
                                        type="text"
                                        class="form-control"
                                        id="imageUrl"
+                                       required
                                        placeholder="https://example.com/character-portrait.jpg">
                             </div>
                         </div>

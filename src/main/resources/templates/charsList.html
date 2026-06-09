@@ -193,7 +193,8 @@
 <div class="container">
     <div class="row mt-3">
         <div th:each="char: ${characters}" class="col-6 col-md-4 col-lg-2">
-            <a style="text-decoration: none" th:href="@{'/profile/' + ${char.user.id}}">
+<!--            <a style="text-decoration: none" th:href="@{'/profile/' + ${char.user.id}}">-->
+            <a style="text-decoration: none" th:href="@{'/profile/'}">
                 <div class="card my-2">
                     <div class="img-body">
                         <img th:src="${char.imageUrl}" alt="" class="card-img-top">

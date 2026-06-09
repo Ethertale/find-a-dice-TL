@@ -8,6 +8,7 @@ import io.ethertale.findadicethymeleaf.user.repo.UserRepo;
 import io.ethertale.findadicethymeleaf.web.dto.HeroUpdateDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -25,25 +26,26 @@ public class HeroService {
         this.heroRepo = heroRepo;
     }
 
+    @Transactional
     public Hero createFirstHero(User user) {
         Hero hero = Hero.builder()
                 .user(user)
-                .name("My Hero")
+                .name(user.getUsername() + "'s Hero")
                 .age(18)
                 .gender(Genders.MALE)
-                .race(Races.AARAKOCRA)
-                .charClass(Classes.ARTIFICER)
+                .race(Races.HUMAN)
+                .charClass(Classes.FIGHTER)
                 .level(1)
-                .description("This is my description")
-                .imageUrl("https://i.ibb.co/WWDv4mYx/Logo-Transparent.png")
+                .description("This is my hero's description")
+                .imageUrl("https://i.ibb.co/C33tdsz7/find-a-dice.jpg")
                 .alignment(Alignment.TRUE_NEUTRAL)
-                .background(Backgrounds.ATHLETE)
-                .strength(1)
-                .dexterity(1)
-                .constitution(1)
-                .intelligence(1)
-                .wisdom(1)
-                .charisma(1)
+                .background(Backgrounds.ACOLYTE)
+                .strength(10)
+                .dexterity(10)
+                .constitution(10)
+                .intelligence(10)
+                .wisdom(10)
+                .charisma(10)
                 .createdAt(LocalDateTime.now())
                 .groupPosts(new HashSet<>())
                 .comments(new HashSet<>())
@@ -55,6 +57,7 @@ public class HeroService {
         return hero;
     }
 
+    @Transactional
     public void updateHero(Hero heroToUpdate, HeroUpdateDTO heroUpdateDTO) {
         Hero updatedHero = heroRepo.findById(heroToUpdate.getId()).orElse(null);
 

@@ -9,6 +9,7 @@ import io.ethertale.findadicethymeleaf.hero.model.Hero;
 import io.ethertale.findadicethymeleaf.user.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -63,6 +64,7 @@ public class ChatRoomService {
         return loggedUser.getHero().getChatRooms().stream().sorted(Comparator.comparing(ChatRoom::getUpdatedAt).reversed()).toList();
     }
 
+    @Transactional
     public void createChatRoom(Hero hero1, Hero hero2) {
 
         if (chatRoomRepo.existsChatRoomBetween(hero1, hero2)){

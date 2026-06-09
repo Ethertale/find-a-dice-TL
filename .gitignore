@@ -34,3 +34,4 @@ build/
 /log/
 /src/main/resources/application-dev.properties
 /uploads/maps/
+/env-variables.env
