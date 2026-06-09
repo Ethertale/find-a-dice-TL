@@ -1,3 +1,6 @@
+# [*Demo website is now live! Click here!*](https://find-a-dice.onrender.com)
+
+
 # Find A Dice 🎲
 
 **A fantasy-themed social platform where tabletop RPG players gather, connect, and adventure together.**
@@ -70,7 +73,7 @@ You can check out the screenshots of the project on my portfolio [*here.*](https
 
 ## 🚀 Getting Started
 
-*(Setup instructions will be provided once deployment or containerization decisions are finalized. Check back soon for information on how to run Find A Dice locally or access the hosted version.)*
+You can now [*visit the website*](https://find-a-dice.onrender.com) and test it out! Current version is a demo, release TBA.
 
 ---
 
