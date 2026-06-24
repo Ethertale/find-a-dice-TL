@@ -10,7 +10,7 @@
     </parent>
     <groupId>io.ethertale</groupId>
     <artifactId>Find-A-Dice-Thymeleaf</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.9.1-DEMO</version>
     <name>Find-A-Dice-Thymeleaf</name>
     <description>Find-A-Dice-Thymeleaf</description>
     <url/>
