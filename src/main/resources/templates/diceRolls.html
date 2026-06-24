@@ -8,17 +8,24 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="/css/navbar-footer.css">
+
+    <!-- MedievalSharp font for dice numbers -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
+
     <title>Find A Dice - Dice Rolls</title>
     <style>
-        /* ========== FANTASY THEME COLOR PALETTE ========== */
+        /* ========== FANTASY THEME ========== */
         :root {
-            --gold: #d9b261;
-            --gold-dark: #8f6a36;
-            --muted-text: #cfc8b8;
-            --light-text: #f7f3e7;
+            --gold:          #d9b261;
+            --gold-dark:     #8f6a36;
+            --gold-mid:      #b8903a;
+            --dice-face:     #3d2800;   /* dark brownish-yellow — the face of every die */
+            --muted-text:    #cfc8b8;
+            --light-text:    #f7f3e7;
         }
 
-        /* ========== BACKGROUND ========== */
         html, body {
             min-height: 100%;
             margin: 0;
@@ -42,7 +49,6 @@
             transform: scale(1.05);
         }
 
-        /* ========== MAIN CONTAINER ========== */
         .container {
             position: relative;
             z-index: 1;
@@ -75,7 +81,6 @@
             opacity: 0.5;
         }
 
-        /* ========== BASE DICE STYLING ========== */
         .dices {
             width: 128px;
             aspect-ratio: 1/1;
@@ -85,13 +90,27 @@
             margin: 1.5rem auto;
             cursor: pointer;
             user-select: none;
+            position: relative;
+            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-mid) 50%, var(--gold-dark) 100%);
+            filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.6))
+            drop-shadow(0 0 10px rgba(217, 178, 97, 0.25));
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            filter: drop-shadow(0 10px 25px rgba(0, 0, 0, 0.5));
+        }
+
+        .dices::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: var(--dice-face);
+            transform: scale(0.89);
+            transform-origin: center center;
+            z-index: 0;
         }
 
         .dices:hover {
             transform: translateY(-12px) scale(1.08);
-            filter: drop-shadow(0 15px 35px rgba(0, 0, 0, 0.6)) brightness(1.15);
+            filter: drop-shadow(0 16px 32px rgba(0, 0, 0, 0.7))
+            drop-shadow(0 0 18px rgba(217, 178, 97, 0.45));
         }
 
         .dices:active {
@@ -100,196 +119,82 @@
 
         .dices p {
             margin: 0;
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #fff;
+            font-family: 'MedievalSharp', serif;
+            font-size: 2.4rem;
+            color: var(--gold);
             text-shadow:
-                    0 3px 6px rgba(0,0,0,0.9),
-                    0 0 15px rgba(0,0,0,0.7);
+                    0 2px 4px rgba(0,0,0,0.9),
+                    0 0 12px rgba(217, 178, 97, 0.4);
+            position: relative;
+            z-index: 1;
             transition: all 0.3s ease;
+            line-height: 1;
         }
 
-        /* ========== INDIVIDUAL DICE SHAPES & COLORS ========== */
-        #d4Con {
-            clip-path: polygon(50% 0, 100% 100%, 0 100%);
-            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
-            filter: drop-shadow(0 10px 25px rgba(74, 222, 128, 0.4));
+        .dices:hover p {
+            color: var(--light-text);
+            text-shadow:
+                    0 2px 4px rgba(0,0,0,0.9),
+                    0 0 16px rgba(255, 240, 200, 0.6);
         }
 
-        #d4Con p {
-            transform: translate(0%, 25%);
-        }
+        #d4Con  { clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+        #d4Con::before { clip-path: polygon(50% 0, 100% 100%, 0 100%); }
+        /* D4 number needs to drop toward the flat base of the triangle */
+        #d4Con p { transform: translateY(20%); }
 
-        #d6Con {
-            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
-            border-radius: 8px;
-            filter: drop-shadow(0 10px 25px rgba(6, 182, 212, 0.4));
-        }
+        #d6Con         { border-radius: 10px; }
+        #d6Con::before { border-radius: 7px; }
 
-        #d8Con {
-            clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%);
-            background: linear-gradient(135deg, #a855f7 0%, #9333ea 100%);
-            filter: drop-shadow(0 10px 25px rgba(168, 85, 247, 0.4));
-        }
+        #d8Con  { clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%); }
+        #d8Con::before { clip-path: polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%); }
 
-        #d10Con {
-            clip-path: polygon(50% 0, 100% 40%, 100% 60%, 50% 99%, 0 60%, 0 40%);
-            background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
-            filter: drop-shadow(0 10px 25px rgba(236, 72, 153, 0.4));
-        }
+        #d10Con { clip-path: polygon(50% 0, 100% 40%, 100% 60%, 50% 99%, 0 60%, 0 40%); }
+        #d10Con::before { clip-path: polygon(50% 0, 100% 40%, 100% 60%, 50% 99%, 0 60%, 0 40%); }
 
-        #d12Con {
-            clip-path: polygon(50% 0%, 83% 12%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 6% 78%, 0% 43%, 17% 12%);
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            filter: drop-shadow(0 10px 25px rgba(239, 68, 68, 0.4));
-        }
+        #d12Con { clip-path: polygon(50% 0%, 83% 12%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 6% 78%, 0% 43%, 17% 12%); }
+        #d12Con::before { clip-path: polygon(50% 0%, 83% 12%, 100% 43%, 94% 78%, 68% 100%, 32% 100%, 6% 78%, 0% 43%, 17% 12%); }
 
-        #d20Con {
-            clip-path: polygon(10% 30%, 50% 0, 90% 30%, 90% 70%, 50% 100%, 10% 70%);
-            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
-            filter: drop-shadow(0 10px 25px rgba(249, 115, 22, 0.4));
-        }
+        #d20Con { clip-path: polygon(10% 30%, 50% 0, 90% 30%, 90% 70%, 50% 100%, 10% 70%); }
+        #d20Con::before { clip-path: polygon(10% 30%, 50% 0, 90% 30%, 90% 70%, 50% 100%, 10% 70%); }
 
-        #dPercCon {
-            clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%);
-            background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
-            filter: drop-shadow(0 10px 25px rgba(217, 178, 97, 0.4));
-        }
+        #dPercCon { clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%); }
+        #dPercCon::before { clip-path: polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%); }
 
-        /* ========== SMOOTH ROLLING ANIMATION ========== */
+        /* ========== ROLLING ANIMATION ========== */
         .rolling {
             animation: diceRoll 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         @keyframes diceRoll {
-            0% {
-                transform: rotate(0deg) scale(1);
-                filter: blur(0px) brightness(1) drop-shadow(0 10px 25px rgba(0, 0, 0, 0.5));
-            }
-            8% {
-                transform: rotate(90deg) scale(0.92);
-                filter: blur(0.5px) brightness(1.08) drop-shadow(0 12px 28px rgba(0, 0, 0, 0.5));
-            }
-            16% {
-                transform: rotate(216deg) scale(1.06);
-                filter: blur(1px) brightness(1.15) drop-shadow(0 14px 32px rgba(0, 0, 0, 0.5));
-            }
-            24% {
-                transform: rotate(342deg) scale(0.9);
-                filter: blur(1.8px) brightness(1.22) drop-shadow(0 16px 36px rgba(0, 0, 0, 0.5));
-            }
-            32% {
-                transform: rotate(504deg) scale(1.1);
-                filter: blur(2.5px) brightness(1.28) drop-shadow(0 18px 40px rgba(0, 0, 0, 0.5));
-            }
-            40% {
-                transform: rotate(630deg) scale(0.88);
-                filter: blur(3px) brightness(1.32) drop-shadow(0 20px 44px rgba(0, 0, 0, 0.5));
-            }
-            48% {
-                transform: rotate(792deg) scale(1.14);
-                filter: blur(3.2px) brightness(1.35) drop-shadow(0 20px 44px rgba(0, 0, 0, 0.5));
-            }
-            56% {
-                transform: rotate(918deg) scale(0.86);
-                filter: blur(2.8px) brightness(1.3) drop-shadow(0 18px 40px rgba(0, 0, 0, 0.5));
-            }
-            64% {
-                transform: rotate(1044deg) scale(1.12);
-                filter: blur(2px) brightness(1.22) drop-shadow(0 16px 36px rgba(0, 0, 0, 0.5));
-            }
-            72% {
-                transform: rotate(1080deg) scale(0.94);
-                filter: blur(1.2px) brightness(1.14) drop-shadow(0 14px 30px rgba(0, 0, 0, 0.5));
-            }
-            80% {
-                transform: rotate(1080deg) scale(1.06);
-                filter: blur(0.6px) brightness(1.08) drop-shadow(0 12px 26px rgba(0, 0, 0, 0.5));
-            }
-            86% {
-                transform: rotate(1080deg) scale(0.97);
-                filter: blur(0px) brightness(1.03) drop-shadow(0 11px 24px rgba(0, 0, 0, 0.5));
-            }
-            92% {
-                transform: rotate(1080deg) scale(1.04);
-                filter: blur(0px) brightness(1.01) drop-shadow(0 10px 25px rgba(0, 0, 0, 0.5));
-            }
-            96% {
-                transform: rotate(1080deg) scale(0.99);
-                filter: blur(0px) brightness(1) drop-shadow(0 10px 25px rgba(0, 0, 0, 0.5));
-            }
-            100% {
-                transform: rotate(1080deg) scale(1);
-                filter: blur(0px) brightness(1) drop-shadow(0 10px 25px rgba(0, 0, 0, 0.5));
-            }
+            0%   { transform: rotate(0deg)     scale(1);    filter: drop-shadow(0 8px 20px rgba(0,0,0,0.6)) drop-shadow(0 0 10px rgba(217,178,97,0.25)); }
+            8%   { transform: rotate(90deg)    scale(0.92); filter: drop-shadow(0 10px 24px rgba(0,0,0,0.6)) drop-shadow(0 0 12px rgba(217,178,97,0.35)); }
+            16%  { transform: rotate(216deg)   scale(1.06); filter: drop-shadow(0 12px 28px rgba(0,0,0,0.6)) drop-shadow(0 0 16px rgba(217,178,97,0.45)); }
+            24%  { transform: rotate(342deg)   scale(0.90); filter: drop-shadow(0 14px 32px rgba(0,0,0,0.6)) drop-shadow(0 0 20px rgba(217,178,97,0.55)); }
+            32%  { transform: rotate(504deg)   scale(1.10); filter: drop-shadow(0 16px 36px rgba(0,0,0,0.6)) drop-shadow(0 0 22px rgba(217,178,97,0.60)); }
+            40%  { transform: rotate(630deg)   scale(0.88); filter: drop-shadow(0 18px 40px rgba(0,0,0,0.6)) drop-shadow(0 0 24px rgba(217,178,97,0.60)); }
+            48%  { transform: rotate(792deg)   scale(1.14); filter: drop-shadow(0 18px 40px rgba(0,0,0,0.6)) drop-shadow(0 0 24px rgba(217,178,97,0.60)); }
+            56%  { transform: rotate(918deg)   scale(0.86); filter: drop-shadow(0 16px 36px rgba(0,0,0,0.6)) drop-shadow(0 0 20px rgba(217,178,97,0.50)); }
+            64%  { transform: rotate(1044deg)  scale(1.12); filter: drop-shadow(0 14px 30px rgba(0,0,0,0.6)) drop-shadow(0 0 16px rgba(217,178,97,0.40)); }
+            72%  { transform: rotate(1080deg)  scale(0.94); filter: drop-shadow(0 12px 26px rgba(0,0,0,0.6)) drop-shadow(0 0 12px rgba(217,178,97,0.30)); }
+            80%  { transform: rotate(1080deg)  scale(1.06); filter: drop-shadow(0 10px 22px rgba(0,0,0,0.6)) drop-shadow(0 0 10px rgba(217,178,97,0.25)); }
+            88%  { transform: rotate(1080deg)  scale(0.98); filter: drop-shadow(0 8px 20px rgba(0,0,0,0.6))  drop-shadow(0 0 10px rgba(217,178,97,0.25)); }
+            100% { transform: rotate(1080deg)  scale(1);    filter: drop-shadow(0 8px 20px rgba(0,0,0,0.6))  drop-shadow(0 0 10px rgba(217,178,97,0.25)); }
         }
 
-        /* Special handling for D20 which is rotated -90deg */
+        /* D20 starts rotated -90deg visually, so its roll starts there */
         #d20Con.rolling {
             animation: diceRollD20 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         @keyframes diceRollD20 {
-            0% {
-                transform: rotate(-90deg) scale(1);
-                filter: blur(0px) brightness(1) drop-shadow(0 10px 25px rgba(0, 0, 0, 0.5));
-            }
-            8% {
-                transform: rotate(0deg) scale(0.92);
-                filter: blur(0.5px) brightness(1.08) drop-shadow(0 12px 28px rgba(0, 0, 0, 0.5));
-            }
-            16% {
-                transform: rotate(126deg) scale(1.06);
-                filter: blur(1px) brightness(1.15) drop-shadow(0 14px 32px rgba(0, 0, 0, 0.5));
-            }
-            24% {
-                transform: rotate(252deg) scale(0.9);
-                filter: blur(1.8px) brightness(1.22) drop-shadow(0 16px 36px rgba(0, 0, 0, 0.5));
-            }
-            32% {
-                transform: rotate(414deg) scale(1.1);
-                filter: blur(2.5px) brightness(1.28) drop-shadow(0 18px 40px rgba(0, 0, 0, 0.5));
-            }
-            40% {
-                transform: rotate(540deg) scale(0.88);
-                filter: blur(3px) brightness(1.32) drop-shadow(0 20px 44px rgba(0, 0, 0, 0.5));
-            }
-            48% {
-                transform: rotate(702deg) scale(1.14);
-                filter: blur(3.2px) brightness(1.35) drop-shadow(0 20px 44px rgba(0, 0, 0, 0.5));
-            }
-            56% {
-                transform: rotate(828deg) scale(0.86);
-                filter: blur(2.8px) brightness(1.3) drop-shadow(0 18px 40px rgba(0, 0, 0, 0.5));
-            }
-            64% {
-                transform: rotate(954deg) scale(1.12);
-                filter: blur(2px) brightness(1.22) drop-shadow(0 16px 36px rgba(0, 0, 0, 0.5));
-            }
-            72% {
-                transform: rotate(1026deg) scale(0.94);
-                filter: blur(1.2px) brightness(1.14) drop-shadow(0 14px 30px rgba(0, 0, 0, 0.5));
-            }
-            80% {
-                transform: rotate(1062deg) scale(1.06);
-                filter: blur(0.6px) brightness(1.08) drop-shadow(0 12px 26px rgba(0, 0, 0, 0.5));
-            }
-            86% {
-                transform: rotate(1080deg) scale(0.97);
-                filter: blur(0px) brightness(1.03) drop-shadow(0 11px 24px rgba(0, 0, 0, 0.5));
-            }
-            92% {
-                transform: rotate(1080deg) scale(1.04);
-                filter: blur(0px) brightness(1.01) drop-shadow(0 10px 25px rgba(0, 0, 0, 0.5));
-            }
-            96% {
-                transform: rotate(1080deg) scale(0.99);
-                filter: blur(0px) brightness(1) drop-shadow(0 10px 25px rgba(0, 0, 0, 0.5));
-            }
-            100% {
-                transform: rotate(1080deg) scale(1);
-                filter: blur(0px) brightness(1) drop-shadow(0 10px 25px rgba(0, 0, 0, 0.5));
-            }
+            0%   { transform: rotate(-90deg)  scale(1);    filter: drop-shadow(0 8px 20px rgba(0,0,0,0.6)) drop-shadow(0 0 10px rgba(217,178,97,0.25)); }
+            8%   { transform: rotate(0deg)    scale(0.92); filter: drop-shadow(0 10px 24px rgba(0,0,0,0.6)) drop-shadow(0 0 16px rgba(217,178,97,0.45)); }
+            24%  { transform: rotate(252deg)  scale(0.90); filter: drop-shadow(0 16px 36px rgba(0,0,0,0.6)) drop-shadow(0 0 24px rgba(217,178,97,0.60)); }
+            48%  { transform: rotate(702deg)  scale(1.14); filter: drop-shadow(0 18px 40px rgba(0,0,0,0.6)) drop-shadow(0 0 24px rgba(217,178,97,0.60)); }
+            72%  { transform: rotate(990deg)  scale(0.94); filter: drop-shadow(0 12px 26px rgba(0,0,0,0.6)) drop-shadow(0 0 12px rgba(217,178,97,0.30)); }
+            88%  { transform: rotate(1080deg) scale(0.98); filter: drop-shadow(0 8px 20px rgba(0,0,0,0.6))  drop-shadow(0 0 10px rgba(217,178,97,0.25)); }
+            100% { transform: rotate(1080deg) scale(1);    filter: drop-shadow(0 8px 20px rgba(0,0,0,0.6))  drop-shadow(0 0 10px rgba(217,178,97,0.25)); }
         }
 
         /* ========== NUMBER FADE ANIMATION ========== */
@@ -302,94 +207,52 @@
         }
 
         @keyframes fadeOut {
-            0% {
-                opacity: 1;
-                transform: scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: scale(0.6);
-            }
+            0%   { opacity: 1; transform: scale(1); }
+            100% { opacity: 0; transform: scale(0.5); }
         }
 
         @keyframes fadeIn {
-            0% {
-                opacity: 0;
-                transform: scale(1.4);
-            }
-            50% {
-                opacity: 0.7;
-                transform: scale(0.95);
-            }
-            100% {
-                opacity: 1;
-                transform: scale(1);
-            }
+            0%   { opacity: 0; transform: scale(1.4); }
+            60%  { opacity: 0.8; transform: scale(0.95); }
+            100% { opacity: 1; transform: scale(1); }
         }
 
         /* ========== DICE LABELS ========== */
         .dice-label {
             text-align: center;
-            font-size: 0.9rem;
-            color: var(--gold);
-            font-weight: 600;
+            font-family: 'MedievalSharp', serif;
+            font-size: 0.85rem;
+            color: var(--gold-dark);
+            font-weight: 400;
             margin-top: 0.5rem;
             text-shadow: 0 1px 2px rgba(0,0,0,0.8);
-            letter-spacing: 0.8px;
+            letter-spacing: 1px;
         }
 
-        /* ========== RESPONSIVE DESIGN ========== */
+        /* ========== RESPONSIVE ========== */
         @media (max-width: 992px) {
-            .dices {
-                width: 110px;
-            }
-
-            .dices p {
-                font-size: 2.2rem;
-            }
-
-            .dice-title {
-                font-size: 2rem;
-            }
+            .dices { width: 110px; }
+            .dices p { font-size: 2.1rem; }
+            .dice-title { font-size: 2rem; }
         }
 
         @media (max-width: 576px) {
-            .dices {
-                width: 95px;
-            }
-
-            .dices p {
-                font-size: 1.9rem;
-            }
-
-            .dice-title {
-                font-size: 1.75rem;
-                margin: 1.5rem 0 2rem 0;
-            }
+            .dices { width: 96px; }
+            .dices p { font-size: 1.9rem; }
+            .dice-title { font-size: 1.75rem; margin: 1.5rem 0 2rem 0; }
         }
 
-        /* ========== CUSTOM SCROLLBAR ========== */
-        ::-webkit-scrollbar {
-            width: 10px;
-        }
-
+        /* ========== SCROLLBAR ========== */
+        ::-webkit-scrollbar { width: 10px; }
         ::-webkit-scrollbar-thumb {
             background: linear-gradient(180deg, #4a381f, #2b210c);
             border-radius: 10px;
             border: 2px solid rgba(0,0,0,0.45);
         }
+        ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, #5a4825, #3a2815); }
+        ::-webkit-scrollbar-track { background: linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.25)); }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(180deg, #5a4825, #3a2815);
-        }
-
-        ::-webkit-scrollbar-track {
-            background: linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.25));
-        }
-
-        nav {
-            z-index: 5;
-        }
+        nav { z-index: 5; }
     </style>
 </head>
 <body>
@@ -397,10 +260,12 @@
 <nav th:replace="~{fragments::navbar}"></nav>
 
 <div class="container pt-5">
+    <h1 class="dice-title">Roll The Dice</h1>
     <div class="row justify-content-center">
+
         <!-- D4 -->
         <div class="col-6 col-lg-5">
-            <div id="d4Con" class="container dices d4 align-content-center text-center">
+            <div id="d4Con" class="container dices align-content-center text-center">
                 <p id="d4Number">4</p>
             </div>
             <p class="dice-label">D4</p>
@@ -408,7 +273,7 @@
 
         <!-- D6 -->
         <div class="col-6 col-lg-5">
-            <div id="d6Con" class="container dices d6 align-content-center text-center">
+            <div id="d6Con" class="container dices align-content-center text-center">
                 <p id="d6Number">6</p>
             </div>
             <p class="dice-label">D6</p>
@@ -416,7 +281,7 @@
 
         <!-- D8 -->
         <div class="col-6 col-lg-4">
-            <div id="d8Con" class="container dices d8 align-content-center text-center">
+            <div id="d8Con" class="container dices align-content-center text-center">
                 <p id="d8Number">8</p>
             </div>
             <p class="dice-label">D8</p>
@@ -424,7 +289,7 @@
 
         <!-- D10 -->
         <div class="col-6 col-lg-4">
-            <div id="d10Con" class="container dices d10 align-content-center text-center">
+            <div id="d10Con" class="container dices align-content-center text-center">
                 <p id="d10Number">10</p>
             </div>
             <p class="dice-label">D10</p>
@@ -432,7 +297,7 @@
 
         <!-- D12 -->
         <div class="col-6 col-lg-4">
-            <div id="d12Con" class="container dices d12 align-content-center text-center">
+            <div id="d12Con" class="container dices align-content-center text-center">
                 <p id="d12Number">12</p>
             </div>
             <p class="dice-label">D12</p>
@@ -440,7 +305,7 @@
 
         <!-- D20 -->
         <div class="col-6 col-lg-5">
-            <div id="d20Con" class="container dices d20 align-content-center text-center">
+            <div id="d20Con" class="container dices align-content-center text-center">
                 <p id="d20Number">20</p>
             </div>
             <p class="dice-label">D20</p>
@@ -448,11 +313,12 @@
 
         <!-- D% -->
         <div class="col-6 col-lg-5">
-            <div id="dPercCon" class="container dices dPercent align-content-center text-center">
+            <div id="dPercCon" class="container dices align-content-center text-center">
                 <p id="dPercNumber">%</p>
             </div>
             <p class="dice-label">D%</p>
         </div>
+
     </div>
 </div>
 
@@ -467,64 +333,43 @@
 
 <script>
     function rollDice(diceEl, numberEl, maxValue, isPercentage = false) {
-        // Add rolling animation
         diceEl.classList.add('rolling');
 
-        // Fade out number with scale down
         numberEl.classList.add('number-fade-out');
 
-        // After animation completes
         setTimeout(() => {
             diceEl.classList.remove('rolling');
         }, 1200);
 
-        // Change number mid-roll
         setTimeout(() => {
             const result = Math.floor(Math.random() * maxValue) + 1;
             numberEl.textContent = isPercentage ? result + '%' : result.toString();
             numberEl.classList.remove('number-fade-out');
             numberEl.classList.add('number-fade-in');
-
-            // Clean up fade-in class
-            setTimeout(() => {
-                numberEl.classList.remove('number-fade-in');
-            }, 400);
+            setTimeout(() => numberEl.classList.remove('number-fade-in'), 400);
         }, 800);
     }
 
     document.getElementById('d4Con').addEventListener('click', function () {
-        let d4 = document.getElementById('d4Number');
-        rollDice(this, d4, 4);
+        rollDice(this, document.getElementById('d4Number'), 4);
     });
-
     document.getElementById('d6Con').addEventListener('click', function () {
-        let d6 = document.getElementById('d6Number');
-        rollDice(this, d6, 6);
+        rollDice(this, document.getElementById('d6Number'), 6);
     });
-
     document.getElementById('d8Con').addEventListener('click', function () {
-        let d8 = document.getElementById('d8Number');
-        rollDice(this, d8, 8);
+        rollDice(this, document.getElementById('d8Number'), 8);
     });
-
     document.getElementById('d10Con').addEventListener('click', function () {
-        let d10 = document.getElementById('d10Number');
-        rollDice(this, d10, 10);
+        rollDice(this, document.getElementById('d10Number'), 10);
     });
-
     document.getElementById('d12Con').addEventListener('click', function () {
-        let d12 = document.getElementById('d12Number');
-        rollDice(this, d12, 12);
+        rollDice(this, document.getElementById('d12Number'), 12);
     });
-
     document.getElementById('d20Con').addEventListener('click', function () {
-        let d20 = document.getElementById('d20Number');
-        rollDice(this, d20, 20);
+        rollDice(this, document.getElementById('d20Number'), 20);
     });
-
     document.getElementById('dPercCon').addEventListener('click', function () {
-        let dPerc = document.getElementById('dPercNumber');
-        rollDice(this, dPerc, 100, true);
+        rollDice(this, document.getElementById('dPercNumber'), 100, true);
     });
 </script>
 
