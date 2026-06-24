@@ -783,6 +783,12 @@
             transition: all 0.2s;
         }
         .btn-modal-cancel:hover { border-color: var(--gold-dark); }
+
+        @media (max-width: 768px){
+            .side-panel {
+                width: 85vw;
+            }
+        }
     </style>
 </head>
 <body>
@@ -1157,7 +1163,7 @@
         <div class="hud-bar" id="hudBar">
             <div class="hud-toggle-row" onclick="toggleHud()">
                 <span class="hud-toggle-arrow">▼</span>
-                <span class="hud-toggle-label">Players</span>
+                <span class="hud-toggle-label">Players <small style="font-size: 0.4rem; color: white">If the map does not change automatically, refresh the page.</small></span>
             </div>
             <div class="hud-players" id="hudPlayers">
 
