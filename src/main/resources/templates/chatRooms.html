@@ -279,6 +279,7 @@
 
 <div class="container">
     <h2 class="inbox-title">Correspondence</h2>
+    <p class="text-center" th:if="${chats.isEmpty()}">To start a chat with someone, visit their profile and click the CHAT button.</p>
 
     <div class="row justify-content-center">
         <div th:each="chatroom: ${chats}" class="col-12 col-md-10">
