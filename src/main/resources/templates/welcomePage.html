@@ -127,6 +127,20 @@
          * The main heading is styled as a grand proclamation,
          * with golden text and elegant shadows
          */
+
+        #backgr h1 {
+            font-family: "Metamorphous", "Book Antiqua", serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 0.5px;
+            margin-bottom: 2rem;
+            text-shadow:
+                    0 2px 0 rgba(0,0,0,0.8),
+                    0 3px 12px rgba(60, 43, 25, 0.6);
+            line-height: 1.4;
+        }
+
         #backgr h4 {
             font-family: "Palatino Linotype", "Book Antiqua", serif;
             font-size: 1.5rem;
@@ -413,18 +427,14 @@
     <div class="row w-100" style="flex: 0 1 auto;">
         <div class="col-10 col-md-6 mx-auto">
             <div id="backgr" class="container d-flex flex-column justify-content-around align-items-center">
-                <!-- Decorative corner embellishments -->
-                <span class="corner-embellishment top-left"></span>
-                <span class="corner-embellishment top-right"></span>
-                <span class="corner-embellishment bottom-left"></span>
-                <span class="corner-embellishment bottom-right"></span>
 
                 <!-- Guild Logo/Crest -->
-                <img style="width: 15%; min-width: 130px"
+                <img style="width: 25%; min-width: 170px"
                      th:src="@{/imgs/find-a-dice-logo.svg}"
                      alt="Guild Emblem">
 
                 <!-- Welcome Message -->
+                <h1 class="text-center">Find A Dice</h1>
                 <h4 class="text-center">Find your next adventure partner!</h4>
 
                 <!-- Action Buttons -->

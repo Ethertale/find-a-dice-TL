@@ -30,6 +30,8 @@ public class MainController {
 
     private final UserService userService;
     private final HeroService heroService;
+    protected String registerMessage = "";
+
 
     private final DeletedReportService deletedReportService;
 
@@ -61,6 +63,9 @@ public class MainController {
     public ModelAndView register(){
         ModelAndView mav = new ModelAndView("register");
         mav.addObject("registerDTO", new RegisterDTO());
+        mav.addObject("errorMessage", registerMessage);
+        registerMessage = "";
+
         return mav;
     }
 
@@ -77,7 +82,6 @@ public class MainController {
 
         if (errorParam != null) {
             mav.addObject("errorMessage", "Incorrect username or password!");
-
         }
         return mav;
     }
