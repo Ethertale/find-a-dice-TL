@@ -466,14 +466,6 @@
     <div class="row w-100" style="flex: 0 1 auto;">
         <div class="col-12 mx-auto">
             <div id="backgr" class="container d-flex flex-column justify-content-around align-items-center">
-                <!-- Decorative corner embellishments -->
-                <span class="corner-embellishment top-left"></span>
-                <span class="corner-embellishment top-right"></span>
-                <span class="corner-embellishment bottom-left"></span>
-                <span class="corner-embellishment bottom-right"></span>
-
-                <!-- Optional title - uncomment if desired -->
-                <!-- <h1 class="registry-title">Guild Registry</h1> -->
 
                 <form th:method="POST" th:action="@{/register}" th:object="${registerDTO}">
                     <!-- Back button -->
@@ -482,6 +474,13 @@
                             <img style="width: 20px" src="https://img.icons8.com/ios/50/left.png" alt="left"/>
                         </a>
                     </div>
+
+                    <div class="container text-center">
+                        <img style="width: 15%; min-width: 130px"
+                             th:src="@{/imgs/find-a-dice-logo.svg}"
+                             alt="Guild Emblem">
+                    </div>
+                    <h1 class="registry-title">Enroll</h1>
 
                     <!-- Username field -->
                     <div class="form-group">
@@ -494,6 +493,7 @@
                                aria-describedby="usernameHelp"
                                placeholder="Enter your account name">
                     </div>
+                    <small th:text="${registerUsernameNotInCharRange}" class="text-danger"></small>
 
                     <!-- Password field -->
                     <div class="form-group">
@@ -506,10 +506,18 @@
                                aria-describedby="passwordHelp"
                                placeholder="Choose a secret phrase">
                     </div>
+                    <small th:text="${registerPasswordNotInCharRange}" class="text-danger"></small>
 
                     <!-- Email field -->
                     <div class="form-group">
-                        <label for="email">Email</label>
+                        <label for="email">Email
+                            <span title="Supported email providers: gmail.com, abv.bg, yahoo.com, outlook.com, hotmail.com, live.com, icloud.com, proton.me, protonmail.com, aol.com, msn.com, gmx.com, mail.com">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+                                          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                          <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+                                    </svg>
+                                </span>
+                        </label>
                         <input th:field="*{email}"
                                type="email"
                                class="form-control"
@@ -518,12 +526,20 @@
                                aria-describedby="emailHelp"
                                placeholder="Your raven's address">
                     </div>
+                    <small th:text="${registerEmailNotValid}" class="text-danger"></small>
 
                     <!-- First and Last name row -->
                     <div class="row">
                         <div class="col-12 col-md-6">
                             <div class="form-group">
-                                <label for="firstName">First Name</label>
+                                <label for="firstName">First Name
+                                <span title="Your first and last name are displayed only as initials.">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-info-circle" viewBox="0 0 16 16">
+                                          <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14m0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16"/>
+                                          <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0"/>
+                                    </svg>
+                                </span>
+                                </label>
                                 <input th:field="*{firstName}"
                                        type="text"
                                        class="form-control"
@@ -545,6 +561,7 @@
                                        placeholder="Family name">
                             </div>
                         </div>
+                        <small>We'll never share any personal information with anyone else.</small>
                     </div>
 
                     <!-- Submit button -->
@@ -552,6 +569,10 @@
                         <button type="submit" class="btn btn-primary m-3">
                             Register
                         </button>
+                    </div>
+
+                    <div class="container text-center">
+                        <p>Registered already? <a href="/login">Login here.</a></p>
                     </div>
                 </form>
             </div>

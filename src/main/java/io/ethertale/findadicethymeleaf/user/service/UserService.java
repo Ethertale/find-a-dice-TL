@@ -1,6 +1,8 @@
 package io.ethertale.findadicethymeleaf.user.service;
 
 import io.ethertale.findadicethymeleaf.exceptions.RegisterEmailNotValid;
+import io.ethertale.findadicethymeleaf.exceptions.RegisterPasswordNotInCharRange;
+import io.ethertale.findadicethymeleaf.exceptions.RegisterUsernameNotInCharRange;
 import io.ethertale.findadicethymeleaf.hero.service.HeroService;
 import io.ethertale.findadicethymeleaf.security.AuthenticationDetails;
 import io.ethertale.findadicethymeleaf.user.model.User;
@@ -41,8 +43,15 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public void registerUser(RegisterDTO registerDTO) {
-        Pattern emailPattern = Pattern.compile("^[A-Za-z0-9._%+-]+@(gmail\\.com|yahoo\\.com|outlook\\.com|hotmail\\.com|live\\.com|icloud\\.com|proton\\.me|protonmail\\.com|aol\\.com|msn\\.com|gmx\\.com|mail\\.com)$");
+        Pattern emailPattern = Pattern.compile("^[A-Za-z0-9._%+-]+@(gmail\\.com|abv\\.bg|yahoo\\.com|outlook\\.com|hotmail\\.com|live\\.com|icloud\\.com|proton\\.me|protonmail\\.com|aol\\.com|msn\\.com|gmx\\.com|mail\\.com)$");
         Matcher matcher = emailPattern.matcher(registerDTO.getEmail());
+
+        if (registerDTO.getUsername().length() < 5 || registerDTO.getUsername().length() > 16) {
+            throw new RegisterUsernameNotInCharRange();
+        }
+        if (registerDTO.getPassword().length() < 8 || registerDTO.getPassword().length() > 32) {
+            throw new RegisterPasswordNotInCharRange();
+        }
 
         User user = User.builder()
                 .username(registerDTO.getUsername())

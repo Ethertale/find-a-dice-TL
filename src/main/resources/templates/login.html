@@ -451,14 +451,7 @@
     <div class="row w-100" style="flex: 0 1 auto;">
         <div class="col-12 mx-auto">
             <div id="backgr" class="container d-flex flex-column justify-content-around align-items-center">
-                <!-- Decorative corner embellishments -->
-                <span class="corner-embellishment top-left"></span>
-                <span class="corner-embellishment top-right"></span>
-                <span class="corner-embellishment bottom-left"></span>
-                <span class="corner-embellishment bottom-right"></span>
 
-                <!-- Optional title - uncomment if desired -->
-                <!-- <h1 class="entrance-title">Guild Entrance</h1> -->
 
                 <form th:method="POST" th:action="@{/login}" th:object="${loginDTO}">
                     <!-- Back button -->
@@ -467,6 +460,13 @@
                             <img style="width: 20px" src="https://img.icons8.com/ios/50/left.png" alt="left"/>
                         </a>
                     </div>
+
+                    <div class="container text-center">
+                        <img style="width: 15%; min-width: 130px"
+                             th:src="@{/imgs/find-a-dice-logo.svg}"
+                             alt="Guild Emblem">
+                    </div>
+                    <h1 class="entrance-title">Gateway</h1>
 
                     <div class="row">
                         <!-- Username field -->
@@ -503,6 +503,10 @@
                     <!-- Submit button -->
                     <div class="container d-flex flex-column justify-content-center align-items-center">
                         <button type="submit" class="btn m-3">Login</button>
+                    </div>
+
+                    <div class="container text-center">
+                        <p>Not registered yet? <a href="/register">Register here.</a></p>
                     </div>
                 </form>
             </div>
