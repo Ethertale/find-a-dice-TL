@@ -362,10 +362,10 @@
     <div class="row justify-content-center">
         <div class="col-12 text-center d-flex flex-column">
             <h1>THIS IS A DEMO</h1>
-            <h2>v0.9.1</h2>
+            <h2 th:text="'v' + ${applicationVersion}">VERSION NUMBER</h2>
             <small style="color: gray">For testing purposes.</small>
             <small style="color: gray">User data will be deleted once</small>
-            <small style="color: gray">we transition to a live version.</small>
+            <small style="color: gray">we transition to an official version.</small>
         </div>
 
         <!-- ========== EVENTS PLAQUE ========== -->
