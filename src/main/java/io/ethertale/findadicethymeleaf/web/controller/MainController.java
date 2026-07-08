@@ -4,12 +4,15 @@ import io.ethertale.findadicethymeleaf.deletedReport.model.DeletedReportType;
 import io.ethertale.findadicethymeleaf.deletedReport.repo.DeletedReportRepo;
 import io.ethertale.findadicethymeleaf.deletedReport.service.DeletedReportService;
 import io.ethertale.findadicethymeleaf.event.service.EventService;
+import io.ethertale.findadicethymeleaf.feedbackReport.model.FeedbackReportType;
+import io.ethertale.findadicethymeleaf.feedbackReport.service.FeedbackReportService;
 import io.ethertale.findadicethymeleaf.group.service.GroupService;
 import io.ethertale.findadicethymeleaf.hero.service.HeroService;
 import io.ethertale.findadicethymeleaf.security.AuthenticationDetails;
 import io.ethertale.findadicethymeleaf.user.model.User;
 import io.ethertale.findadicethymeleaf.user.model.UserRoles;
 import io.ethertale.findadicethymeleaf.user.service.UserService;
+import io.ethertale.findadicethymeleaf.web.dto.FeedbackReportDTO;
 import io.ethertale.findadicethymeleaf.web.dto.LoginDTO;
 import io.ethertale.findadicethymeleaf.web.dto.RegisterDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -30,15 +33,19 @@ public class MainController {
 
     private final UserService userService;
     private final HeroService heroService;
+    private final FeedbackReportService feedbackReportService;
+
     protected String registerMessage = "";
+    protected String feedbackMessage = "";
 
 
     private final DeletedReportService deletedReportService;
 
     @Autowired
-    public MainController(UserService userService, HeroService heroService, DeletedReportService deletedReportService) {
+    public MainController(UserService userService, HeroService heroService, FeedbackReportService feedbackReportService, DeletedReportService deletedReportService) {
         this.userService = userService;
         this.heroService = heroService;
+        this.feedbackReportService = feedbackReportService;
         this.deletedReportService = deletedReportService;
     }
 
@@ -120,5 +127,25 @@ public class MainController {
         mav.addObject("deletedChatroomMessagesReports", deletedReportService.getAllDeletedReportsFromType(DeletedReportType.CHAT_MESSAGE));
 
         return mav;
+    }
+
+    @GetMapping("/feedback")
+    public ModelAndView feedbackPage(@AuthenticationPrincipal AuthenticationDetails authenticationDetails){
+        User loggedUser = userService.getUserById(authenticationDetails.getId());
+
+        ModelAndView mav = new ModelAndView("feedback");
+        mav.addObject("loggedUser", loggedUser);
+        mav.addObject("feedbackReportDTO", new FeedbackReportDTO());
+        mav.addObject("feedbackMessage", feedbackMessage);
+        mav.addObject("typesOfReports", FeedbackReportType.values());
+        feedbackMessage = "";
+
+        return mav;
+    }
+
+    @PostMapping("/feedback/submit")
+    public String submitFeedback(FeedbackReportDTO feedbackReportDTO){
+        feedbackReportService.submitReport(feedbackReportDTO);
+        return "redirect:/feedback";
     }
 }
