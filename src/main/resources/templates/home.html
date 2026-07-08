@@ -360,12 +360,27 @@
 
 <div style="min-height: 70vh" class="parent container d-flex justify-content-center align-items-center h-80">
     <div class="row justify-content-center">
-        <div class="col-12 text-center d-flex flex-column">
-            <h1>THIS IS A DEMO</h1>
-            <h2 th:text="'v' + ${applicationVersion}">VERSION NUMBER</h2>
-            <small style="color: gray">For testing purposes.</small>
-            <small style="color: gray">User data will be deleted once</small>
-            <small style="color: gray">we transition to an official version.</small>
+        <div class="col-12 text-center d-flex flex-row align-items-center align-content-center">
+            <div class="container d-flex flex-column text-center">
+                <h1>THIS IS A DEMO</h1>
+                <h2 th:text="'v' + ${applicationVersion}">VERSION NUMBER</h2>
+                <small style="color: gray">For testing purposes.</small>
+                <small style="color: gray">User data will be deleted once</small>
+                <small style="color: gray">we transition to an official version.</small>
+            </div>
+            <div style="background-color: var(--gold-bright)" class="main-buttons">
+                <!-- Decorative corner embellishments -->
+                <span class="corner-decoration top-left"></span>
+                <span class="corner-decoration top-right"></span>
+                <span class="corner-decoration bottom-left"></span>
+                <span class="corner-decoration bottom-right"></span>
+
+                <a class="d-flex flex-column align-items-center" href="/feedback">
+                    <img style="width: 50px;" src="https://img.icons8.com/ios/100/thumbs-up-down.png" alt="thumbs-up-down"/>
+                    <h4>Feedback</h4>
+                    <p class="text-center">Submit your feedback, it matters.</p>
+                </a>
+            </div>
         </div>
 
         <!-- ========== EVENTS PLAQUE ========== -->
