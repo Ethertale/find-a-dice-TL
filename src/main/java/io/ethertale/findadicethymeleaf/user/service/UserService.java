@@ -53,6 +53,9 @@ public class UserService implements UserDetailsService {
         if (registerDTO.getPassword().length() < 8 || registerDTO.getPassword().length() > 32) {
             throw new RegisterPasswordNotInCharRange();
         }
+        if (!matcher.find()) {
+            throw new RegisterEmailNotValid();
+        }
 
         User user = User.builder()
                 .username(registerDTO.getUsername())
@@ -60,15 +63,10 @@ public class UserService implements UserDetailsService {
                 .firstName(registerDTO.getFirstName())
                 .lastName(registerDTO.getLastName())
                 .imageUrl("https://api.dicebear.com/10.x/shapes/svg?seed=1")
+                .email(matcher.group())
                 .role(UserRoles.USER)
                 .createdAt(LocalDateTime.now())
                 .build();
-
-        if (!matcher.find()) {
-            throw new RegisterEmailNotValid();
-        }else {
-            user.setEmail(matcher.group());
-        }
 
         userRepo.save(user);
 
