@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
@@ -135,6 +136,9 @@ public class HeroService {
 
     public List<Hero> getAllCharacters() {
         return heroRepo.findAll().stream().toList();
+    }
+    public List<Hero> getAllHeroesSortedByCreatedAtDesc() {
+        return heroRepo.findAll().stream().sorted(Comparator.comparing(Hero::getCreatedAt).reversed()).toList();
     }
 
     public List<Hero> searchHeroes(String query) {

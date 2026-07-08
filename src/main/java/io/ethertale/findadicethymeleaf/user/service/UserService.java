@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -97,6 +98,10 @@ public class UserService implements UserDetailsService {
 
     public List<User> getAllUsers() {
         return userRepo.findAll().stream().toList();
+    }
+
+    public List<User> getAllUsersSortedByDateCreatedDesc() {
+        return userRepo.findAll().stream().sorted(Comparator.comparing(User::getCreatedAt).reversed()).toList();
     }
 
     public List<User> searchUsers(String query) {

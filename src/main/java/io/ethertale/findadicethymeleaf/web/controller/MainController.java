@@ -89,14 +89,14 @@ public class MainController {
     @GetMapping("/users")
     public ModelAndView usersListPage(){
         ModelAndView mav = new ModelAndView("usersList");
-        mav.addObject("users", userService.getAllUsers());
+        mav.addObject("users", userService.getAllUsersSortedByDateCreatedDesc());
         return mav;
     }
 
     @GetMapping("/characters")
     public ModelAndView charsListPage(){
         ModelAndView mav = new ModelAndView("charsList");
-        mav.addObject("characters", heroService.getAllCharacters());
+        mav.addObject("characters", heroService.getAllHeroesSortedByCreatedAtDesc());
         return mav;
     }
 
