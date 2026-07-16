@@ -62,6 +62,11 @@ public class HeroService {
     public void updateHero(Hero heroToUpdate, HeroUpdateDTO heroUpdateDTO) {
         Hero updatedHero = heroRepo.findById(heroToUpdate.getId()).orElse(null);
 
+        if (heroUpdateDTO.getName().contains("ADMIN")) {
+            throw new RuntimeException("NO ADMIN");
+            // TODO Change the exception
+        }
+
         if (heroUpdateDTO.getName() != null || !heroUpdateDTO.getName().isBlank()) {
             updatedHero.setName(heroUpdateDTO.getName());
         }
