@@ -37,4 +37,8 @@ public class FeedbackReport {
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    public String getCreatedAtFormated(){
+        return createdAt.getDayOfMonth() + " " + createdAt.getMonth() + " " + createdAt.getYear() + " - " + createdAt.getHour() + ":" + createdAt.getMinute();
+    }
 }

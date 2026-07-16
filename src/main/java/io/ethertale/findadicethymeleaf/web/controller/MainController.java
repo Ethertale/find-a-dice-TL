@@ -125,6 +125,10 @@ public class MainController {
         mav.addObject("deletedEventsReports", deletedReportService.getAllDeletedReportsFromType(DeletedReportType.EVENT));
         mav.addObject("deletedCampaignChatMessagesReports", deletedReportService.getAllDeletedReportsFromType(DeletedReportType.CAMPAIGN_CHAT_MESSAGE));
         mav.addObject("deletedChatroomMessagesReports", deletedReportService.getAllDeletedReportsFromType(DeletedReportType.CHAT_MESSAGE));
+        mav.addObject("feedbackPositiveReports", feedbackReportService.getAllPositiveFeedbackReportsSortedByCreatedAtDesc());
+        mav.addObject("feedbackNegativeReports", feedbackReportService.getAllNegativeFeedbackReportsSortedByCreatedAtDesc());
+        mav.addObject("feedbackReportReports", feedbackReportService.getAllReportFeedbackReportsSortedByCreatedAtDesc());
+        mav.addObject("feedbackBugReports", feedbackReportService.getAllBugFeedbackReportsSortedByCreatedAtDesc());
 
         return mav;
     }

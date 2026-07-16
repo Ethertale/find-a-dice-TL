@@ -7,232 +7,734 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="/css/navbar-footer.css">
     <title>Find A Dice - Admin Panel</title>
     <style>
-        table {
-            overflow-y: scroll;
-            height: 80vh;
-            display: block;
+        /* =========================================================
+           BASE
+        ========================================================= */
+        :root {
+            --panel-accent: #3c2b19;
+            --gold:         #d9b261;
+            --gold-dark:    #8f6a36;
+            --muted-text:   #cfc8b8;
+            --light-text:   #f7f3e7;
+            --bg-panel:     rgba(10,12,14,0.88);
+
+            /* Category accent colours — subtle tints, not garish */
+            --c-positive:   #2e6b3e;
+            --c-negative:   #7a2020;
+            --c-report:     #7a5c10;
+            --c-bug:        #6b3a10;
         }
+
+        html, body {
+            min-height: 100%;
+            margin: 0; padding: 0;
+            font-family: "Georgia", "Palatino Linotype", serif;
+            color: var(--muted-text);
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background:
+                    linear-gradient(rgba(4,7,5,0.75), rgba(2,4,3,0.82)),
+                    url("/imgs/new-background.jpeg")
+                    center center / cover no-repeat;
+            filter: blur(10px);
+            transform: scale(1.05);
+        }
+
+        .container { position: relative; z-index: 1; }
+        nav { z-index: 100; }
+
+        /* =========================================================
+           PAGE HEADER
+        ========================================================= */
+        .admin-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 0 1rem 0;
+            border-bottom: 2px solid rgba(60,43,25,0.5);
+            margin-bottom: 2rem;
+        }
+
+        .admin-header h1 {
+            font-family: "Palatino Linotype", serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin: 0;
+            text-shadow: 0 2px 0 rgba(0,0,0,0.8);
+        }
+
+        .admin-badge {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #111;
+            background: linear-gradient(180deg, #5a4320, var(--gold));
+            border-radius: 20px;
+            padding: 0.2rem 0.75rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+        }
+
+        /* =========================================================
+           SECTION TITLES
+        ========================================================= */
+        .section-title {
+            font-family: "Palatino Linotype", serif;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 1.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-title::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: linear-gradient(90deg, var(--gold-dark), transparent);
+            opacity: 0.4;
+        }
+
+        /* =========================================================
+           FEEDBACK COLUMNS
+        ========================================================= */
+        .feedback-col-header {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 0.9rem;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 0;
+            font-family: "Palatino Linotype", serif;
+            font-size: 0.9rem;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+        }
+
+        .feedback-col-header.positive { background: var(--c-positive); color: #a8e6a8; border: 2px solid #2e6b3e; border-bottom: none; }
+        .feedback-col-header.negative { background: var(--c-negative); color: #e8a8a8; border: 2px solid #7a2020; border-bottom: none; }
+        .feedback-col-header.report   { background: var(--c-report);   color: #f0d080; border: 2px solid #7a5c10; border-bottom: none; }
+        .feedback-col-header.bug      { background: var(--c-bug);      color: #f0c090; border: 2px solid #6b3a10; border-bottom: none; }
+
+        .feedback-col-header .count-badge {
+            font-size: 0.7rem;
+            background: rgba(0,0,0,0.35);
+            border-radius: 12px;
+            padding: 0.1rem 0.5rem;
+            margin-left: auto;
+        }
+
+        /* Scrollable column body */
+        .feedback-col-body {
+            background: var(--bg-panel);
+            border-radius: 0 0 8px 8px;
+            border: 2px solid var(--panel-accent);
+            border-top: none;
+            height: 68vh;
+            overflow-y: auto;
+            padding: 0.5rem;
+        }
+
+        .feedback-col-body.positive { border-color: #2e6b3e; }
+        .feedback-col-body.negative { border-color: #7a2020; }
+        .feedback-col-body.report   { border-color: #7a5c10; }
+        .feedback-col-body.bug      { border-color: #6b3a10; }
+
+        .feedback-col-body::-webkit-scrollbar { width: 5px; }
+        .feedback-col-body::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 4px; }
+        .feedback-col-body::-webkit-scrollbar-track { background: transparent; }
+
+        /* =========================================================
+           FEEDBACK CARDS
+        ========================================================= */
+        .feedback-card {
+            background: rgba(18,16,12,0.85);
+            border: 1px solid rgba(60,43,25,0.4);
+            border-radius: 7px;
+            padding: 0.75rem 0.9rem;
+            margin-bottom: 0.6rem;
+            transition: border-color 0.2s;
+        }
+
+        .feedback-card:hover { border-color: var(--gold-dark); }
+
+        .feedback-card .reporter-name {
+            font-size: 0.88rem;
+            font-weight: 700;
+            color: var(--light-text);
+            margin: 0 0 0.1rem 0;
+        }
+
+        .feedback-card .reporter-email {
+            font-size: 0.72rem;
+            color: var(--gold-dark);
+            margin: 0 0 0.5rem 0;
+        }
+
+        .feedback-card .report-id {
+            font-size: 0.62rem;
+            color: rgba(207,200,184,0.3);
+            display: block;
+            margin-bottom: 0.4rem;
+            word-break: break-all;
+        }
+
+        /* Scrollable content box within each card */
+        .feedback-card .report-content {
+            background: rgba(8,6,4,0.6);
+            border: 1px solid rgba(60,43,25,0.3);
+            border-radius: 5px;
+            padding: 0.5rem 0.6rem;
+            font-size: 0.82rem;
+            color: #cac2b0;
+            line-height: 1.6;
+            max-height: 150px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .feedback-card .report-content::-webkit-scrollbar { width: 4px; }
+        .feedback-card .report-content::-webkit-scrollbar-thumb { background: rgba(143,106,54,0.5); border-radius: 4px; }
+
+        /* Empty state */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 120px;
+            color: rgba(207,200,184,0.25);
+            font-size: 0.85rem;
+            font-style: italic;
+            gap: 0.4rem;
+        }
+
+        /* =========================================================
+           DELETION REPORTS SECTION
+        ========================================================= */
+        .deletion-section {
+            margin-top: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Accordion overrides */
+        .accordion-item {
+            background: var(--bg-panel) !important;
+            border: 2px solid var(--panel-accent) !important;
+            border-radius: 8px !important;
+            margin-bottom: 0.5rem;
+            overflow: hidden;
+        }
+
+        .accordion-button {
+            background: linear-gradient(180deg, rgba(37,22,7,0.95), rgba(25,16,6,0.98)) !important;
+            color: var(--gold) !important;
+            font-family: "Palatino Linotype", serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0.85rem 1.25rem;
+        }
+
+        .accordion-button:not(.collapsed) {
+            background: linear-gradient(180deg, rgba(54,34,14,0.98), rgba(37,22,7,0.99)) !important;
+            color: var(--light-text) !important;
+            border-bottom: 2px solid var(--panel-accent) !important;
+        }
+
+        /* Override Bootstrap's arrow colour */
+        .accordion-button::after {
+            filter: brightness(0) saturate(100%) invert(73%) sepia(31%) saturate(542%) hue-rotate(358deg) brightness(93%) contrast(86%);
+        }
+
+        .accordion-body {
+            background: transparent !important;
+            padding: 0;
+        }
+
+        /* =========================================================
+           DELETION TABLES
+        ========================================================= */
+        .deletion-table-wrapper {
+            overflow-x: auto;
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+
+        .deletion-table-wrapper::-webkit-scrollbar { width: 5px; height: 5px; }
+        .deletion-table-wrapper::-webkit-scrollbar-thumb { background: var(--gold-dark); border-radius: 4px; }
+        .deletion-table-wrapper::-webkit-scrollbar-track { background: transparent; }
+
+        table.admin-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.83rem;
+        }
+
+        table.admin-table thead tr {
+            background: linear-gradient(180deg, rgba(37,22,7,0.96), rgba(25,16,6,0.98));
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        table.admin-table thead td {
+            padding: 0.65rem 0.9rem;
+            color: var(--gold);
+            font-weight: 700;
+            letter-spacing: 0.4px;
+            white-space: nowrap;
+            border-bottom: 2px solid rgba(60,43,25,0.6);
+        }
+
+        table.admin-table tbody tr {
+            border-bottom: 1px solid rgba(60,43,25,0.2);
+            transition: background 0.15s;
+        }
+
+        table.admin-table tbody tr:hover {
+            background: rgba(217,178,97,0.06);
+        }
+
+        table.admin-table tbody td {
+            padding: 0.55rem 0.9rem;
+            color: #cac2b0;
+            vertical-align: top;
+            word-break: break-word;
+        }
+
+        /* ID cells — monospace, dimmer */
+        table.admin-table .id-cell {
+            font-family: monospace;
+            font-size: 0.72rem;
+            color: rgba(207,200,184,0.4);
+            max-width: 100px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        /* Content cell — capped height */
+        table.admin-table .content-cell {
+            max-width: 500px;
+            min-width: 280px;
+            max-height: 100px;
+            overflow: auto;
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+        }
+
+        /* Empty state inside accordion */
+        .table-empty {
+            padding: 1.5rem;
+            text-align: center;
+            color: rgba(207,200,184,0.3);
+            font-style: italic;
+            font-size: 0.88rem;
+        }
+
+        /* =========================================================
+           SCROLLBAR (global)
+        ========================================================= */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #4a381f, #2b210c);
+            border-radius: 8px;
+            border: 1px solid rgba(0,0,0,0.4);
+        }
+        ::-webkit-scrollbar-track { background: rgba(0,0,0,0.15); }
     </style>
 </head>
 <body>
 <nav th:replace="~{fragments::navbar}"></nav>
 
-<div class="container pt-5">
-    <h1>Deletion Reports</h1>
-    <div class="accordion" id="accordionExample">
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
-                    Groups
-                </button>
-            </h2>
-            <div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                <div class="accordion-body">
-                    <table class="table table-bordered table-striped">
-                        <thead>
-                        <tr>
-                            <td>Report ID</td>
-                            <td>User ID</td>
-                            <td>Group ID</td>
-                            <td>Name</td>
-                            <td>Content</td>
-                            <td>Deleted On</td>
-                        </tr>
-                        </thead>
-                        <h2 th:if="${deletedGroupsReports.isEmpty()}">No reports filed yet</h2>
-                        <tr style="overflow: auto" th:each="report: ${deletedGroupsReports}">
-                            <td th:text="${report.id}"></td>
-                            <td th:text="${report.deletedByUserId}"></td>
-                            <td th:text="${report.objectId}"></td>
-                            <td th:text="${report.title}"></td>
-                            <td th:text="${report.content}"></td>
-                            <td th:text="${report.getFormatedTime()}"></td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
-                    Group Posts
-                </button>
-            </h2>
-            <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                <div class="accordion-body">
-                    <table class="table table-bordered table-striped">
-                        <thead>
-                        <tr>
-                            <td>Report ID</td>
-                            <td>User ID</td>
-                            <td>Post ID</td>
-                            <td>Name</td>
-                            <td>Content</td>
-                            <td>Deleted On</td>
-                        </tr>
-                        </thead>
-                        <h2 th:if="${deletedGroupPostsReports.isEmpty()}">No reports filed yet</h2>
-                        <tr style="overflow: auto" th:each="report: ${deletedGroupPostsReports}">
-                            <td th:text="${report.id}"></td>
-                            <td th:text="${report.deletedByUserId}"></td>
-                            <td th:text="${report.objectId}"></td>
-                            <td th:text="${report.title}"></td>
-                            <td th:text="${report.content}"></td>
-                            <td th:text="${report.getFormatedTime()}"></td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
-                    Events
-                </button>
-            </h2>
-            <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                <div class="accordion-body">
-                    <table class="table table-bordered table-striped">
-                        <thead>
-                        <tr>
-                            <td>Report ID</td>
-                            <td>User ID</td>
-                            <td>Event ID</td>
-                            <td>Name</td>
-                            <td>Content</td>
-                            <td>Deleted On</td>
-                        </tr>
-                        </thead>
-                        <h2 th:if="${deletedEventsReports.isEmpty()}">No reports filed yet</h2>
-                        <tr style="overflow: auto" th:each="report: ${deletedEventsReports}">
-                            <td th:text="${report.id}"></td>
-                            <td th:text="${report.deletedByUserId}"></td>
-                            <td th:text="${report.objectId}"></td>
-                            <td th:text="${report.title}"></td>
-                            <td th:text="${report.content}"></td>
-                            <td th:text="${report.getFormatedTime()}"></td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
-                    Campaign Chat Messages
-                </button>
-            </h2>
-            <div id="collapseFour" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                <div class="accordion-body">
-                    <table class="table table-bordered table-striped">
-                        <thead>
-                        <tr>
-                            <td>Report ID</td>
-                            <td>User ID</td>
-                            <td>Post ID</td>
-                            <td>Name</td>
-                            <td>Content</td>
-                            <td>Deleted On</td>
-                        </tr>
-                        </thead>
-                        <h2 th:if="${deletedCampaignChatMessagesReports.isEmpty()}">No reports filed yet</h2>
-                        <tr style="overflow: auto" th:each="report: ${deletedCampaignChatMessagesReports}">
-                            <td th:text="${report.id}"></td>
-                            <td th:text="${report.deletedByUserId}"></td>
-                            <td th:text="${report.objectId}"></td>
-                            <td th:text="${report.title}"></td>
-                            <td th:text="${report.content}"></td>
-                            <td th:text="${report.getFormatedTime()}"></td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div class="accordion-item">
-            <h2 class="accordion-header">
-                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
-                    Chatroom Messages
-                </button>
-            </h2>
-            <div id="collapseFive" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
-                <div class="accordion-body">
-                    <table class="table table-bordered table-striped">
-                        <thead>
-                        <tr>
-                            <td>Report ID</td>
-                            <td>User ID</td>
-                            <td>Post ID</td>
-                            <td>Name</td>
-                            <td>Content</td>
-                            <td>Deleted On</td>
-                        </tr>
-                        </thead>
-                        <h2 th:if="${deletedChatroomMessagesReports.isEmpty()}">No reports filed yet</h2>
-                        <tr style="overflow: auto" th:each="report: ${deletedChatroomMessagesReports}">
-                            <td th:text="${report.id}"></td>
-                            <td th:text="${report.deletedByUserId}"></td>
-                            <td th:text="${report.objectId}"></td>
-                            <td th:text="${report.title}"></td>
-                            <td th:text="${report.content}"></td>
-                            <td th:text="${report.getFormatedTime()}"></td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+<div class="container py-4">
 
-<!--<div class="container">-->
-<!--    <div class="col-12">-->
-<!--        <h1 class="table-header">Deleted Groups</h1>-->
-<!--        <table class="table table-bordered table-striped">-->
-<!--            <thead>-->
-<!--                <tr>-->
-<!--                    <td>Report ID</td>-->
-<!--                    <td>User ID</td>-->
-<!--                    <td>Group ID</td>-->
-<!--                    <td>Name</td>-->
-<!--                    <td>Content</td>-->
-<!--                    <td>Deleted On</td>-->
-<!--                </tr>-->
-<!--            </thead>-->
-<!--            <tr style="overflow: auto" th:each="report: ${deletedGroupsReports}">-->
-<!--                <td th:text="${report.id}"></td>-->
-<!--                <td th:text="${report.deletedByUserId}"></td>-->
-<!--                <td th:text="${report.objectId}"></td>-->
-<!--                <td th:text="${report.title}"></td>-->
-<!--                <td th:text="${report.content}"></td>-->
-<!--                <td th:text="${report.getFormatedTime()}"></td>-->
-<!--            </tr>-->
-<!--        </table>-->
-<!--    </div>-->
-<!--    <div class="col-12">-->
-<!--        <h1 class="table-header">Deleted Group Posts</h1>-->
-<!--        <table class="table table-bordered table-striped">-->
-<!--            <thead>-->
-<!--            <tr>-->
-<!--                <td>Report ID</td>-->
-<!--                <td>User ID</td>-->
-<!--                <td>Post ID</td>-->
-<!--                <td>Name</td>-->
-<!--                <td>Content</td>-->
-<!--                <td>Deleted On</td>-->
-<!--            </tr>-->
-<!--            </thead>-->
-<!--            <tr style="overflow: auto" th:each="report: ${deletedGroupPostsReports}">-->
-<!--                <td th:text="${report.id}"></td>-->
-<!--                <td th:text="${report.deletedByUserId}"></td>-->
-<!--                <td th:text="${report.objectId}"></td>-->
-<!--                <td th:text="${report.title}"></td>-->
-<!--                <td th:text="${report.content}"></td>-->
-<!--                <td th:text="${report.getFormatedTime()}"></td>-->
-<!--            </tr>-->
-<!--        </table>-->
-<!--    </div>-->
-<!--</div>-->
+    <!-- ===== PAGE HEADER ===== -->
+    <div class="admin-header">
+        <h1>⚙ Admin Panel</h1>
+        <span class="admin-badge">🔒 Restricted Access</span>
+    </div>
+
+    <!-- ===================================================
+         SECTION 1 — FEEDBACK
+    ==================================================== -->
+    <h2 class="section-title">💬 User Feedback</h2>
+
+    <div class="row g-3">
+
+        <!-- POSITIVE -->
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="feedback-col-header positive">
+                ✅ Positive
+                <span class="count-badge"
+                      th:text="${feedbackPositiveReports.size()}">0</span>
+            </div>
+            <div class="feedback-col-body positive">
+                <div th:if="${feedbackPositiveReports.isEmpty()}" class="empty-state">
+                    <span>✓</span>No positive reports yet
+                </div>
+                <div th:each="r : ${feedbackPositiveReports}" class="feedback-card">
+                    <p class="reporter-name"
+                       th:text="${r.firstName} + ' ' + ${r.lastName}"></p>
+                    <p class="reporter-email" th:text="${r.email}"></p>
+                    <small class="report-id" th:text="${r.id}"></small>
+                    <div class="report-content" th:text="${r.content}"></div>
+                    <small class="report-id" th:text="${r.getCreatedAtFormated()}"></small>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEGATIVE -->
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="feedback-col-header negative">
+                ❌ Negative
+                <span class="count-badge"
+                      th:text="${feedbackNegativeReports.size()}">0</span>
+            </div>
+            <div class="feedback-col-body negative">
+                <div th:if="${feedbackNegativeReports.isEmpty()}" class="empty-state">
+                    <span>✓</span>No negative reports yet
+                </div>
+                <div th:each="r : ${feedbackNegativeReports}" class="feedback-card">
+                    <p class="reporter-name"
+                       th:text="${r.firstName} + ' ' + ${r.lastName}"></p>
+                    <p class="reporter-email" th:text="${r.email}"></p>
+                    <small class="report-id" th:text="${r.id}"></small>
+                    <div class="report-content" th:text="${r.content}"></div>
+                    <small class="report-id" th:text="${r.getCreatedAtFormated()}"></small>
+                </div>
+            </div>
+        </div>
+
+        <!-- REPORTS -->
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="feedback-col-header report">
+                ⚑ Reports
+                <span class="count-badge"
+                      th:text="${feedbackReportReports.size()}">0</span>
+            </div>
+            <div class="feedback-col-body report">
+                <div th:if="${feedbackReportReports.isEmpty()}" class="empty-state">
+                    <span>✓</span>No user reports yet
+                </div>
+                <div th:each="r : ${feedbackReportReports}" class="feedback-card">
+                    <p class="reporter-name"
+                       th:text="${r.firstName} + ' ' + ${r.lastName}"></p>
+                    <p class="reporter-email" th:text="${r.email}"></p>
+                    <small class="report-id" th:text="${r.id}"></small>
+                    <div class="report-content" th:text="${r.content}"></div>
+                    <small class="report-id" th:text="${r.getCreatedAtFormated()}"></small>
+                </div>
+            </div>
+        </div>
+
+        <!-- BUGS -->
+        <div class="col-12 col-md-6 col-xl-3">
+            <div class="feedback-col-header bug">
+                🐛 Bugs
+                <span class="count-badge"
+                      th:text="${feedbackBugReports.size()}">0</span>
+            </div>
+            <div class="feedback-col-body bug">
+                <div th:if="${feedbackBugReports.isEmpty()}" class="empty-state">
+                    <span>✓</span>No bug reports yet
+                </div>
+                <div th:each="r : ${feedbackBugReports}" class="feedback-card">
+                    <p class="reporter-name"
+                       th:text="${r.firstName} + ' ' + ${r.lastName}"></p>
+                    <p class="reporter-email" th:text="${r.email}"></p>
+                    <small class="report-id" th:text="${r.id}"></small>
+                    <div class="report-content" th:text="${r.content}"></div>
+                    <small class="report-id" th:text="${r.getCreatedAtFormated()}"></small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- end feedback row -->
+
+    <!-- ===================================================
+         SECTION 2 — DELETION REPORTS
+    ==================================================== -->
+    <div class="deletion-section">
+        <h2 class="section-title">🗑 Deletion Reports</h2>
+
+        <div class="accordion" id="deletionAccordion">
+
+            <!-- GROUPS -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseGroups"
+                            aria-expanded="false">
+                        👥 Groups
+                        <span class="count-badge ms-2"
+                              th:text="${deletedGroupsReports.size()}">0</span>
+                    </button>
+                </h2>
+                <div id="collapseGroups"
+                     class="accordion-collapse collapse"
+                     data-bs-parent="#deletionAccordion">
+                    <div class="accordion-body">
+                        <div th:if="${deletedGroupsReports.isEmpty()}" class="table-empty">
+                            No deleted group reports on record.
+                        </div>
+                        <div th:unless="${deletedGroupsReports.isEmpty()}"
+                             class="deletion-table-wrapper">
+                            <table class="admin-table">
+                                <thead>
+                                <tr>
+                                    <td>Report ID</td>
+                                    <td>User ID</td>
+                                    <td>Group ID</td>
+                                    <td>Name</td>
+                                    <td>Content</td>
+                                    <td>Deleted On</td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="r : ${deletedGroupsReports}">
+                                    <td class="id-cell" th:text="${r.id}"></td>
+                                    <td class="id-cell" th:text="${r.deletedByUserId}"></td>
+                                    <td class="id-cell" th:text="${r.objectId}"></td>
+                                    <td th:text="${r.title}"></td>
+                                    <td class="content-cell" th:text="${r.content}"></td>
+                                    <td style="white-space:nowrap;" th:text="${r.getFormatedTime()}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GROUP POSTS -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseGroupPosts"
+                            aria-expanded="false">
+                        📄 Group Posts
+                        <span class="count-badge ms-2"
+                              th:text="${deletedGroupPostsReports.size()}">0</span>
+                    </button>
+                </h2>
+                <div id="collapseGroupPosts"
+                     class="accordion-collapse collapse"
+                     data-bs-parent="#deletionAccordion">
+                    <div class="accordion-body">
+                        <div th:if="${deletedGroupPostsReports.isEmpty()}" class="table-empty">
+                            No deleted group post reports on record.
+                        </div>
+                        <div th:unless="${deletedGroupPostsReports.isEmpty()}"
+                             class="deletion-table-wrapper">
+                            <table class="admin-table">
+                                <thead>
+                                <tr>
+                                    <td>Report ID</td>
+                                    <td>User ID</td>
+                                    <td>Post ID</td>
+                                    <td>Name</td>
+                                    <td>Content</td>
+                                    <td>Deleted On</td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="r : ${deletedGroupPostsReports}">
+                                    <td class="id-cell" th:text="${r.id}"></td>
+                                    <td class="id-cell" th:text="${r.deletedByUserId}"></td>
+                                    <td class="id-cell" th:text="${r.objectId}"></td>
+                                    <td th:text="${r.title}"></td>
+                                    <td class="content-cell" th:text="${r.content}"></td>
+                                    <td style="white-space:nowrap;" th:text="${r.getFormatedTime()}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EVENTS -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseEvents"
+                            aria-expanded="false">
+                        📅 Events
+                        <span class="count-badge ms-2"
+                              th:text="${deletedEventsReports.size()}">0</span>
+                    </button>
+                </h2>
+                <div id="collapseEvents"
+                     class="accordion-collapse collapse"
+                     data-bs-parent="#deletionAccordion">
+                    <div class="accordion-body">
+                        <div th:if="${deletedEventsReports.isEmpty()}" class="table-empty">
+                            No deleted event reports on record.
+                        </div>
+                        <div th:unless="${deletedEventsReports.isEmpty()}"
+                             class="deletion-table-wrapper">
+                            <table class="admin-table">
+                                <thead>
+                                <tr>
+                                    <td>Report ID</td>
+                                    <td>User ID</td>
+                                    <td>Event ID</td>
+                                    <td>Name</td>
+                                    <td>Content</td>
+                                    <td>Deleted On</td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="r : ${deletedEventsReports}">
+                                    <td class="id-cell" th:text="${r.id}"></td>
+                                    <td class="id-cell" th:text="${r.deletedByUserId}"></td>
+                                    <td class="id-cell" th:text="${r.objectId}"></td>
+                                    <td th:text="${r.title}"></td>
+                                    <td class="content-cell" th:text="${r.content}"></td>
+                                    <td style="white-space:nowrap;" th:text="${r.getFormatedTime()}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CAMPAIGN CHAT MESSAGES -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseCampaignChat"
+                            aria-expanded="false">
+                        ⚔ Campaign Chat Messages
+                        <span class="count-badge ms-2"
+                              th:text="${deletedCampaignChatMessagesReports.size()}">0</span>
+                    </button>
+                </h2>
+                <div id="collapseCampaignChat"
+                     class="accordion-collapse collapse"
+                     data-bs-parent="#deletionAccordion">
+                    <div class="accordion-body">
+                        <div th:if="${deletedCampaignChatMessagesReports.isEmpty()}" class="table-empty">
+                            No deleted campaign chat message reports on record.
+                        </div>
+                        <div th:unless="${deletedCampaignChatMessagesReports.isEmpty()}"
+                             class="deletion-table-wrapper">
+                            <table class="admin-table">
+                                <thead>
+                                <tr>
+                                    <td>Report ID</td>
+                                    <td>User ID</td>
+                                    <td>Message ID</td>
+                                    <td>Name</td>
+                                    <td>Content</td>
+                                    <td>Deleted On</td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="r : ${deletedCampaignChatMessagesReports}">
+                                    <td class="id-cell" th:text="${r.id}"></td>
+                                    <td class="id-cell" th:text="${r.deletedByUserId}"></td>
+                                    <td class="id-cell" th:text="${r.objectId}"></td>
+                                    <td th:text="${r.title}"></td>
+                                    <td class="content-cell" th:text="${r.content}"></td>
+                                    <td style="white-space:nowrap;" th:text="${r.getFormatedTime()}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHATROOM MESSAGES -->
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseChatroom"
+                            aria-expanded="false">
+                        💬 Chatroom Messages
+                        <span class="count-badge ms-2"
+                              th:text="${deletedChatroomMessagesReports.size()}">0</span>
+                    </button>
+                </h2>
+                <div id="collapseChatroom"
+                     class="accordion-collapse collapse"
+                     data-bs-parent="#deletionAccordion">
+                    <div class="accordion-body">
+                        <div th:if="${deletedChatroomMessagesReports.isEmpty()}" class="table-empty">
+                            No deleted chatroom message reports on record.
+                        </div>
+                        <div th:unless="${deletedChatroomMessagesReports.isEmpty()}"
+                             class="deletion-table-wrapper">
+                            <table class="admin-table">
+                                <thead>
+                                <tr>
+                                    <td>Report ID</td>
+                                    <td>User ID</td>
+                                    <td>Message ID</td>
+                                    <td>Name</td>
+                                    <td>Content</td>
+                                    <td>Deleted On</td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="r : ${deletedChatroomMessagesReports}">
+                                    <td class="id-cell" th:text="${r.id}"></td>
+                                    <td class="id-cell" th:text="${r.deletedByUserId}"></td>
+                                    <td class="id-cell" th:text="${r.objectId}"></td>
+                                    <td th:text="${r.title}"></td>
+                                    <td class="content-cell" th:text="${r.content}"></td>
+                                    <td style="white-space:nowrap;" th:text="${r.getFormatedTime()}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <!-- end accordion -->
+    </div>
+    <!-- end deletion section -->
+
+</div>
+<!-- end container -->
 
 <footer th:replace="~{fragments::footer}"></footer>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"

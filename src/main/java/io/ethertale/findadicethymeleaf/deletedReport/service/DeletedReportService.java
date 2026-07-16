@@ -11,6 +11,7 @@ import io.ethertale.findadicethymeleaf.post.model.GroupPost;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -24,7 +25,7 @@ public class DeletedReportService {
     }
 
     public List<DeletedReport> getAllDeletedReportsFromType(DeletedReportType deletedReportType) {
-        return deletedReportRepo.getAllByType(deletedReportType);
+        return deletedReportRepo.getAllByType(deletedReportType).stream().sorted(Comparator.comparing(DeletedReport::getDeletedOn).reversed()).toList();
     };
 //    public List<GroupPost> getAllDeletedGroupPosts(){
 //        return (List<GroupPost>) deletedReportRepo.getAllByType(DeletedReportType.GROUP_POST);
