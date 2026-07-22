@@ -175,6 +175,7 @@
                     <img th:src="${user.imageUrl}" alt="" class="card-img-top">
                     <div class="card-body">
                         <h5 class="text-center" th:text="${user.username}"></h5>
+                        <small th:if="${user.role.toString() == 'ADMIN'}" style="color: gray" class="text-center" th:text="${user.role}"></small>
                         <p th:text="'Member Since: ' + ${user.getYearAndMonthAndDayOfCreation()}"></p>
                     </div>
                 </div>
