@@ -733,16 +733,30 @@
     </div>
     <!-- end deletion section -->
 
-<!--    <div class="container">-->
-<!--        <h1>Ban Section</h1>-->
-<!--        <form action="">-->
-<!--            <div class="form-group">-->
-<!--                <label for="userIdToBan"></label>-->
-<!--                <input placeholder="Type ID to Ban" type="text">-->
-<!--            </div>-->
-<!--            <button>SUBMIT</button>-->
-<!--        </form>-->
-<!--    </div>-->
+    <div class="container">
+        <h1>Banned Users</h1>
+        <div class="container">
+            <div th:each="bannedUser: ${bannedUsers}" class="row">
+                <div class="col-12 col-md-4 d-flex flex-row align-items-center">
+                    <div class="container">
+                        <h3>User Info</h3>
+                        <p th:text="${bannedUser.id}"></p>
+                        <p th:text="${bannedUser.username}"></p>
+                        <p th:text="${bannedUser.email}"></p>
+                        <img width="32" height="32" th:src="${bannedUser.imageUrl}" alt="">
+                    </div>
+
+                    <div class="container">
+                        <h3>Hero Info</h3>
+                        <p th:text="${bannedUser.hero.id}"></p>
+                        <p th:text="${bannedUser.hero.name}"></p>
+                        <p style="font-size: 0.5rem" th:text="${bannedUser.hero.description}"></p>
+                        <img width="32" height="32" th:src="${bannedUser.hero.imageUrl}" alt="">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
 </div>
 <!-- end container -->

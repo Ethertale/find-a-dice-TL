@@ -358,8 +358,8 @@
                     </div>
                     <div>
                         <label for="postInput" class="form-label"></label>
-                        <input required type="text" th:field="*{description}" class="form-control" id="postInput" placeholder="Write something here...">
-                        <small id="charCounter">0/1000</small>
+                        <textarea required type="text" th:field="*{description}" class="form-control" id="postInput" maxlength="1000" placeholder="Write something here..."></textarea>
+                        <small id="charCounter">0 / 1000</small>
                     </div>
                     <button id="submitPostButton" disabled type="submit" class="btn btn-primary">Post</button>
             </form>
@@ -434,22 +434,52 @@
     });
 </script>
 <script>
-    let inputArea = document.getElementById('postInput');
-    let charCounter = document.getElementById('charCounter');
-    let submitPostButton = document.getElementById('submitPostButton')
+    let textarea = document.getElementById('postInput');
+    let counter = document.getElementById('charCounter');
+    let submitBtn = document.getElementById('submitPostButton')
 
-    inputArea.addEventListener('keydown' && 'keyup', () => {
-        if (inputArea.value.length >= 1000 && inputArea.value.length <= 0) {
-            charCounter.style.color = 'red';
-            submitPostButton.disabled = true;
+    // inputArea.addEventListener('keydown' && 'keyup', () => {
+    //     if (inputArea.value.length >= 1000 && inputArea.value.length <= 0) {
+    //         charCounter.style.color = 'red';
+    //         submitPostButton.disabled = true;
+    //     } else {
+    //         charCounter.style.color = '#cfc8b8';
+    //         submitPostButton.disabled = false;
+    //     }
+    //     charCounter.textContent = inputArea.value.length + '/1000';
+    //     console.log(inputArea.value.length);
+    //     console.log(charCounter);
+    // })
+
+    const MIN = 10;
+    const MAX = 1000;
+
+    function updateCounter() {
+        const len = textarea.value.length;
+
+        counter.textContent = len + ' / ' + MAX;
+
+        // Colour coding
+        counter.classList.remove('ok', 'warn', 'error');
+
+        if (len < MIN || len > MAX) {
+            counter.classList.add('error');
+            submitBtn.disabled = true;
+        } else if (len >= MAX * 0.9) {
+            // Within the last 10% of the limit — warn
+            counter.classList.add('warn');
+            submitBtn.disabled = false;
         } else {
-            charCounter.style.color = '#cfc8b8';
-            submitPostButton.disabled = false;
+            counter.classList.add('ok');
+            submitBtn.disabled = false;
         }
-        charCounter.textContent = inputArea.value.length + '/1000';
-        console.log(inputArea.value.length);
-        console.log(charCounter);
-    })
+    }
+
+    // Run on every keystroke and on paste
+    textarea.addEventListener('input', updateCounter);
+
+    // Run once on load in case the browser pre-fills the field
+    updateCounter();
 </script>
 </body>
 </html>

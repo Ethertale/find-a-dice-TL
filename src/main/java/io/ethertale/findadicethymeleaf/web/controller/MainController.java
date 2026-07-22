@@ -136,6 +136,7 @@ public class MainController {
         mav.addObject("feedbackNegativeReports", feedbackReportService.getAllNegativeFeedbackReportsSortedByCreatedAtDesc());
         mav.addObject("feedbackReportReports", feedbackReportService.getAllReportFeedbackReportsSortedByCreatedAtDesc());
         mav.addObject("feedbackBugReports", feedbackReportService.getAllBugFeedbackReportsSortedByCreatedAtDesc());
+        mav.addObject("bannedUsers", userService.getAllBannedUsers());
 
         return mav;
     }
