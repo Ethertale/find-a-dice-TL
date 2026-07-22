@@ -202,7 +202,7 @@ public class CampaignController {
      */
     @PostMapping("/{id}/sheet/{membershipId}/update")
     @ResponseBody
-    public ResponseEntity<Void> updateSheet(@PathVariable UUID id, @PathVariable UUID membershipId, @ModelAttribute CharacterSheetDTO sheetDTO, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
+    public ResponseEntity<Void> updateSheet(@PathVariable UUID id, @PathVariable UUID membershipId, @RequestBody CharacterSheetDTO sheetDTO, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
         User loggedUser = userService.getUserById(authenticationDetails.getId());
         if (!campaignService.isActiveMember(id, loggedUser.getHero())) {
             return ResponseEntity.status(403).build();
@@ -235,7 +235,7 @@ public class CampaignController {
      */
     @PostMapping("/{id}/notes/update")
     @ResponseBody
-    public ResponseEntity<Void> updateDmNotes(@PathVariable UUID id, @ModelAttribute DmNotesDTO notesDTO, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
+    public ResponseEntity<Void> updateDmNotes(@PathVariable UUID id, @RequestBody DmNotesDTO notesDTO, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
         User loggedUser = userService.getUserById(authenticationDetails.getId());
         if (!campaignService.isDm(id, loggedUser.getHero())) {
             return ResponseEntity.status(403).build();

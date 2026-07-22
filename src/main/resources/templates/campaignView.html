@@ -1085,10 +1085,14 @@
                         <p class="sheet-section-title">Active Players</p>
                         <div th:each="member : ${activeMembers}" class="pending-request-row">
                             <img class="pending-avatar" th:src="${member.hero.imageUrl}" alt="">
-                            <p class="pending-name" th:text="${member.hero.name}">Hero Name</p>
+                            <a th:href="'/profile/' + ${member.hero.user.id}"><p class="pending-name" th:text="${member.hero.name}">Hero Name</p></a>
 <!--                            TODO Fix "Only variable expressions returning numbers or booleans are allowed in this context, any other datatypes are not trusted in the context of this expression, including Strings or any other object that could be rendered as a text literal. A typical case is HTML attributes for event handlers (e.g. "onload"), in which textual data from variables should better be output to "data-*" attributes and then read from the event handler."-->
-<!--                            <button class="btn-reject" th:onclick="'confirmKick(\'' + ${member.id} + '\', \'' + ${member.hero.name} + '\')'">Kick</button>-->
-                            <button class="btn-reject">Kick</button>
+                            <button class="btn-reject"
+                                    th:data-membership-id="${member.id}"
+                                    th:data-hero-name="${member.hero.name}"
+                                    onclick="confirmKick(this.dataset.membershipId, this.dataset.heroName)">
+                                Kick
+                            </button>
                         </div>
 
                         <!-- DM notes textarea -->
@@ -1171,10 +1175,16 @@
                      class="hud-player"
                      th:id="'hud-' + ${member.hero.id}">
                     <img class="hud-avatar"
+                         th:unless="${member.characterSheet?.imageUrl == null}"
+                         th:src="${member.characterSheet?.imageUrl}"
+                         th:alt="${member.characterSheet?.name}">
+                    <img class="hud-avatar"
+                         th:if="${member.characterSheet?.imageUrl == null}"
                          th:src="${member.hero.imageUrl}"
                          th:alt="${member.hero.name}">
                     <div class="hud-info">
-                        <p class="hud-name" th:text="${member.hero.name}">Hero Name</p>
+                        <p class="hud-name" th:text="${member.characterSheet?.name}">Hero Name</p>
+<!--                        <small class="hud-name" th:text="${member.hero.name}">Hero Name</small>-->
                         <p class="hud-stat">
                             HP: <span th:text="${member.characterSheet?.healthPoints != null ? member.characterSheet.healthPoints : '?'}">?</span>
                             / <span th:text="${member.characterSheet?.maxHealthPoints != null ? member.characterSheet.maxHealthPoints : '?'}">?</span>
@@ -1394,7 +1404,9 @@
         const status = document.getElementById('sheetSaveStatus');
         if (!form) return;
 
-        const data = new FormData(form);
+        const formData = new FormData(form);
+        const sheetData = Object.fromEntries(formData.entries());
+
         status.textContent = 'Saving...';
 
         try {
@@ -1402,8 +1414,11 @@
                 '/campaigns/' + CAMPAIGN_ID + '/sheet/' + MEMBERSHIP_ID + '/update',
                 {
                     method: 'POST',
-                    headers: { [CSRF_HEADER]: CSRF_TOKEN },
-                    body: data
+                    headers: {
+                        'Content-Type': 'application/json',
+                        [CSRF_HEADER]: CSRF_TOKEN
+                    },
+                    body: JSON.stringify(sheetData)
                 }
             );
 
@@ -1426,8 +1441,6 @@
         const status   = document.getElementById('notesSaveStatus');
         if (!textarea) return;
 
-        const data = new FormData();
-        data.append('content', textarea.value);
         status.textContent = 'Saving...';
 
         try {
@@ -1435,8 +1448,11 @@
                 '/campaigns/' + CAMPAIGN_ID + '/notes/update',
                 {
                     method: 'POST',
-                    headers: { [CSRF_HEADER]: CSRF_TOKEN },
-                    body: data
+                    headers: {
+                        'Content-Type': 'application/json',
+                        [CSRF_HEADER]: CSRF_TOKEN
+                    },
+                    body: JSON.stringify({ content: textarea.value })
                 }
             );
 

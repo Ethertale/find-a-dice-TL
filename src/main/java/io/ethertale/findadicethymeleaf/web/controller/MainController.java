@@ -107,10 +107,10 @@ public class MainController {
         return mav;
     }
 
-    @GetMapping("/documentation")
-    public ModelAndView documentationPage(){
-        return new ModelAndView("documentation");
-    }
+//    @GetMapping("/documentation")
+//    public ModelAndView documentationPage(){
+//        return new ModelAndView("documentation");
+//    }
 
     @GetMapping("/dice-roll")
     public ModelAndView diceRollPage(){return new ModelAndView("diceRolls");}
