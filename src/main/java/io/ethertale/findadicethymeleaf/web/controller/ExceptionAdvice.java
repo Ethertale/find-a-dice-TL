@@ -100,5 +100,10 @@ public class ExceptionAdvice {
         redirectAttributes.addFlashAttribute("campaignCreateTitleNotWithinBounds", "Campaign Title either too long or too short!");
         return "redirect:/campaigns/campaignCreate";
     }
+    @ExceptionHandler(BannedException.class)
+    public String handleBannedException(RedirectAttributes redirectAttributes){
+        redirectAttributes.addFlashAttribute("bannedException", "Banned!");
+        return "redirect:/banned";
+    }
 
 }

@@ -1,10 +1,12 @@
 package io.ethertale.findadicethymeleaf.user.service;
 
+import io.ethertale.findadicethymeleaf.exceptions.BannedException;
 import io.ethertale.findadicethymeleaf.exceptions.RegisterEmailNotValid;
 import io.ethertale.findadicethymeleaf.exceptions.RegisterPasswordNotInCharRange;
 import io.ethertale.findadicethymeleaf.exceptions.RegisterUsernameNotInCharRange;
 import io.ethertale.findadicethymeleaf.hero.service.HeroService;
 import io.ethertale.findadicethymeleaf.security.AuthenticationDetails;
+import io.ethertale.findadicethymeleaf.user.model.AccountStatus;
 import io.ethertale.findadicethymeleaf.user.model.User;
 import io.ethertale.findadicethymeleaf.user.model.UserRoles;
 import io.ethertale.findadicethymeleaf.user.repo.UserRepo;
@@ -53,7 +55,7 @@ public class UserService implements UserDetailsService {
         if (registerDTO.getPassword().length() < 8 || registerDTO.getPassword().length() > 32) {
             throw new RegisterPasswordNotInCharRange();
         }
-        if (!matcher.find()) {
+        if (!matcher.find() || doesEmailExist(registerDTO.getEmail()) || compareUserEmailToBannedUsers(registerDTO.getEmail())) {
             throw new RegisterEmailNotValid();
         }
 
@@ -66,6 +68,7 @@ public class UserService implements UserDetailsService {
                 .email(matcher.group())
                 .role(UserRoles.USER)
                 .createdAt(LocalDateTime.now())
+                .accountStatus(AccountStatus.ACTIVE)
                 .build();
 
         userRepo.save(user);
@@ -79,6 +82,16 @@ public class UserService implements UserDetailsService {
     }
 
     public User getUserById(UUID id) {
+        if (userRepo.findById(id).isEmpty()) {
+            throw new UsernameNotFoundException(id.toString());
+        }
+        if (userRepo.findById(id).get().getAccountStatus().equals(AccountStatus.BANNED)) {
+            throw new BannedException();
+        }
+        return userRepo.findById(id).get();
+    }
+
+    public User getBannedUserById(UUID id){
         if (userRepo.findById(id).isEmpty()) {
             throw new UsernameNotFoundException(id.toString());
         }
@@ -104,5 +117,27 @@ public class UserService implements UserDetailsService {
 
     public List<User> searchUsers(String query) {
         return userRepo.findUserByUsernameContainingIgnoreCase(query);
+    }
+
+    public boolean doesEmailExist(String email) {
+        for (User user : getAllUsers()) {
+            if (user.getEmail().equals(email)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public List<User> getAllBannedUsers(){
+        return userRepo.findAll().stream().filter(user -> user.getAccountStatus().equals(AccountStatus.BANNED)).toList();
+    }
+
+    public boolean compareUserEmailToBannedUsers(String email){
+        for (User bannedUser : getAllBannedUsers()) {
+            if (email.equals(bannedUser.getEmail())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

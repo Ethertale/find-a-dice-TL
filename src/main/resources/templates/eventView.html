@@ -447,7 +447,7 @@
                     </li>
                     <li th:each="hero : ${event.getInterestedHeroesSortedAlphabeticallyAsc()}"
                         class="attendee-item">
-                        <a th:href="@{'/profile/' + ${hero.user.id}}">
+                        <a th:unless="${hero.user.accountStatus.toString() == 'BANNED'}" th:href="@{'/profile/' + ${hero.user.id}}">
                             <img class="attendee-avatar" th:src="${hero.imageUrl}" alt="Hero Portrait">
                             <p class="attendee-name" th:text="${hero.name}">Hero Name</p>
                         </a>
@@ -469,7 +469,7 @@
                     </li>
                     <li th:each="hero : ${event.getGoingHeroesSortedAlphabeticallyAsc()}"
                         class="attendee-item">
-                        <a th:href="@{'/profile/' + ${hero.user.id}}">
+                        <a th:unless="${hero.user.accountStatus.toString() == 'BANNED'}" th:href="@{'/profile/' + ${hero.user.id}}">
                             <img class="attendee-avatar"
                                  th:src="${hero.imageUrl}"
                                  alt="Hero Portrait">

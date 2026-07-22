@@ -52,6 +52,10 @@ public class User {
     @Column(nullable = false, name = "created_at")
     private LocalDateTime createdAt;
 
+    @Column(nullable = false, name = "account_status")
+    @Enumerated(value = EnumType.STRING)
+    private AccountStatus accountStatus;
+
 
     public String giveUserNames() {
         String firstChar = firstName.substring(0, 1);
@@ -78,5 +82,14 @@ public class User {
                 + createdAt.getMonthValue()
                 + "/"
                 + createdAt.getYear();
+    }
+
+    public String generateGibberish(int length){
+        StringBuilder gibberish = new StringBuilder();
+        char[] chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'};
+        for (int i = 0; i < length; i++) {
+            gibberish.append(chars[(int) (Math.random() * 26)]);
+        }
+        return gibberish.toString();
     }
 }

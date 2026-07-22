@@ -285,7 +285,7 @@
         <div th:each="chatroom: ${chats}" class="col-12 col-md-10">
 
             <!-- Each chatroom is an ornate correspondence plaque -->
-            <a class="chatroom-link" th:href="'chat-room/' + ${chatroom.roomCode}">
+            <a th:unless="${chatroom.participants.getFirst().user.accountStatus == 'BANNED'} or ${chatroom.participants.getLast().user.accountStatus.toString() == 'BANNED'}" class="chatroom-link" th:href="'chat-room/' + ${chatroom.roomCode}">
                 <div class="chatroom-plaque">
                     <div class="row d-flex flex-row justify-content-center align-items-center">
 

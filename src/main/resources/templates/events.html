@@ -488,7 +488,7 @@
 <div class="container">
     <div class="row">
         <!-- Each event is rendered as an ornate announcement card -->
-        <div class="col-12 col-md-6 col-lg-4" th:each="event: ${events}">
+        <div class="col-12 col-md-6 col-lg-4" th:unless="${event.createdByEvent.user.accountStatus.toString() == 'BANNED'}" th:each="event: ${events}">
             <a th:href="'/events/' + ${event.id}">
                 <div class="card">
                     <img th:src="${event.image}" class="card-img-top" alt="Event Banner">

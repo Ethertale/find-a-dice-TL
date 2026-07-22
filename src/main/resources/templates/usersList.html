@@ -169,7 +169,7 @@
 
 <div class="container">
     <div class="row mt-3">
-        <div th:each="user: ${users}" class="col-6 col-md-4 col-lg-2">
+        <div th:unless="${user.accountStatus.toString() == 'BANNED'}" th:each="user: ${users}" class="col-6 col-md-4 col-lg-2">
             <a style="text-decoration: none" th:href="@{'/profile/' + ${user.id}}">
                 <div class="card my-2">
                     <img th:src="${user.imageUrl}" alt="" class="card-img-top">

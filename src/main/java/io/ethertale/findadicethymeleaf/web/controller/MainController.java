@@ -9,6 +9,7 @@ import io.ethertale.findadicethymeleaf.feedbackReport.service.FeedbackReportServ
 import io.ethertale.findadicethymeleaf.group.service.GroupService;
 import io.ethertale.findadicethymeleaf.hero.service.HeroService;
 import io.ethertale.findadicethymeleaf.security.AuthenticationDetails;
+import io.ethertale.findadicethymeleaf.user.model.AccountStatus;
 import io.ethertale.findadicethymeleaf.user.model.User;
 import io.ethertale.findadicethymeleaf.user.model.UserRoles;
 import io.ethertale.findadicethymeleaf.user.service.UserService;
@@ -29,6 +30,7 @@ import java.time.LocalDateTime;
 
 @Controller
 @RequestMapping("/")
+@Slf4j
 public class MainController {
 
     private final UserService userService;
@@ -119,6 +121,11 @@ public class MainController {
     public ModelAndView adminPanelPage(@AuthenticationPrincipal AuthenticationDetails authenticationDetails){
         User loggedUser = userService.getUserById(authenticationDetails.getId());
 
+        if (!(loggedUser.getRole() == UserRoles.ADMIN)){
+            log.warn("Unauthorized user with ID {} tried to access the ADMIN PANEL.", loggedUser.getId());
+            return new ModelAndView("diceRolls");
+        }
+
         ModelAndView mav = new ModelAndView("adminPanel");
         mav.addObject("deletedGroupsReports", deletedReportService.getAllDeletedReportsFromType(DeletedReportType.GROUP));
         mav.addObject("deletedGroupPostsReports", deletedReportService.getAllDeletedReportsFromType(DeletedReportType.GROUP_POST));
@@ -151,5 +158,14 @@ public class MainController {
     public String submitFeedback(FeedbackReportDTO feedbackReportDTO){
         feedbackReportService.submitReport(feedbackReportDTO);
         return "redirect:/feedback";
+    }
+
+    @GetMapping("/banned")
+    public ModelAndView bannedPage(@AuthenticationPrincipal AuthenticationDetails authenticationDetails){
+        User loggedUser = userService.getBannedUserById(authenticationDetails.getId());
+
+        ModelAndView mav = new ModelAndView("status-banned");
+        mav.addObject("loggedUser", loggedUser);
+        return mav;
     }
 }

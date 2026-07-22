@@ -409,7 +409,7 @@
         <h2 class="section-header">Heroes</h2>
         <div class="row">
             <div th:each="hero : ${heroes}" class="col-6 col-lg-4 col-xl-3 pb-1">
-                <div class="result-card">
+                <div th:unless="${hero.user.accountStatus.toString() == 'BANNED'}" class="result-card">
                     <a th:href="@{'/profile/' + ${hero.user.id}}">
                         <img class="result-avatar"
                              th:src="${hero.imageUrl}"
@@ -441,7 +441,7 @@
         <h2 class="section-header">Users</h2>
         <div class="row">
             <div class="col-6 col-lg-4 col-xl-3 pb-1" th:each="user : ${users}">
-                <div class="result-card">
+                <div th:unless="${user.accountStatus.toString() == 'BANNED'}" class="result-card">
                     <a th:href="@{'/profile/' + ${user.id}}">
                         <img class="result-avatar"
                              th:src="${user.imageUrl}"
@@ -460,7 +460,7 @@
         <h2 class="section-header">Events</h2>
         <div class="row">
             <div class="col-6 col-lg-4 pb-1" th:each="event : ${events}">
-                <div class="result-card">
+                <div th:unless="${event.createdByEvent.user.accountStatus.toString() == 'BANNED'}" class="result-card">
                     <a th:href="@{'/events/' + ${event.id}}">
                         <img class="event-image"
                              th:src="${event.image}"
@@ -479,7 +479,7 @@
         <h2 class="section-header">Groups</h2>
         <div class="row">
             <div class="col-6 col-lg-4 pb-1" th:each="group : ${groups}">
-                <div class="result-card">
+                <div th:unless="${group.createdBy.user.accountStatus.toString() == 'BANNED'}" class="result-card">
                     <a th:href="@{'/groups/' + ${group.id}}">
                         <img class="group-image"
                              th:src="${group.imageUrl}"
