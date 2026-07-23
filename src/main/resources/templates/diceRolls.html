@@ -319,6 +319,10 @@
             <p class="dice-label">D%</p>
         </div>
 
+        <div style="display: none" class="container">
+            <audio id="diceRollAudio" src="/dice-roll.mp3" controls preload="auto"></audio>
+        </div>
+
     </div>
 </div>
 
@@ -332,6 +336,11 @@
         crossorigin="anonymous"></script>
 
 <script>
+    function DiceSound() {
+        let thisSound = document.getElementById('diceRollAudio');
+        thisSound.play();
+    }
+
     function rollDice(diceEl, numberEl, maxValue, isPercentage = false) {
         diceEl.classList.add('rolling');
 
@@ -352,24 +361,31 @@
 
     document.getElementById('d4Con').addEventListener('click', function () {
         rollDice(this, document.getElementById('d4Number'), 4);
+        DiceSound();
     });
     document.getElementById('d6Con').addEventListener('click', function () {
         rollDice(this, document.getElementById('d6Number'), 6);
+        DiceSound();
     });
     document.getElementById('d8Con').addEventListener('click', function () {
         rollDice(this, document.getElementById('d8Number'), 8);
+        DiceSound();
     });
     document.getElementById('d10Con').addEventListener('click', function () {
         rollDice(this, document.getElementById('d10Number'), 10);
+        DiceSound();
     });
     document.getElementById('d12Con').addEventListener('click', function () {
         rollDice(this, document.getElementById('d12Number'), 12);
+        DiceSound();
     });
     document.getElementById('d20Con').addEventListener('click', function () {
         rollDice(this, document.getElementById('d20Number'), 20);
+        DiceSound();
     });
     document.getElementById('dPercCon').addEventListener('click', function () {
         rollDice(this, document.getElementById('dPercNumber'), 100, true);
+        DiceSound();
     });
 </script>
 
