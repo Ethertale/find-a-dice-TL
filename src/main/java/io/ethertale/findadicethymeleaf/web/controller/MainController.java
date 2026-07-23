@@ -169,4 +169,12 @@ public class MainController {
         mav.addObject("loggedUser", loggedUser);
         return mav;
     }
+
+    @GetMapping("/rules")
+    public ModelAndView rulesPage(@AuthenticationPrincipal AuthenticationDetails authenticationDetails){
+        User loggedUser = userService.getUserById(authenticationDetails.getId());
+
+        ModelAndView mav = new ModelAndView("rules");
+        return mav;
+    }
 }
