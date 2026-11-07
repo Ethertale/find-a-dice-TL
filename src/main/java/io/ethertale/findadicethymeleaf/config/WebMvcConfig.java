@@ -23,7 +23,7 @@ public class WebMvcConfig implements WebMvcConfigurer {
                         .requestMatchers("/login", "/register", "/", "/documentation").permitAll()
                         .requestMatchers("/favicon.ico").permitAll()
                         .requestMatchers("/ws/**").permitAll()
-                        .requestMatchers("/admin-panel").hasRole("ADMIN")
+                        .requestMatchers("/admin-panel", "/admin-panel/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

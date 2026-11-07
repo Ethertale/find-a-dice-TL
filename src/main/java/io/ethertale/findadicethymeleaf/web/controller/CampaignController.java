@@ -3,6 +3,7 @@ package io.ethertale.findadicethymeleaf.web.controller;
 import io.ethertale.findadicethymeleaf.campaign.model.Campaign;
 import io.ethertale.findadicethymeleaf.campaign.model.CampaignMembership;
 import io.ethertale.findadicethymeleaf.campaign.model.MembershipStatus;
+import io.ethertale.findadicethymeleaf.campaign.model.CharacterSheet;
 import io.ethertale.findadicethymeleaf.campaign.service.CampaignService;
 import io.ethertale.findadicethymeleaf.config.Utils;
 import io.ethertale.findadicethymeleaf.security.AuthenticationDetails;
@@ -208,7 +209,7 @@ public class CampaignController {
             return ResponseEntity.status(403).build();
         }
 
-        campaignService.updateSheet(membershipId, sheetDTO);
+        CharacterSheet savedSheet = campaignService.updateSheet(membershipId, sheetDTO);
 
         // Broadcast only the HUD-relevant fields, no need to send the full sheet
         messagingTemplate.convertAndSend(
@@ -217,11 +218,11 @@ public class CampaignController {
                         loggedUser.getHero().getId().toString(),
                         loggedUser.getHero().getName(),
                         loggedUser.getHero().getImageUrl(),
-                        sheetDTO.getHp(),
-                        sheetDTO.getMaxHp(),
-                        sheetDTO.getResourceName(),
-                        sheetDTO.getCurrentResource(),
-                        sheetDTO.getMaxResource()
+                        savedSheet.getHealthPoints(),
+                        savedSheet.getMaxHealthPoints(),
+                        savedSheet.getResourceName(),
+                        savedSheet.getCurrResource(),
+                        savedSheet.getMaxResource()
                 )
         );
 

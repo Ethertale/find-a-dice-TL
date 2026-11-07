@@ -1,5 +1,6 @@
 package io.ethertale.findadicethymeleaf.web.controller;
 
+import io.ethertale.findadicethymeleaf.chat.model.ChatMessages;
 import io.ethertale.findadicethymeleaf.chat.service.ChatMessagesService;
 import io.ethertale.findadicethymeleaf.config.Utils;
 import io.ethertale.findadicethymeleaf.security.AuthenticationDetails;
@@ -45,13 +46,14 @@ public class ChatWebsocketController {
         AuthenticationDetails authenticationDetailsDetails = (AuthenticationDetails) authToken.getPrincipal();
         User loggedUser = userService.getUserById(authenticationDetailsDetails.getId());
 
-        chatMessagesService.sendMessage(roomCode, loggedUser, new ChatRoomMessageDTO(incomingMessage.getMessage()));
+        // Broadcast the saved (moderated) text, never the raw input
+        ChatMessages savedMessage = chatMessagesService.sendMessage(roomCode, loggedUser, new ChatRoomMessageDTO(incomingMessage.getMessage()));
 
         return new WSOutgoingMessageDTO(
                 loggedUser.getHero().getId().toString(),
                 loggedUser.getHero().getName(),
                 loggedUser.getHero().getImageUrl(),
-                incomingMessage.getMessage(),
+                savedMessage.getMessage(),
                 utils.formattedTimeNow()
         );
     }

@@ -3,6 +3,8 @@ package io.ethertale.findadicethymeleaf.event.service;
 import io.ethertale.findadicethymeleaf.deletedReport.model.DeletedReport;
 import io.ethertale.findadicethymeleaf.deletedReport.model.DeletedReportType;
 import io.ethertale.findadicethymeleaf.deletedReport.repo.DeletedReportRepo;
+import io.ethertale.findadicethymeleaf.moderation.model.ModerationSource;
+import io.ethertale.findadicethymeleaf.moderation.service.ModerationService;
 import io.ethertale.findadicethymeleaf.event.model.Event;
 import io.ethertale.findadicethymeleaf.event.repo.EventRepo;
 import io.ethertale.findadicethymeleaf.hero.model.Hero;
@@ -24,9 +26,11 @@ public class EventService {
     private final HeroRepo heroRepo;
 
     private final DeletedReportRepo deletedReportRepo;
+    private final ModerationService moderationService;
 
     @Autowired
-    public EventService(EventRepo eventRepo, HeroRepo heroRepo, DeletedReportRepo deletedReportRepo) {
+    public EventService(EventRepo eventRepo, HeroRepo heroRepo, DeletedReportRepo deletedReportRepo, ModerationService moderationService) {
+        this.moderationService = moderationService;
         this.eventRepo = eventRepo;
         this.heroRepo = heroRepo;
         this.deletedReportRepo = deletedReportRepo;
@@ -36,9 +40,9 @@ public class EventService {
     public void createEvent(EventCreateDTO eventCreateDTO, Hero hero) {
 
         Event event = Event.builder()
-                .title(eventCreateDTO.getTitle())
-                .description(eventCreateDTO.getDescription())
-                .location(eventCreateDTO.getLocation())
+                .title(moderationService.moderate(eventCreateDTO.getTitle(), ModerationSource.EVENT, hero.getUser().getId()))
+                .description(moderationService.moderate(eventCreateDTO.getDescription(), ModerationSource.EVENT, hero.getUser().getId()))
+                .location(moderationService.moderate(eventCreateDTO.getLocation(), ModerationSource.EVENT, hero.getUser().getId()))
                 .createdByEvent(hero)
                 .createdAt(LocalDateTime.now())
                 .startTime(eventCreateDTO.getStartTime())

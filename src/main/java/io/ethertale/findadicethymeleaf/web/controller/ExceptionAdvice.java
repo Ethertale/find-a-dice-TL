@@ -30,6 +30,12 @@ public class ExceptionAdvice {
         redirectAttributes.addFlashAttribute("registerUsernameNotInCharRange", "Username must be between 5 and 16 characters!");
         return "redirect:/register";
     }
+    @ExceptionHandler(RegisterUsernameNotAllowed.class)
+    public String handleRegisterUsernameNotAllowed(RedirectAttributes redirectAttributes) {
+        redirectAttributes.addFlashAttribute("registerUsernameNotAllowed", "This username is not allowed!");
+        return "redirect:/register";
+    }
+
     @ExceptionHandler(GroupDoesNotExistException.class)
     public String handleGroupDoesNotExist(RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute("groupDoesNotExist", "Group does not exist!");
