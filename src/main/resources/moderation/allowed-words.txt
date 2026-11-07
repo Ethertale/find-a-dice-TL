@@ -1,0 +1,39 @@
+# Allowed words - never masked, even if they contain or resemble a banned word.
+# Mostly matters if matching is substring/prefix based (the "Scunthorpe problem").
+# D&D / fantasy vocabulary
+assassin
+assassins
+assassinate
+cockatrice
+cockatrices
+hancock
+peacock
+# Everyday words
+assess
+assessment
+assist
+assistant
+assume
+bass
+brass
+class
+classes
+classic
+compass
+cocktail
+dickens
+embassy
+glass
+grass
+harass
+mass
+pass
+passage
+password
+scrap
+scrape
+scunthorpe
+shiitake
+shitake
+therapist
+title
