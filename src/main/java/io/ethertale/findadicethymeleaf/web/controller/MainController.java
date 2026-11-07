@@ -1,15 +1,12 @@
 package io.ethertale.findadicethymeleaf.web.controller;
 
 import io.ethertale.findadicethymeleaf.deletedReport.model.DeletedReportType;
-import io.ethertale.findadicethymeleaf.deletedReport.repo.DeletedReportRepo;
 import io.ethertale.findadicethymeleaf.deletedReport.service.DeletedReportService;
-import io.ethertale.findadicethymeleaf.event.service.EventService;
 import io.ethertale.findadicethymeleaf.feedbackReport.model.FeedbackReportType;
 import io.ethertale.findadicethymeleaf.feedbackReport.service.FeedbackReportService;
-import io.ethertale.findadicethymeleaf.group.service.GroupService;
 import io.ethertale.findadicethymeleaf.hero.service.HeroService;
+import io.ethertale.findadicethymeleaf.moderation.service.ModerationService;
 import io.ethertale.findadicethymeleaf.security.AuthenticationDetails;
-import io.ethertale.findadicethymeleaf.user.model.AccountStatus;
 import io.ethertale.findadicethymeleaf.user.model.User;
 import io.ethertale.findadicethymeleaf.user.model.UserRoles;
 import io.ethertale.findadicethymeleaf.user.service.UserService;
@@ -25,8 +22,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.bind.annotation.PathVariable;
 
-import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Controller
 @RequestMapping("/")
@@ -42,13 +40,15 @@ public class MainController {
 
 
     private final DeletedReportService deletedReportService;
+    private final ModerationService moderationService;
 
     @Autowired
-    public MainController(UserService userService, HeroService heroService, FeedbackReportService feedbackReportService, DeletedReportService deletedReportService) {
+    public MainController(UserService userService, HeroService heroService, FeedbackReportService feedbackReportService, DeletedReportService deletedReportService, ModerationService moderationService) {
         this.userService = userService;
         this.heroService = heroService;
         this.feedbackReportService = feedbackReportService;
         this.deletedReportService = deletedReportService;
+        this.moderationService = moderationService;
     }
 
     @GetMapping("/")
@@ -132,13 +132,25 @@ public class MainController {
         mav.addObject("deletedEventsReports", deletedReportService.getAllDeletedReportsFromType(DeletedReportType.EVENT));
         mav.addObject("deletedCampaignChatMessagesReports", deletedReportService.getAllDeletedReportsFromType(DeletedReportType.CAMPAIGN_CHAT_MESSAGE));
         mav.addObject("deletedChatroomMessagesReports", deletedReportService.getAllDeletedReportsFromType(DeletedReportType.CHAT_MESSAGE));
-        mav.addObject("feedbackPositiveReports", feedbackReportService.getAllPositiveFeedbackReportsSortedByCreatedAtDesc());
-        mav.addObject("feedbackNegativeReports", feedbackReportService.getAllNegativeFeedbackReportsSortedByCreatedAtDesc());
-        mav.addObject("feedbackReportReports", feedbackReportService.getAllReportFeedbackReportsSortedByCreatedAtDesc());
-        mav.addObject("feedbackBugReports", feedbackReportService.getAllBugFeedbackReportsSortedByCreatedAtDesc());
+        mav.addObject("feedbackBugReports", feedbackReportService.getAllBugReportReportsSortedByCreatedAtDesc());
+        mav.addObject("feedbackFeatureRequestReports", feedbackReportService.getAllFeatureRequestReportsSortedByCreatedAtDesc());
+        mav.addObject("feedbackThoughtsReports", feedbackReportService.getAllThoughtsReportsSortedByCreatedAtDesc());
+        mav.addObject("feedbackReportReports", feedbackReportService.getAllReportReportsSortedByCreatedAtDesc());
         mav.addObject("bannedUsers", userService.getAllBannedUsers());
+        mav.addObject("moderationFlags", moderationService.getAllPendingFlags());
 
         return mav;
+    }
+
+    @PostMapping("/admin-panel/moderation/{flagId}/review")
+    public String reviewModerationFlag(@PathVariable UUID flagId, @AuthenticationPrincipal AuthenticationDetails authenticationDetails){
+        User loggedUser = userService.getUserById(authenticationDetails.getId());
+        if (!(loggedUser.getRole() == UserRoles.ADMIN)){
+            log.warn("Unauthorized user with ID {} tried to review moderation flag {}.", loggedUser.getId(), flagId);
+            return "redirect:/home";
+        }
+        moderationService.markReviewed(flagId, loggedUser.getId());
+        return "redirect:/admin-panel";
     }
 
     @GetMapping("/feedback")

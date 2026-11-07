@@ -38,3 +38,4 @@ build/
 /env-variables.env
 /src/main/resources/static/rcth-d3.html
 /src/main/resources/static/rcth-d3-og.html
+/tcl/
