@@ -1,5 +1,6 @@
 package io.ethertale.findadicethymeleaf.web.controller;
 
+import io.ethertale.findadicethymeleaf.campaign.model.CampaignMessage;
 import io.ethertale.findadicethymeleaf.campaign.service.CampaignService;
 import io.ethertale.findadicethymeleaf.config.Utils;
 import io.ethertale.findadicethymeleaf.security.AuthenticationDetails;
@@ -53,8 +54,8 @@ public class CampaignWebsocketController {
         User loggedUser = userService.getUserById(authDetails.getId());
 
         // Persist the message
-        campaignService.saveMessage(UUID.fromString(campaignId), loggedUser.getHero(), incomingMessage.getMessage());
+        CampaignMessage savedMessage = campaignService.saveMessage(UUID.fromString(campaignId), loggedUser.getHero(), incomingMessage.getMessage());
 
-        return new WSCampaignOutgoingMessageDTO(loggedUser.getHero().getId().toString(), loggedUser.getHero().getName(), loggedUser.getHero().getImageUrl(), incomingMessage.getMessage(), utils.formattedTimeNow());
+        return new WSCampaignOutgoingMessageDTO(loggedUser.getHero().getId().toString(), loggedUser.getHero().getName(), loggedUser.getHero().getImageUrl(), savedMessage.getMessage(), utils.formattedTimeNow());
     }
 }

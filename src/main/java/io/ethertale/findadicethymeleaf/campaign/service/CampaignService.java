@@ -3,6 +3,8 @@ package io.ethertale.findadicethymeleaf.campaign.service;
 import io.ethertale.findadicethymeleaf.campaign.model.*;
 import io.ethertale.findadicethymeleaf.campaign.repo.*;
 import io.ethertale.findadicethymeleaf.exceptions.*;
+import io.ethertale.findadicethymeleaf.moderation.model.ModerationSource;
+import io.ethertale.findadicethymeleaf.moderation.service.ModerationService;
 import io.ethertale.findadicethymeleaf.hero.model.Hero;
 import io.ethertale.findadicethymeleaf.web.dto.campaign.CampaignCreateDTO;
 import io.ethertale.findadicethymeleaf.web.dto.campaign.CampaignUpdateDTO;
@@ -34,17 +36,19 @@ public class CampaignService {
     private final CharacterSheetRepo characterSheetRepo;
     private final DmNotesRepo dmNotesRepo;
     private final CampaignMessageRepo campaignMessageRepo;
+    private final ModerationService moderationService;
 
     // Dir for where the uploaded maps will be, TODO move to application.properties
     private static final String MAP_UPLOAD_DIR = "uploads/maps";
 
     @Autowired
-    public CampaignService(CampaignRepo campaignRepo, CampaignMembershipRepo campaignMembershipRepo, CharacterSheetRepo characterSheetRepo, DmNotesRepo dmNotesRepo, CampaignMessageRepo campaignMessageRepo) {
+    public CampaignService(CampaignRepo campaignRepo, CampaignMembershipRepo campaignMembershipRepo, CharacterSheetRepo characterSheetRepo, DmNotesRepo dmNotesRepo, CampaignMessageRepo campaignMessageRepo, ModerationService moderationService) {
         this.campaignRepo = campaignRepo;
         this.campaignMembershipRepo = campaignMembershipRepo;
         this.characterSheetRepo = characterSheetRepo;
         this.dmNotesRepo = dmNotesRepo;
         this.campaignMessageRepo = campaignMessageRepo;
+        this.moderationService = moderationService;
     }
 
     // CAMPAIGN
@@ -78,12 +82,12 @@ public class CampaignService {
         if (campaignCreateDTO.getTitle().length() > 50 || campaignCreateDTO.getTitle().length() <= 0 || campaignCreateDTO.getTitle().isBlank()) {
             throw new CampaignCreateTitleNotWithinBounds();
         }
-        campaign.setTitle(campaignCreateDTO.getTitle());
+        campaign.setTitle(moderationService.moderate(campaignCreateDTO.getTitle(), ModerationSource.CAMPAIGN, dm.getUser().getId()));
 
         if (campaignCreateDTO.getDescription().length() > 1000 || campaignCreateDTO.getDescription().length() <= 0 || campaignCreateDTO.getDescription().isBlank()) {
             throw new CampaignCreateDescriptionNotWithinBounds();
         }
-        campaign.setDescription(campaignCreateDTO.getDescription());
+        campaign.setDescription(moderationService.moderate(campaignCreateDTO.getDescription(), ModerationSource.CAMPAIGN, dm.getUser().getId()));
 
         if (!campaignCreateDTO.getImageUrl().startsWith("https://") || campaignCreateDTO.getImageUrl().isBlank()) {
             campaign.setImageUrl(dm.getImageUrl());
@@ -116,8 +120,8 @@ public class CampaignService {
     @Transactional
     public void updateCampaign(UUID campaignId, CampaignUpdateDTO dto) {
         Campaign campaign = campaignRepo.findById(campaignId).orElseThrow();
-        campaign.setTitle(dto.getTitle());
-        campaign.setDescription(dto.getDescription());
+        campaign.setTitle(moderationService.moderate(dto.getTitle(), ModerationSource.CAMPAIGN, campaign.getDm().getUser().getId()));
+        campaign.setDescription(moderationService.moderate(dto.getDescription(), ModerationSource.CAMPAIGN, campaign.getDm().getUser().getId()));
         campaign.setImageUrl(dto.getImageUrl());
         campaign.setMaxPlayers(dto.getMaxPlayers());
         campaignRepo.save(campaign);
@@ -264,36 +268,42 @@ public class CampaignService {
     }
 
     @Transactional
-    public void updateSheet(UUID membershipId, CharacterSheetDTO sheetDTO){
+    public CharacterSheet updateSheet(UUID membershipId, CharacterSheetDTO sheetDTO){
         CampaignMembership campaignMembership = campaignMembershipRepo.findById(membershipId).orElseThrow(CampaignMembershipDoesNotExist::new);
         CharacterSheet sheet = characterSheetRepo.findByMembership(campaignMembership).orElseThrow(CampaignSheetDoesNotExist::new);
 
-        sheet.setName(sheetDTO.getName());
-        sheet.setAge(sheetDTO.getAge());
-        sheet.setGender(sheetDTO.getGender());
-        sheet.setRace(sheetDTO.getRace());
-        sheet.setCharClass(sheetDTO.getCharClass());
-        sheet.setLevel(sheetDTO.getLevel());
-        sheet.setBackground(sheetDTO.getBackground());
-        sheet.setAlignment(sheetDTO.getAlignment());
+        // Every sheet field is free text (even the stats), and HP/resource values are broadcast to the whole table
+        UUID authorUserId = campaignMembership.getHero().getUser().getId();
+        sheet.setName(moderateSheet(sheetDTO.getName(), authorUserId));
+        sheet.setAge(moderateSheet(sheetDTO.getAge(), authorUserId));
+        sheet.setGender(moderateSheet(sheetDTO.getGender(), authorUserId));
+        sheet.setRace(moderateSheet(sheetDTO.getRace(), authorUserId));
+        sheet.setCharClass(moderateSheet(sheetDTO.getCharClass(), authorUserId));
+        sheet.setLevel(moderateSheet(sheetDTO.getLevel(), authorUserId));
+        sheet.setBackground(moderateSheet(sheetDTO.getBackground(), authorUserId));
+        sheet.setAlignment(moderateSheet(sheetDTO.getAlignment(), authorUserId));
         sheet.setImageUrl(sheetDTO.getImageUrl());
-        sheet.setHealthPoints(sheetDTO.getHp());
-        sheet.setMaxHealthPoints(sheetDTO.getMaxHp());
-        sheet.setResourceName(sheetDTO.getResourceName());
-        sheet.setCurrResource(sheetDTO.getCurrentResource());
-        sheet.setMaxResource(sheetDTO.getMaxResource());
-        sheet.setStrength(sheetDTO.getStrength());
-        sheet.setDexterity(sheetDTO.getDexterity());
-        sheet.setConstitution(sheetDTO.getConstitution());
-        sheet.setIntelligence(sheetDTO.getIntelligence());
-        sheet.setWisdom(sheetDTO.getWisdom());
-        sheet.setCharisma(sheetDTO.getCharisma());
-        sheet.setBackstory(sheetDTO.getBackstory());
-        sheet.setInventory(sheetDTO.getInventory());
-        sheet.setSpells(sheetDTO.getSpells());
-        sheet.setNotes(sheetDTO.getNotes());
+        sheet.setHealthPoints(moderateSheet(sheetDTO.getHp(), authorUserId));
+        sheet.setMaxHealthPoints(moderateSheet(sheetDTO.getMaxHp(), authorUserId));
+        sheet.setResourceName(moderateSheet(sheetDTO.getResourceName(), authorUserId));
+        sheet.setCurrResource(moderateSheet(sheetDTO.getCurrentResource(), authorUserId));
+        sheet.setMaxResource(moderateSheet(sheetDTO.getMaxResource(), authorUserId));
+        sheet.setStrength(moderateSheet(sheetDTO.getStrength(), authorUserId));
+        sheet.setDexterity(moderateSheet(sheetDTO.getDexterity(), authorUserId));
+        sheet.setConstitution(moderateSheet(sheetDTO.getConstitution(), authorUserId));
+        sheet.setIntelligence(moderateSheet(sheetDTO.getIntelligence(), authorUserId));
+        sheet.setWisdom(moderateSheet(sheetDTO.getWisdom(), authorUserId));
+        sheet.setCharisma(moderateSheet(sheetDTO.getCharisma(), authorUserId));
+        sheet.setBackstory(moderateSheet(sheetDTO.getBackstory(), authorUserId));
+        sheet.setInventory(moderateSheet(sheetDTO.getInventory(), authorUserId));
+        sheet.setSpells(moderateSheet(sheetDTO.getSpells(), authorUserId));
+        sheet.setNotes(moderateSheet(sheetDTO.getNotes(), authorUserId));
 
-        characterSheetRepo.save(sheet);
+        return characterSheetRepo.save(sheet);
+    }
+
+    private String moderateSheet(String text, UUID authorUserId) {
+        return moderationService.moderate(text, ModerationSource.CHARACTER_SHEET, authorUserId);
     }
 
     //DM Notes
@@ -326,7 +336,7 @@ public class CampaignService {
         CampaignMessage campaignMessage = CampaignMessage.builder()
                 .campaign(campaign)
                 .sender(sender)
-                .message(message)
+                .message(moderationService.moderate(message, ModerationSource.CAMPAIGN_CHAT_MESSAGE, sender.getUser().getId()))
                 .sentAt(LocalDateTime.now())
                 .build();
         return campaignMessageRepo.save(campaignMessage);

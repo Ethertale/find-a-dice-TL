@@ -3,8 +3,11 @@ package io.ethertale.findadicethymeleaf.user.service;
 import io.ethertale.findadicethymeleaf.exceptions.BannedException;
 import io.ethertale.findadicethymeleaf.exceptions.RegisterEmailNotValid;
 import io.ethertale.findadicethymeleaf.exceptions.RegisterPasswordNotInCharRange;
+import io.ethertale.findadicethymeleaf.exceptions.RegisterUsernameNotAllowed;
 import io.ethertale.findadicethymeleaf.exceptions.RegisterUsernameNotInCharRange;
 import io.ethertale.findadicethymeleaf.hero.service.HeroService;
+import io.ethertale.findadicethymeleaf.moderation.model.ModerationSource;
+import io.ethertale.findadicethymeleaf.moderation.service.ModerationService;
 import io.ethertale.findadicethymeleaf.security.AuthenticationDetails;
 import io.ethertale.findadicethymeleaf.user.model.AccountStatus;
 import io.ethertale.findadicethymeleaf.user.model.User;
@@ -36,12 +39,14 @@ public class UserService implements UserDetailsService {
     private final UserRepo userRepo;
     private final HeroService heroService;
     private final PasswordEncoder passwordEncoder;
+    private final ModerationService moderationService;
 
     @Autowired
-    public UserService(UserRepo userRepo, HeroService heroService, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepo userRepo, HeroService heroService, PasswordEncoder passwordEncoder, ModerationService moderationService) {
         this.userRepo = userRepo;
         this.heroService = heroService;
         this.passwordEncoder = passwordEncoder;
+        this.moderationService = moderationService;
     }
 
     @Transactional
@@ -51,6 +56,10 @@ public class UserService implements UserDetailsService {
 
         if (registerDTO.getUsername().length() < 5 || registerDTO.getUsername().length() > 16) {
             throw new RegisterUsernameNotInCharRange();
+        }
+        // Usernames are unique and public, so they can't be masked - reject them outright
+        if (moderationService.isProfane(registerDTO.getUsername())) {
+            throw new RegisterUsernameNotAllowed();
         }
         if (registerDTO.getPassword().length() < 8 || registerDTO.getPassword().length() > 32) {
             throw new RegisterPasswordNotInCharRange();
@@ -76,6 +85,8 @@ public class UserService implements UserDetailsService {
         User userByUsername = userRepo.getUserByUsername(user.getUsername());
         userByUsername.setHero(heroService.createFirstHero(userByUsername));
         userByUsername.setImageUrl("https://api.dicebear.com/10.x/shapes/svg?seed=" + userByUsername.getId());
+        userByUsername.setFirstName(moderationService.moderate(userByUsername.getFirstName(), ModerationSource.USER_REGISTRATION, userByUsername.getId()));
+        userByUsername.setLastName(moderationService.moderate(userByUsername.getLastName(), ModerationSource.USER_REGISTRATION, userByUsername.getId()));
 
         userRepo.save(userByUsername);
 

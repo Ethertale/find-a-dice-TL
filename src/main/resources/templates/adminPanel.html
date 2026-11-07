@@ -373,29 +373,28 @@
 
     <!-- ===== PAGE HEADER ===== -->
     <div class="admin-header">
-        <h1>⚙ Admin Panel</h1>
-        <span class="admin-badge">🔒 Restricted Access</span>
+        <h1>Admin Panel</h1>
     </div>
 
     <!-- ===================================================
          SECTION 1 — FEEDBACK
     ==================================================== -->
-    <h2 class="section-title">💬 User Feedback</h2>
+    <h2 class="section-title">User Feedback</h2>
 
     <div class="row g-3">
 
         <!-- POSITIVE -->
         <div class="col-12 col-md-6 col-xl-3">
             <div class="feedback-col-header positive">
-                ✅ Positive
+                <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bug" viewBox="0 0 16 16"><path d="M4.355.522a.5.5 0 0 1 .623.333l.291.956A5 5 0 0 1 8 1c1.007 0 1.946.298 2.731.811l.29-.956a.5.5 0 1 1 .957.29l-.41 1.352A5 5 0 0 1 13 6h.5a.5.5 0 0 0 .5-.5V5a.5.5 0 0 1 1 0v.5A1.5 1.5 0 0 1 13.5 7H13v1h1.5a.5.5 0 0 1 0 1H13v1h.5a1.5 1.5 0 0 1 1.5 1.5v.5a.5.5 0 1 1-1 0v-.5a.5.5 0 0 0-.5-.5H13a5 5 0 0 1-10 0h-.5a.5.5 0 0 0-.5.5v.5a.5.5 0 1 1-1 0v-.5A1.5 1.5 0 0 1 2.5 10H3V9H1.5a.5.5 0 0 1 0-1H3V7h-.5A1.5 1.5 0 0 1 1 5.5V5a.5.5 0 0 1 1 0v.5a.5.5 0 0 0 .5.5H3c0-1.364.547-2.601 1.432-3.503l-.41-1.352a.5.5 0 0 1 .333-.623M4 7v4a4 4 0 0 0 3.5 3.97V7zm4.5 0v7.97A4 4 0 0 0 12 11V7zM12 6a4 4 0 0 0-1.334-2.982A3.98 3.98 0 0 0 8 2a3.98 3.98 0 0 0-2.667 1.018A4 4 0 0 0 4 6z"/></svg> Bugs</span>
                 <span class="count-badge"
-                      th:text="${feedbackPositiveReports.size()}">0</span>
+                      th:text="${feedbackBugReports.size()}">0</span>
             </div>
             <div class="feedback-col-body positive">
-                <div th:if="${feedbackPositiveReports.isEmpty()}" class="empty-state">
-                    <span>✓</span>No positive reports yet
+                <div th:if="${feedbackBugReports.isEmpty()}" class="empty-state">
+                    <span>✓</span>No bugs reports yet
                 </div>
-                <div th:each="r : ${feedbackPositiveReports}" class="feedback-card">
+                <div th:each="r : ${feedbackBugReports}" class="feedback-card">
                     <p class="reporter-name"
                        th:text="${r.firstName} + ' ' + ${r.lastName}"></p>
                     <p class="reporter-email" th:text="${r.email}"></p>
@@ -409,15 +408,15 @@
         <!-- NEGATIVE -->
         <div class="col-12 col-md-6 col-xl-3">
             <div class="feedback-col-header negative">
-                ❌ Negative
+                <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-archive" viewBox="0 0 16 16"><path d="M0 2a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v2a1 1 0 0 1-1 1v7.5a2.5 2.5 0 0 1-2.5 2.5h-9A2.5 2.5 0 0 1 1 12.5V5a1 1 0 0 1-1-1zm2 3v7.5A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5V5zm13-3H1v2h14zM5 7.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5"/></svg> Feature Requests</span>
                 <span class="count-badge"
-                      th:text="${feedbackNegativeReports.size()}">0</span>
+                      th:text="${feedbackFeatureRequestReports.size()}">0</span>
             </div>
             <div class="feedback-col-body negative">
-                <div th:if="${feedbackNegativeReports.isEmpty()}" class="empty-state">
-                    <span>✓</span>No negative reports yet
+                <div th:if="${feedbackFeatureRequestReports.isEmpty()}" class="empty-state">
+                    <span>✓</span>No feature requests yet
                 </div>
-                <div th:each="r : ${feedbackNegativeReports}" class="feedback-card">
+                <div th:each="r : ${feedbackFeatureRequestReports}" class="feedback-card">
                     <p class="reporter-name"
                        th:text="${r.firstName} + ' ' + ${r.lastName}"></p>
                     <p class="reporter-email" th:text="${r.email}"></p>
@@ -431,15 +430,16 @@
         <!-- REPORTS -->
         <div class="col-12 col-md-6 col-xl-3">
             <div class="feedback-col-header report">
-                ⚑ Reports
+                <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chat-dots" viewBox="0 0 16 16">
+  <path d="M5 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/><path d="m2.165 15.803.02-.004c1.83-.363 2.948-.842 3.468-1.105A9 9 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.4 10.4 0 0 1-.524 2.318l-.003.011a11 11 0 0 1-.244.637c-.079.186.074.394.273.362a22 22 0 0 0 .693-.125m.8-3.108a1 1 0 0 0-.287-.801C1.618 10.83 1 9.468 1 8c0-3.192 3.004-6 7-6s7 2.808 7 6-3.004 6-7 6a8 8 0 0 1-2.088-.272 1 1 0 0 0-.711.074c-.387.196-1.24.57-2.634.893a11 11 0 0 0 .398-2"/></svg> Thoughts</span>
                 <span class="count-badge"
-                      th:text="${feedbackReportReports.size()}">0</span>
+                      th:text="${feedbackThoughtsReports.size()}">0</span>
             </div>
             <div class="feedback-col-body report">
-                <div th:if="${feedbackReportReports.isEmpty()}" class="empty-state">
-                    <span>✓</span>No user reports yet
+                <div th:if="${feedbackThoughtsReports.isEmpty()}" class="empty-state">
+                    <span>✓</span>No thoughts yet
                 </div>
-                <div th:each="r : ${feedbackReportReports}" class="feedback-card">
+                <div th:each="r : ${feedbackThoughtsReports}" class="feedback-card">
                     <p class="reporter-name"
                        th:text="${r.firstName} + ' ' + ${r.lastName}"></p>
                     <p class="reporter-email" th:text="${r.email}"></p>
@@ -453,15 +453,15 @@
         <!-- BUGS -->
         <div class="col-12 col-md-6 col-xl-3">
             <div class="feedback-col-header bug">
-                🐛 Bugs
+                <span><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-flag" viewBox="0 0 16 16"><path d="M14.778.085A.5.5 0 0 1 15 .5V8a.5.5 0 0 1-.314.464L14.5 8l.186.464-.003.001-.006.003-.023.009a12 12 0 0 1-.397.15c-.264.095-.631.223-1.047.35-.816.252-1.879.523-2.71.523-.847 0-1.548-.28-2.158-.525l-.028-.01C7.68 8.71 7.14 8.5 6.5 8.5c-.7 0-1.638.23-2.437.477A20 20 0 0 0 3 9.342V15.5a.5.5 0 0 1-1 0V.5a.5.5 0 0 1 1 0v.282c.226-.079.496-.17.79-.26C4.606.272 5.67 0 6.5 0c.84 0 1.524.277 2.121.519l.043.018C9.286.788 9.828 1 10.5 1c.7 0 1.638-.23 2.437-.477a20 20 0 0 0 1.349-.476l.019-.007.004-.002h.001M14 1.221c-.22.078-.48.167-.766.255-.81.252-1.872.523-2.734.523-.886 0-1.592-.286-2.203-.534l-.008-.003C7.662 1.21 7.139 1 6.5 1c-.669 0-1.606.229-2.415.478A21 21 0 0 0 3 1.845v6.433c.22-.078.48-.167.766-.255C4.576 7.77 5.638 7.5 6.5 7.5c.847 0 1.548.28 2.158.525l.028.01C9.32 8.29 9.86 8.5 10.5 8.5c.668 0 1.606-.229 2.415-.478A21 21 0 0 0 14 7.655V1.222z"/></svg> Reports</span>
                 <span class="count-badge"
-                      th:text="${feedbackBugReports.size()}">0</span>
+                      th:text="${feedbackReportReports.size()}">0</span>
             </div>
             <div class="feedback-col-body bug">
-                <div th:if="${feedbackBugReports.isEmpty()}" class="empty-state">
+                <div th:if="${feedbackReportReports.isEmpty()}" class="empty-state">
                     <span>✓</span>No bug reports yet
                 </div>
-                <div th:each="r : ${feedbackBugReports}" class="feedback-card">
+                <div th:each="r : ${feedbackReportReports}" class="feedback-card">
                     <p class="reporter-name"
                        th:text="${r.firstName} + ' ' + ${r.lastName}"></p>
                     <p class="reporter-email" th:text="${r.email}"></p>
@@ -476,10 +476,52 @@
     <!-- end feedback row -->
 
     <!-- ===================================================
-         SECTION 2 — DELETION REPORTS
+         SECTION 2 — FLAGGED CONTENT (profanity filter)
     ==================================================== -->
     <div class="deletion-section">
-        <h2 class="section-title">🗑 Deletion Reports</h2>
+        <h2 class="section-title">
+            Flagged Content
+            <span class="count-badge ms-2" th:text="${moderationFlags.size()}">0</span>
+        </h2>
+
+        <div th:if="${moderationFlags.isEmpty()}" class="table-empty">
+            Nothing waiting for review.
+        </div>
+        <div th:unless="${moderationFlags.isEmpty()}" class="deletion-table-wrapper">
+            <table class="admin-table">
+                <thead>
+                <tr>
+                    <td>Source</td>
+                    <td>User ID</td>
+                    <td>Original</td>
+                    <td>Shown As</td>
+                    <td>Flagged On</td>
+                    <td></td>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="f : ${moderationFlags}">
+                    <td style="white-space:nowrap;" th:text="${f.source}"></td>
+                    <td class="id-cell" th:text="${f.authorUserId}"></td>
+                    <td class="content-cell" th:text="${f.originalText}"></td>
+                    <td class="content-cell" th:text="${f.maskedText}"></td>
+                    <td style="white-space:nowrap;" th:text="${f.getFormatedTime()}"></td>
+                    <td>
+                        <form th:method="POST" th:action="@{/admin-panel/moderation/{id}/review(id=${f.id})}">
+                            <button type="submit" class="btn btn-sm btn-outline-warning">Reviewed</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ===================================================
+         SECTION 3 — DELETION REPORTS
+    ==================================================== -->
+    <div class="deletion-section">
+        <h2 class="section-title">Deletion Reports</h2>
 
         <div class="accordion" id="deletionAccordion">
 

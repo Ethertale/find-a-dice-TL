@@ -2,6 +2,8 @@ package io.ethertale.findadicethymeleaf.hero.service;
 
 import io.ethertale.findadicethymeleaf.hero.model.*;
 import io.ethertale.findadicethymeleaf.hero.repo.HeroRepo;
+import io.ethertale.findadicethymeleaf.moderation.model.ModerationSource;
+import io.ethertale.findadicethymeleaf.moderation.service.ModerationService;
 import io.ethertale.findadicethymeleaf.user.model.Genders;
 import io.ethertale.findadicethymeleaf.user.model.User;
 import io.ethertale.findadicethymeleaf.user.repo.UserRepo;
@@ -20,11 +22,13 @@ public class HeroService {
 
     private final UserRepo userRepo;
     private final HeroRepo heroRepo;
+    private final ModerationService moderationService;
 
     @Autowired
-    public HeroService(UserRepo userRepo, HeroRepo heroRepo) {
+    public HeroService(UserRepo userRepo, HeroRepo heroRepo, ModerationService moderationService) {
         this.userRepo = userRepo;
         this.heroRepo = heroRepo;
+        this.moderationService = moderationService;
     }
 
     @Transactional
@@ -68,7 +72,7 @@ public class HeroService {
         }
 
         if (heroUpdateDTO.getName() != null || !heroUpdateDTO.getName().isBlank()) {
-            updatedHero.setName(heroUpdateDTO.getName());
+            updatedHero.setName(moderationService.moderate(heroUpdateDTO.getName(), ModerationSource.HERO, updatedHero.getUser().getId()));
         }
         if (heroUpdateDTO.getAge() >= 18) {
             updatedHero.setAge(heroUpdateDTO.getAge());
@@ -86,7 +90,7 @@ public class HeroService {
             updatedHero.setLevel(heroUpdateDTO.getLevel());
         }
         if (heroUpdateDTO.getDescription() != null || !heroUpdateDTO.getDescription().isBlank()) {
-            updatedHero.setDescription(heroUpdateDTO.getDescription());
+            updatedHero.setDescription(moderationService.moderate(heroUpdateDTO.getDescription(), ModerationSource.HERO, updatedHero.getUser().getId()));
         }
         if (heroUpdateDTO.getImageUrl() != null || !heroUpdateDTO.getDescription().isBlank()) {
             updatedHero.setImageUrl(heroUpdateDTO.getImageUrl());

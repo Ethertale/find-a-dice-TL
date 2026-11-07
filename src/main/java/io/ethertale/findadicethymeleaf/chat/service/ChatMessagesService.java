@@ -4,6 +4,8 @@ import io.ethertale.findadicethymeleaf.chat.model.ChatMessages;
 import io.ethertale.findadicethymeleaf.chat.model.ChatRoom;
 import io.ethertale.findadicethymeleaf.chat.repo.ChatMessagesRepo;
 import io.ethertale.findadicethymeleaf.chat.repo.ChatRoomRepo;
+import io.ethertale.findadicethymeleaf.moderation.model.ModerationSource;
+import io.ethertale.findadicethymeleaf.moderation.service.ModerationService;
 import io.ethertale.findadicethymeleaf.user.model.User;
 import io.ethertale.findadicethymeleaf.web.dto.ChatRoomMessageDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -18,18 +20,20 @@ public class ChatMessagesService {
 
     private final ChatMessagesRepo chatMessagesRepo;
     private final ChatRoomRepo chatRoomRepo;
+    private final ModerationService moderationService;
 
-    public ChatMessagesService(ChatMessagesRepo chatMessagesRepo, ChatRoomRepo chatRoomRepo) {
+    public ChatMessagesService(ChatMessagesRepo chatMessagesRepo, ChatRoomRepo chatRoomRepo, ModerationService moderationService) {
         this.chatMessagesRepo = chatMessagesRepo;
         this.chatRoomRepo = chatRoomRepo;
+        this.moderationService = moderationService;
     }
 
     @Transactional
-    public void sendMessage(String roomCode, User loggedUser, ChatRoomMessageDTO chatRoomMessageDTO) {
+    public ChatMessages sendMessage(String roomCode, User loggedUser, ChatRoomMessageDTO chatRoomMessageDTO) {
         ChatMessages newMessage = ChatMessages.builder()
                 .chatRoom(chatRoomRepo.findByRoomCode(roomCode))
                 .sender(loggedUser.getHero())
-                .message(chatRoomMessageDTO.getMessage())
+                .message(moderationService.moderate(chatRoomMessageDTO.getMessage(), ModerationSource.CHAT_MESSAGE, loggedUser.getId()))
                 .sentAt(LocalDateTime.now())
                 .build();
 
@@ -39,6 +43,7 @@ public class ChatMessagesService {
         chatMessagesRepo.save(newMessage);
         chatRoomRepo.save(room);
 
-        log.info("{} {} - {}: {}", LocalDateTime.now(), loggedUser.getHero().getName(), roomCode, chatRoomMessageDTO.getMessage());
+        log.info("{} {} - {}: {}", LocalDateTime.now(), loggedUser.getHero().getName(), roomCode, newMessage.getMessage());
+        return newMessage;
     }
 }

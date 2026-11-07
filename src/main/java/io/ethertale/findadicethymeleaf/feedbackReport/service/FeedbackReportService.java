@@ -43,17 +43,17 @@ public class FeedbackReportService {
         return feedbackReportRepo.findAll();
     }
 
-    public List<FeedbackReport> getAllPositiveFeedbackReportsSortedByCreatedAtDesc(){
-        return feedbackReportRepo.findAllByType(FeedbackReportType.POSITIVE).stream().sorted(Comparator.comparing(FeedbackReport::getCreatedAt).reversed()).toList();
+    public List<FeedbackReport> getAllBugReportReportsSortedByCreatedAtDesc(){
+        return feedbackReportRepo.findAllByType(FeedbackReportType.BUG_REPORT).stream().sorted(Comparator.comparing(FeedbackReport::getCreatedAt).reversed()).toList();
     }
-    public List<FeedbackReport> getAllNegativeFeedbackReportsSortedByCreatedAtDesc(){
-        return feedbackReportRepo.findAllByType(FeedbackReportType.NEGATIVE).stream().sorted(Comparator.comparing(FeedbackReport::getCreatedAt).reversed()).toList();
+    public List<FeedbackReport> getAllFeatureRequestReportsSortedByCreatedAtDesc(){
+        return feedbackReportRepo.findAllByType(FeedbackReportType.FEATURE_REQUEST).stream().sorted(Comparator.comparing(FeedbackReport::getCreatedAt).reversed()).toList();
     }
-    public List<FeedbackReport> getAllReportFeedbackReportsSortedByCreatedAtDesc(){
+    public List<FeedbackReport> getAllThoughtsReportsSortedByCreatedAtDesc(){
+        return feedbackReportRepo.findAllByType(FeedbackReportType.THOUGHTS).stream().sorted(Comparator.comparing(FeedbackReport::getCreatedAt).reversed()).toList();
+    }
+    public List<FeedbackReport> getAllReportReportsSortedByCreatedAtDesc(){
         return feedbackReportRepo.findAllByType(FeedbackReportType.REPORT).stream().sorted(Comparator.comparing(FeedbackReport::getCreatedAt).reversed()).toList();
-    }
-    public List<FeedbackReport> getAllBugFeedbackReportsSortedByCreatedAtDesc(){
-        return feedbackReportRepo.findAllByType(FeedbackReportType.BUG).stream().sorted(Comparator.comparing(FeedbackReport::getCreatedAt).reversed()).toList();
     }
 
 }

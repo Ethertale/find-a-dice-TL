@@ -12,6 +12,8 @@ import io.ethertale.findadicethymeleaf.group.repo.DeletedGroupsRepo;
 import io.ethertale.findadicethymeleaf.group.repo.GroupRepo;
 import io.ethertale.findadicethymeleaf.hero.model.Hero;
 import io.ethertale.findadicethymeleaf.hero.repo.HeroRepo;
+import io.ethertale.findadicethymeleaf.moderation.model.ModerationSource;
+import io.ethertale.findadicethymeleaf.moderation.service.ModerationService;
 import io.ethertale.findadicethymeleaf.post.model.GroupPost;
 import io.ethertale.findadicethymeleaf.post.repo.GroupPostRepo;
 import io.ethertale.findadicethymeleaf.web.dto.GroupCreateDTO;
@@ -35,13 +37,15 @@ public class GroupService {
     private final HeroRepo heroRepo;
     private final GroupPostRepo groupPostRepo;
     private final DeletedReportRepo deletedReportRepo;
+    private final ModerationService moderationService;
 
     @Autowired
-    public GroupService(GroupRepo groupRepo, HeroRepo heroRepo, GroupPostRepo groupPostRepo, DeletedReportRepo deletedReportRepo) {
+    public GroupService(GroupRepo groupRepo, HeroRepo heroRepo, GroupPostRepo groupPostRepo, DeletedReportRepo deletedReportRepo, ModerationService moderationService) {
         this.groupRepo = groupRepo;
         this.heroRepo = heroRepo;
         this.groupPostRepo = groupPostRepo;
         this.deletedReportRepo = deletedReportRepo;
+        this.moderationService = moderationService;
     }
 
     public List<Group> getAllGroupsSortedByCreationDesc() {
@@ -92,8 +96,8 @@ public class GroupService {
     @Transactional
     public void createGroup(GroupCreateDTO groupDTO, Hero hero) {
         Group group = Group.builder()
-                .name(groupDTO.getName())
-                .description(groupDTO.getDescription())
+                .name(moderationService.moderate(groupDTO.getName(), ModerationSource.GROUP, hero.getUser().getId()))
+                .description(moderationService.moderate(groupDTO.getDescription(), ModerationSource.GROUP, hero.getUser().getId()))
                 .imageUrl(groupDTO.getImageUrl())
                 .heroes(new HashSet<>())
                 .groupPosts(new HashSet<>())
@@ -112,11 +116,11 @@ public class GroupService {
 
         GroupPost newPost = GroupPost.builder()
                 .group(groupRepo.findById(groupId).orElse(null))
-                .title(postDTO.getTitle())
+                .title(moderationService.moderate(postDTO.getTitle(), ModerationSource.GROUP_POST, hero.getUser().getId()))
                 .createdAt(LocalDateTime.now())
                 .hero(hero)
                 .comments(new HashSet<>())
-                .description(postDTO.getDescription())
+                .description(moderationService.moderate(postDTO.getDescription(), ModerationSource.GROUP_POST, hero.getUser().getId()))
                 .image(hero.getImageUrl())
                 .likes(0)
                 .build();
